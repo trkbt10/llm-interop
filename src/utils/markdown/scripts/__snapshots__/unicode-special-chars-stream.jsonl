@@ -1,0 +1,206 @@
+{"sample":"unicode-special-chars.md","index":0,"event":{"type":"begin","elementType":"header","elementId":"md-1","metadata":{"level":1}}}
+{"sample":"unicode-special-chars.md","index":1,"event":{"type":"delta","elementId":"md-1","content":"Unicode and Special Characters Test"}}
+{"sample":"unicode-special-chars.md","index":2,"event":{"type":"end","elementId":"md-1","finalContent":"Unicode and Special Characters Test"}}
+{"sample":"unicode-special-chars.md","index":3,"event":{"type":"begin","elementType":"text","elementId":"md-2"}}
+{"sample":"unicode-special-chars.md","index":4,"event":{"type":"delta","elementId":"md-2","content":"Text"}}
+{"sample":"unicode-special-chars.md","index":5,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"unicode-special-chars.md","index":6,"event":{"type":"delta","elementId":"md-2","content":"with"}}
+{"sample":"unicode-special-chars.md","index":7,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"unicode-special-chars.md","index":8,"event":{"type":"delta","elementId":"md-2","content":"emojis"}}
+{"sample":"unicode-special-chars.md","index":9,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"unicode-special-chars.md","index":10,"event":{"type":"delta","elementId":"md-2","content":"🎉"}}
+{"sample":"unicode-special-chars.md","index":11,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"unicode-special-chars.md","index":12,"event":{"type":"delta","elementId":"md-2","content":"and"}}
+{"sample":"unicode-special-chars.md","index":13,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"unicode-special-chars.md","index":14,"event":{"type":"delta","elementId":"md-2","content":"special"}}
+{"sample":"unicode-special-chars.md","index":15,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"unicode-special-chars.md","index":16,"event":{"type":"delta","elementId":"md-2","content":"chars"}}
+{"sample":"unicode-special-chars.md","index":17,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"unicode-special-chars.md","index":18,"event":{"type":"end","elementId":"md-2","finalContent":"Text with emojis 🎉 and special chars ™®©."}}
+{"sample":"unicode-special-chars.md","index":19,"event":{"type":"begin","elementType":"header","elementId":"md-3","metadata":{"level":2}}}
+{"sample":"unicode-special-chars.md","index":20,"event":{"type":"delta","elementId":"md-3","content":"Code with Unicode"}}
+{"sample":"unicode-special-chars.md","index":21,"event":{"type":"end","elementId":"md-3","finalContent":"Code with Unicode"}}
+{"sample":"unicode-special-chars.md","index":22,"event":{"type":"begin","elementType":"code","elementId":"md-4","metadata":{"language":"python"}}}
+{"sample":"unicode-special-chars.md","index":23,"event":{"type":"end","elementId":"md-4","finalContent":"print(\"Hello, 世界! 🌍\")\nprint(\"Special chars: \\n\\r\\t\")\nprint(\"Unicode: café, naïve, résumé\")"}}
+{"sample":"unicode-special-chars.md","index":24,"event":{"type":"begin","elementType":"header","elementId":"md-5","metadata":{"level":2}}}
+{"sample":"unicode-special-chars.md","index":25,"event":{"type":"delta","elementId":"md-5","content":"Line endings test"}}
+{"sample":"unicode-special-chars.md","index":26,"event":{"type":"end","elementId":"md-5","finalContent":"Line endings test"}}
+{"sample":"unicode-special-chars.md","index":27,"event":{"type":"begin","elementType":"text","elementId":"md-6"}}
+{"sample":"unicode-special-chars.md","index":28,"event":{"type":"delta","elementId":"md-6","content":"Unix"}}
+{"sample":"unicode-special-chars.md","index":29,"event":{"type":"delta","elementId":"md-6","content":" "}}
+{"sample":"unicode-special-chars.md","index":30,"event":{"type":"delta","elementId":"md-6","content":"line"}}
+{"sample":"unicode-special-chars.md","index":31,"event":{"type":"delta","elementId":"md-6","content":" "}}
+{"sample":"unicode-special-chars.md","index":32,"event":{"type":"delta","elementId":"md-6","content":"ending"}}
+{"sample":"unicode-special-chars.md","index":33,"event":{"type":"delta","elementId":"md-6","content":" "}}
+{"sample":"unicode-special-chars.md","index":34,"event":{"type":"delta","elementId":"md-6","content":"(LF):"}}
+{"sample":"unicode-special-chars.md","index":35,"event":{"type":"delta","elementId":"md-6","content":" "}}
+{"sample":"unicode-special-chars.md","index":36,"event":{"type":"delta","elementId":"md-6","content":"Line"}}
+{"sample":"unicode-special-chars.md","index":37,"event":{"type":"delta","elementId":"md-6","content":" "}}
+{"sample":"unicode-special-chars.md","index":38,"event":{"type":"delta","elementId":"md-6","content":"1"}}
+{"sample":"unicode-special-chars.md","index":39,"event":{"type":"delta","elementId":"md-6","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":40,"event":{"type":"delta","elementId":"md-6","content":"Line"}}
+{"sample":"unicode-special-chars.md","index":41,"event":{"type":"delta","elementId":"md-6","content":" "}}
+{"sample":"unicode-special-chars.md","index":42,"event":{"type":"end","elementId":"md-6","finalContent":"Unix line ending (LF): Line 1\nLine 2"}}
+{"sample":"unicode-special-chars.md","index":43,"event":{"type":"begin","elementType":"text","elementId":"md-7"}}
+{"sample":"unicode-special-chars.md","index":44,"event":{"type":"delta","elementId":"md-7","content":"Windows"}}
+{"sample":"unicode-special-chars.md","index":45,"event":{"type":"delta","elementId":"md-7","content":" "}}
+{"sample":"unicode-special-chars.md","index":46,"event":{"type":"delta","elementId":"md-7","content":"line"}}
+{"sample":"unicode-special-chars.md","index":47,"event":{"type":"delta","elementId":"md-7","content":" "}}
+{"sample":"unicode-special-chars.md","index":48,"event":{"type":"delta","elementId":"md-7","content":"ending"}}
+{"sample":"unicode-special-chars.md","index":49,"event":{"type":"delta","elementId":"md-7","content":" "}}
+{"sample":"unicode-special-chars.md","index":50,"event":{"type":"delta","elementId":"md-7","content":"(CRLF):"}}
+{"sample":"unicode-special-chars.md","index":51,"event":{"type":"delta","elementId":"md-7","content":" "}}
+{"sample":"unicode-special-chars.md","index":52,"event":{"type":"delta","elementId":"md-7","content":"Line"}}
+{"sample":"unicode-special-chars.md","index":53,"event":{"type":"delta","elementId":"md-7","content":" "}}
+{"sample":"unicode-special-chars.md","index":54,"event":{"type":"delta","elementId":"md-7","content":"1"}}
+{"sample":"unicode-special-chars.md","index":55,"event":{"type":"delta","elementId":"md-7","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":56,"event":{"type":"delta","elementId":"md-7","content":"Line"}}
+{"sample":"unicode-special-chars.md","index":57,"event":{"type":"delta","elementId":"md-7","content":" "}}
+{"sample":"unicode-special-chars.md","index":58,"event":{"type":"end","elementId":"md-7","finalContent":"Windows line ending (CRLF): Line 1\nLine 2"}}
+{"sample":"unicode-special-chars.md","index":59,"event":{"type":"begin","elementType":"text","elementId":"md-8"}}
+{"sample":"unicode-special-chars.md","index":60,"event":{"type":"delta","elementId":"md-8","content":"Mixed"}}
+{"sample":"unicode-special-chars.md","index":61,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":62,"event":{"type":"delta","elementId":"md-8","content":"line"}}
+{"sample":"unicode-special-chars.md","index":63,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":64,"event":{"type":"delta","elementId":"md-8","content":"endings"}}
+{"sample":"unicode-special-chars.md","index":65,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":66,"event":{"type":"delta","elementId":"md-8","content":"in"}}
+{"sample":"unicode-special-chars.md","index":67,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":68,"event":{"type":"delta","elementId":"md-8","content":"code:"}}
+{"sample":"unicode-special-chars.md","index":69,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":70,"event":{"type":"delta","elementId":"md-8","content":"```javascrip"}}
+{"sample":"unicode-special-chars.md","index":71,"event":{"type":"delta","elementId":"md-8","content":"t"}}
+{"sample":"unicode-special-chars.md","index":72,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":73,"event":{"type":"delta","elementId":"md-8","content":"//"}}
+{"sample":"unicode-special-chars.md","index":74,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":75,"event":{"type":"delta","elementId":"md-8","content":"This"}}
+{"sample":"unicode-special-chars.md","index":76,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":77,"event":{"type":"delta","elementId":"md-8","content":"has"}}
+{"sample":"unicode-special-chars.md","index":78,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":79,"event":{"type":"delta","elementId":"md-8","content":"mixed"}}
+{"sample":"unicode-special-chars.md","index":80,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":81,"event":{"type":"delta","elementId":"md-8","content":"line"}}
+{"sample":"unicode-special-chars.md","index":82,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":83,"event":{"type":"delta","elementId":"md-8","content":"endings"}}
+{"sample":"unicode-special-chars.md","index":84,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":85,"event":{"type":"delta","elementId":"md-8","content":"const"}}
+{"sample":"unicode-special-chars.md","index":86,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":87,"event":{"type":"delta","elementId":"md-8","content":"unix"}}
+{"sample":"unicode-special-chars.md","index":88,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":89,"event":{"type":"delta","elementId":"md-8","content":"="}}
+{"sample":"unicode-special-chars.md","index":90,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":91,"event":{"type":"delta","elementId":"md-8","content":"\"line1\\nline"}}
+{"sample":"unicode-special-chars.md","index":92,"event":{"type":"delta","elementId":"md-8","content":"2\";"}}
+{"sample":"unicode-special-chars.md","index":93,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":94,"event":{"type":"delta","elementId":"md-8","content":"const"}}
+{"sample":"unicode-special-chars.md","index":95,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":96,"event":{"type":"delta","elementId":"md-8","content":"windows"}}
+{"sample":"unicode-special-chars.md","index":97,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":98,"event":{"type":"delta","elementId":"md-8","content":"="}}
+{"sample":"unicode-special-chars.md","index":99,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":100,"event":{"type":"delta","elementId":"md-8","content":"\"line1\\r\\nli"}}
+{"sample":"unicode-special-chars.md","index":101,"event":{"type":"delta","elementId":"md-8","content":"ne2\";"}}
+{"sample":"unicode-special-chars.md","index":102,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":103,"event":{"type":"delta","elementId":"md-8","content":"const"}}
+{"sample":"unicode-special-chars.md","index":104,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":105,"event":{"type":"delta","elementId":"md-8","content":"mixed"}}
+{"sample":"unicode-special-chars.md","index":106,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":107,"event":{"type":"delta","elementId":"md-8","content":"="}}
+{"sample":"unicode-special-chars.md","index":108,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"unicode-special-chars.md","index":109,"event":{"type":"delta","elementId":"md-8","content":"\"line1\\nline"}}
+{"sample":"unicode-special-chars.md","index":110,"event":{"type":"delta","elementId":"md-8","content":"2\\r\\nline3\";"}}
+{"sample":"unicode-special-chars.md","index":111,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":112,"event":{"type":"end","elementId":"md-8","finalContent":"Mixed line endings in code:\n`javascript\n// This has mixed line endings\nconst unix = \"line1\\nline2\";\nconst windows = \"line1\\r\\nline2\";\nconst mixed = \"line1\\nline2\\r\\nline3\";\n`"}}
+{"sample":"unicode-special-chars.md","index":113,"event":{"type":"begin","elementType":"header","elementId":"md-9","metadata":{"level":2}}}
+{"sample":"unicode-special-chars.md","index":114,"event":{"type":"delta","elementId":"md-9","content":"Zero-width characters"}}
+{"sample":"unicode-special-chars.md","index":115,"event":{"type":"end","elementId":"md-9","finalContent":"Zero-width characters"}}
+{"sample":"unicode-special-chars.md","index":116,"event":{"type":"begin","elementType":"text","elementId":"md-10"}}
+{"sample":"unicode-special-chars.md","index":117,"event":{"type":"delta","elementId":"md-10","content":"Here's"}}
+{"sample":"unicode-special-chars.md","index":118,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"unicode-special-chars.md","index":119,"event":{"type":"delta","elementId":"md-10","content":"text"}}
+{"sample":"unicode-special-chars.md","index":120,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"unicode-special-chars.md","index":121,"event":{"type":"delta","elementId":"md-10","content":"with​zero-wi"}}
+{"sample":"unicode-special-chars.md","index":122,"event":{"type":"end","elementId":"md-10","finalContent":"Here's text with​zero-width​spaces."}}
+{"sample":"unicode-special-chars.md","index":123,"event":{"type":"begin","elementType":"header","elementId":"md-11","metadata":{"level":2}}}
+{"sample":"unicode-special-chars.md","index":124,"event":{"type":"delta","elementId":"md-11","content":"RTL text"}}
+{"sample":"unicode-special-chars.md","index":125,"event":{"type":"end","elementId":"md-11","finalContent":"RTL text"}}
+{"sample":"unicode-special-chars.md","index":126,"event":{"type":"begin","elementType":"text","elementId":"md-12"}}
+{"sample":"unicode-special-chars.md","index":127,"event":{"type":"delta","elementId":"md-12","content":"Hebrew:"}}
+{"sample":"unicode-special-chars.md","index":128,"event":{"type":"delta","elementId":"md-12","content":" "}}
+{"sample":"unicode-special-chars.md","index":129,"event":{"type":"delta","elementId":"md-12","content":"שלום"}}
+{"sample":"unicode-special-chars.md","index":130,"event":{"type":"delta","elementId":"md-12","content":" "}}
+{"sample":"unicode-special-chars.md","index":131,"event":{"type":"delta","elementId":"md-12","content":"עולם"}}
+{"sample":"unicode-special-chars.md","index":132,"event":{"type":"delta","elementId":"md-12","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":133,"event":{"type":"delta","elementId":"md-12","content":"Arabic:"}}
+{"sample":"unicode-special-chars.md","index":134,"event":{"type":"delta","elementId":"md-12","content":" "}}
+{"sample":"unicode-special-chars.md","index":135,"event":{"type":"delta","elementId":"md-12","content":"مرحبا"}}
+{"sample":"unicode-special-chars.md","index":136,"event":{"type":"delta","elementId":"md-12","content":" "}}
+{"sample":"unicode-special-chars.md","index":137,"event":{"type":"end","elementId":"md-12","finalContent":"Hebrew: שלום עולם\nArabic: مرحبا بالعالم"}}
+{"sample":"unicode-special-chars.md","index":138,"event":{"type":"begin","elementType":"header","elementId":"md-13","metadata":{"level":2}}}
+{"sample":"unicode-special-chars.md","index":139,"event":{"type":"delta","elementId":"md-13","content":"Special markdown chars"}}
+{"sample":"unicode-special-chars.md","index":140,"event":{"type":"end","elementId":"md-13","finalContent":"Special markdown chars"}}
+{"sample":"unicode-special-chars.md","index":141,"event":{"type":"begin","elementType":"text","elementId":"md-14"}}
+{"sample":"unicode-special-chars.md","index":142,"event":{"type":"delta","elementId":"md-14","content":"\\*Not"}}
+{"sample":"unicode-special-chars.md","index":143,"event":{"type":"delta","elementId":"md-14","content":" "}}
+{"sample":"unicode-special-chars.md","index":144,"event":{"type":"delta","elementId":"md-14","content":"talic\\"}}
+{"sample":"unicode-special-chars.md","index":145,"event":{"type":"delta","elementId":"md-14","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":146,"event":{"type":"delta","elementId":"md-14","content":"\\**Not"}}
+{"sample":"unicode-special-chars.md","index":147,"event":{"type":"delta","elementId":"md-14","content":" "}}
+{"sample":"unicode-special-chars.md","index":148,"event":{"type":"delta","elementId":"md-14","content":"ld\\"}}
+{"sample":"unicode-special-chars.md","index":149,"event":{"type":"delta","elementId":"md-14","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":150,"event":{"type":"delta","elementId":"md-14","content":"\\`Not"}}
+{"sample":"unicode-special-chars.md","index":151,"event":{"type":"delta","elementId":"md-14","content":" "}}
+{"sample":"unicode-special-chars.md","index":152,"event":{"type":"end","elementId":"md-14","finalContent":"\\Not italic\\\n\\Not bold\\\n\\Not code\\"}}
+{"sample":"unicode-special-chars.md","index":153,"event":{"type":"begin","elementType":"header","elementId":"md-15","metadata":{"level":2}}}
+{"sample":"unicode-special-chars.md","index":154,"event":{"type":"delta","elementId":"md-15","content":"Nested quotes"}}
+{"sample":"unicode-special-chars.md","index":155,"event":{"type":"end","elementId":"md-15","finalContent":"Nested quotes"}}
+{"sample":"unicode-special-chars.md","index":156,"event":{"type":"begin","elementType":"quote","elementId":"md-16"}}
+{"sample":"unicode-special-chars.md","index":157,"event":{"type":"delta","elementId":"md-16","content":"Level"}}
+{"sample":"unicode-special-chars.md","index":158,"event":{"type":"delta","elementId":"md-16","content":" "}}
+{"sample":"unicode-special-chars.md","index":159,"event":{"type":"delta","elementId":"md-16","content":"1"}}
+{"sample":"unicode-special-chars.md","index":160,"event":{"type":"delta","elementId":"md-16","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":161,"event":{"type":"delta","elementId":"md-16","content":">"}}
+{"sample":"unicode-special-chars.md","index":162,"event":{"type":"delta","elementId":"md-16","content":" "}}
+{"sample":"unicode-special-chars.md","index":163,"event":{"type":"delta","elementId":"md-16","content":"Level"}}
+{"sample":"unicode-special-chars.md","index":164,"event":{"type":"delta","elementId":"md-16","content":" "}}
+{"sample":"unicode-special-chars.md","index":165,"event":{"type":"delta","elementId":"md-16","content":"2"}}
+{"sample":"unicode-special-chars.md","index":166,"event":{"type":"delta","elementId":"md-16","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":167,"event":{"type":"delta","elementId":"md-16","content":">>"}}
+{"sample":"unicode-special-chars.md","index":168,"event":{"type":"delta","elementId":"md-16","content":" "}}
+{"sample":"unicode-special-chars.md","index":169,"event":{"type":"delta","elementId":"md-16","content":"Level"}}
+{"sample":"unicode-special-chars.md","index":170,"event":{"type":"delta","elementId":"md-16","content":" "}}
+{"sample":"unicode-special-chars.md","index":171,"event":{"type":"delta","elementId":"md-16","content":"3"}}
+{"sample":"unicode-special-chars.md","index":172,"event":{"type":"delta","elementId":"md-16","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":173,"event":{"type":"delta","elementId":"md-16","content":">>>"}}
+{"sample":"unicode-special-chars.md","index":174,"event":{"type":"delta","elementId":"md-16","content":" "}}
+{"sample":"unicode-special-chars.md","index":175,"event":{"type":"delta","elementId":"md-16","content":"Level"}}
+{"sample":"unicode-special-chars.md","index":176,"event":{"type":"delta","elementId":"md-16","content":" "}}
+{"sample":"unicode-special-chars.md","index":177,"event":{"type":"end","elementId":"md-16","finalContent":"Level 1\n> Level 2\n>> Level 3\n>>> Level 4"}}
+{"sample":"unicode-special-chars.md","index":178,"event":{"type":"begin","elementType":"header","elementId":"md-17","metadata":{"level":2}}}
+{"sample":"unicode-special-chars.md","index":179,"event":{"type":"delta","elementId":"md-17","content":"Complex nesting"}}
+{"sample":"unicode-special-chars.md","index":180,"event":{"type":"end","elementId":"md-17","finalContent":"Complex nesting"}}
+{"sample":"unicode-special-chars.md","index":181,"event":{"type":"begin","elementType":"quote","elementId":"md-18"}}
+{"sample":"unicode-special-chars.md","index":182,"event":{"type":"delta","elementId":"md-18","content":"Quote"}}
+{"sample":"unicode-special-chars.md","index":183,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"unicode-special-chars.md","index":184,"event":{"type":"delta","elementId":"md-18","content":"with"}}
+{"sample":"unicode-special-chars.md","index":185,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"unicode-special-chars.md","index":186,"event":{"type":"delta","elementId":"md-18","content":"code:"}}
+{"sample":"unicode-special-chars.md","index":187,"event":{"type":"delta","elementId":"md-18","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":188,"event":{"type":"delta","elementId":"md-18","content":"```python"}}
+{"sample":"unicode-special-chars.md","index":189,"event":{"type":"delta","elementId":"md-18","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":190,"event":{"type":"delta","elementId":"md-18","content":"def"}}
+{"sample":"unicode-special-chars.md","index":191,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"unicode-special-chars.md","index":192,"event":{"type":"delta","elementId":"md-18","content":"quoted_code("}}
+{"sample":"unicode-special-chars.md","index":193,"event":{"type":"delta","elementId":"md-18","content":"):"}}
+{"sample":"unicode-special-chars.md","index":194,"event":{"type":"delta","elementId":"md-18","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":195,"event":{"type":"delta","elementId":"md-18","content":"print(\"I'm"}}
+{"sample":"unicode-special-chars.md","index":196,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"unicode-special-chars.md","index":197,"event":{"type":"delta","elementId":"md-18","content":"in"}}
+{"sample":"unicode-special-chars.md","index":198,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"unicode-special-chars.md","index":199,"event":{"type":"delta","elementId":"md-18","content":"a"}}
+{"sample":"unicode-special-chars.md","index":200,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"unicode-special-chars.md","index":201,"event":{"type":"delta","elementId":"md-18","content":"quote!\")"}}
+{"sample":"unicode-special-chars.md","index":202,"event":{"type":"delta","elementId":"md-18","content":"\n"}}
+{"sample":"unicode-special-chars.md","index":203,"event":{"type":"delta","elementId":"md-18","content":"End"}}
+{"sample":"unicode-special-chars.md","index":204,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"unicode-special-chars.md","index":205,"event":{"type":"end","elementId":"md-18","finalContent":"Quote with code:\n`python\ndef quoted_code():\nprint(\"I'm in a quote!\")\n`\nEnd quote."}}

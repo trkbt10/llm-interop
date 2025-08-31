@@ -1,0 +1,107 @@
+{"sample":"cross-validation-example.md","index":0,"event":{"type":"begin","elementType":"text","elementId":"md-1"}}
+{"sample":"cross-validation-example.md","index":1,"event":{"type":"delta","elementId":"md-1","content":"Here's"}}
+{"sample":"cross-validation-example.md","index":2,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"cross-validation-example.md","index":3,"event":{"type":"delta","elementId":"md-1","content":"a"}}
+{"sample":"cross-validation-example.md","index":4,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"cross-validation-example.md","index":5,"event":{"type":"delta","elementId":"md-1","content":"comprehensiv"}}
+{"sample":"cross-validation-example.md","index":6,"event":{"type":"delta","elementId":"md-1","content":"e"}}
+{"sample":"cross-validation-example.md","index":7,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"cross-validation-example.md","index":8,"event":{"type":"end","elementId":"md-1","finalContent":"Here's a comprehensive example:"}}
+{"sample":"cross-validation-example.md","index":9,"event":{"type":"begin","elementType":"code","elementId":"md-2","metadata":{"language":"python"}}}
+{"sample":"cross-validation-example.md","index":10,"event":{"type":"end","elementId":"md-2","finalContent":"import numpy as np\nfrom sklearn.model_selection import KFold\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score\n\n# Sample data\nX = np.random.rand(100, 5)\ny = np.random.randint(0, 2, 100)\n\n# Initialize KFold\nkf = KFold(n_splits=5, shuffle=True, random_state=42)\n\n# Initialize model\nmodel = LogisticRegression()\n\n# Cross-validation scores\ncv_scores = []\n\nfor train_idx, val_idx in kf.split(X):\n    X_train, X_val = X[train_idx], X[val_idx]\n    y_train, y_val = y[train_idx], y[val_idx]\n    \n    model.fit(X_train, y_train)\n    y_pred = model.predict(X_val)\n    score = accuracy_score(y_val, y_pred)\n    cv_scores.append(score)\n\ncv_scores = np.array(cv_scores)\nprint(f\"\\nCross-Validation Scores (Accuracy for each fold): {cv_scores}\")\nprint(f\"Mean Cross-Validation Accuracy: {cv_scores.mean():.2f}\")\nprint(f\"Standard Deviation of CV Accuracy: {cv_scores.std():.2f}\")"}}
+{"sample":"cross-validation-example.md","index":11,"event":{"type":"begin","elementType":"text","elementId":"md-3"}}
+{"sample":"cross-validation-example.md","index":12,"event":{"type":"delta","elementId":"md-3","content":"**Explanatio"}}
+{"sample":"cross-validation-example.md","index":13,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":14,"event":{"type":"delta","elementId":"md-3","content":"This"}}
+{"sample":"cross-validation-example.md","index":15,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":16,"event":{"type":"delta","elementId":"md-3","content":"code"}}
+{"sample":"cross-validation-example.md","index":17,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":18,"event":{"type":"delta","elementId":"md-3","content":"demonstrates"}}
+{"sample":"cross-validation-example.md","index":19,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":20,"event":{"type":"delta","elementId":"md-3","content":"KFold"}}
+{"sample":"cross-validation-example.md","index":21,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":22,"event":{"type":"delta","elementId":"md-3","content":"cross-valida"}}
+{"sample":"cross-validation-example.md","index":23,"event":{"type":"delta","elementId":"md-3","content":"tion."}}
+{"sample":"cross-validation-example.md","index":24,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":25,"event":{"type":"delta","elementId":"md-3","content":"It"}}
+{"sample":"cross-validation-example.md","index":26,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":27,"event":{"type":"delta","elementId":"md-3","content":"splits"}}
+{"sample":"cross-validation-example.md","index":28,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":29,"event":{"type":"delta","elementId":"md-3","content":"the"}}
+{"sample":"cross-validation-example.md","index":30,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":31,"event":{"type":"delta","elementId":"md-3","content":"data"}}
+{"sample":"cross-validation-example.md","index":32,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":33,"event":{"type":"delta","elementId":"md-3","content":"into"}}
+{"sample":"cross-validation-example.md","index":34,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":35,"event":{"type":"delta","elementId":"md-3","content":"5"}}
+{"sample":"cross-validation-example.md","index":36,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":37,"event":{"type":"delta","elementId":"md-3","content":"folds,"}}
+{"sample":"cross-validation-example.md","index":38,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":39,"event":{"type":"delta","elementId":"md-3","content":"trains"}}
+{"sample":"cross-validation-example.md","index":40,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":41,"event":{"type":"delta","elementId":"md-3","content":"and"}}
+{"sample":"cross-validation-example.md","index":42,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":43,"event":{"type":"delta","elementId":"md-3","content":"evaluates"}}
+{"sample":"cross-validation-example.md","index":44,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":45,"event":{"type":"delta","elementId":"md-3","content":"the"}}
+{"sample":"cross-validation-example.md","index":46,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":47,"event":{"type":"delta","elementId":"md-3","content":"`LogisticReg"}}
+{"sample":"cross-validation-example.md","index":48,"event":{"type":"delta","elementId":"md-3","content":"ession"}}
+{"sample":"cross-validation-example.md","index":49,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":50,"event":{"type":"delta","elementId":"md-3","content":"model"}}
+{"sample":"cross-validation-example.md","index":51,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":52,"event":{"type":"delta","elementId":"md-3","content":"5"}}
+{"sample":"cross-validation-example.md","index":53,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":54,"event":{"type":"delta","elementId":"md-3","content":"times,"}}
+{"sample":"cross-validation-example.md","index":55,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":56,"event":{"type":"delta","elementId":"md-3","content":"and"}}
+{"sample":"cross-validation-example.md","index":57,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":58,"event":{"type":"delta","elementId":"md-3","content":"then"}}
+{"sample":"cross-validation-example.md","index":59,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":60,"event":{"type":"delta","elementId":"md-3","content":"reports"}}
+{"sample":"cross-validation-example.md","index":61,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":62,"event":{"type":"delta","elementId":"md-3","content":"the"}}
+{"sample":"cross-validation-example.md","index":63,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":64,"event":{"type":"delta","elementId":"md-3","content":"mean"}}
+{"sample":"cross-validation-example.md","index":65,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":66,"event":{"type":"delta","elementId":"md-3","content":"and"}}
+{"sample":"cross-validation-example.md","index":67,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":68,"event":{"type":"delta","elementId":"md-3","content":"standard"}}
+{"sample":"cross-validation-example.md","index":69,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":70,"event":{"type":"delta","elementId":"md-3","content":"deviation"}}
+{"sample":"cross-validation-example.md","index":71,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":72,"event":{"type":"delta","elementId":"md-3","content":"of"}}
+{"sample":"cross-validation-example.md","index":73,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":74,"event":{"type":"delta","elementId":"md-3","content":"the"}}
+{"sample":"cross-validation-example.md","index":75,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":76,"event":{"type":"delta","elementId":"md-3","content":"accuracy"}}
+{"sample":"cross-validation-example.md","index":77,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":78,"event":{"type":"delta","elementId":"md-3","content":"scores"}}
+{"sample":"cross-validation-example.md","index":79,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":80,"event":{"type":"delta","elementId":"md-3","content":"across"}}
+{"sample":"cross-validation-example.md","index":81,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":82,"event":{"type":"delta","elementId":"md-3","content":"all"}}
+{"sample":"cross-validation-example.md","index":83,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":84,"event":{"type":"delta","elementId":"md-3","content":"folds."}}
+{"sample":"cross-validation-example.md","index":85,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":86,"event":{"type":"delta","elementId":"md-3","content":"This"}}
+{"sample":"cross-validation-example.md","index":87,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":88,"event":{"type":"delta","elementId":"md-3","content":"provides"}}
+{"sample":"cross-validation-example.md","index":89,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":90,"event":{"type":"delta","elementId":"md-3","content":"a"}}
+{"sample":"cross-validation-example.md","index":91,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":92,"event":{"type":"delta","elementId":"md-3","content":"more"}}
+{"sample":"cross-validation-example.md","index":93,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":94,"event":{"type":"delta","elementId":"md-3","content":"robust"}}
+{"sample":"cross-validation-example.md","index":95,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":96,"event":{"type":"delta","elementId":"md-3","content":"estimate"}}
+{"sample":"cross-validation-example.md","index":97,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":98,"event":{"type":"delta","elementId":"md-3","content":"of"}}
+{"sample":"cross-validation-example.md","index":99,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":100,"event":{"type":"delta","elementId":"md-3","content":"the"}}
+{"sample":"cross-validation-example.md","index":101,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":102,"event":{"type":"delta","elementId":"md-3","content":"model's"}}
+{"sample":"cross-validation-example.md","index":103,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"cross-validation-example.md","index":104,"event":{"type":"delta","elementId":"md-3","content":"performance."}}
+{"sample":"cross-validation-example.md","index":105,"event":{"type":"delta","elementId":"md-3","content":"\n"}}
+{"sample":"cross-validation-example.md","index":106,"event":{"type":"end","elementId":"md-3","finalContent":"Explanation: This code demonstrates KFold cross-validation. It splits the data into 5 folds, trains and evaluates the LogisticRegression model 5 times, and then reports the mean and standard deviation of the accuracy scores across all folds. This provides a more robust estimate of the model's performance."}}

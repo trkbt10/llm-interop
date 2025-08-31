@@ -1,0 +1,35 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "The population of Paris is a bit complex, as it depends on what area you're referring to. Here's a breakdown:\n\n*   **City of Paris (within the \"périphérique\" ring road):** Around 2.1 million people.\n\n*   **Greater Paris (also known as the \"Métropole du Grand Paris\"):** Around 7 million people. This includes the city of Paris and its surrounding inner suburbs.\n\n*   **Île-de-France Region (the larger metropolitan area):** Around 12 million people. This is the largest and most encompassing definition of the Paris area.\n\nSo, depending on the context, the \"population of Paris\" can refer to any of these"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "MAX_TOKENS",
+      "avgLogprobs": -0.27639760335286456
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 19,
+    "candidatesTokenCount": 150,
+    "totalTokenCount": 169,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 19
+      }
+    ],
+    "candidatesTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 150
+      }
+    ]
+  },
+  "modelVersion": "gemini-2.0-flash",
+  "responseId": "mtyzaOzDMIaO6dkPzJq9yQ4"
+}

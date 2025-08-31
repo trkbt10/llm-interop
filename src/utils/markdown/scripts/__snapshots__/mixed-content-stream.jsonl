@@ -1,0 +1,165 @@
+{"sample":"mixed-content.md","index":0,"event":{"type":"begin","elementType":"header","elementId":"md-1","metadata":{"level":1}}}
+{"sample":"mixed-content.md","index":1,"event":{"type":"delta","elementId":"md-1","content":"Comprehensive Example"}}
+{"sample":"mixed-content.md","index":2,"event":{"type":"end","elementId":"md-1","finalContent":"Comprehensive Example"}}
+{"sample":"mixed-content.md","index":3,"event":{"type":"begin","elementType":"text","elementId":"md-2"}}
+{"sample":"mixed-content.md","index":4,"event":{"type":"delta","elementId":"md-2","content":"This"}}
+{"sample":"mixed-content.md","index":5,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"mixed-content.md","index":6,"event":{"type":"delta","elementId":"md-2","content":"markdown"}}
+{"sample":"mixed-content.md","index":7,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"mixed-content.md","index":8,"event":{"type":"delta","elementId":"md-2","content":"file"}}
+{"sample":"mixed-content.md","index":9,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"mixed-content.md","index":10,"event":{"type":"delta","elementId":"md-2","content":"contains"}}
+{"sample":"mixed-content.md","index":11,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"mixed-content.md","index":12,"event":{"type":"delta","elementId":"md-2","content":"various"}}
+{"sample":"mixed-content.md","index":13,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"mixed-content.md","index":14,"event":{"type":"end","elementId":"md-2","finalContent":"This markdown file contains various elements."}}
+{"sample":"mixed-content.md","index":15,"event":{"type":"begin","elementType":"header","elementId":"md-3","metadata":{"level":2}}}
+{"sample":"mixed-content.md","index":16,"event":{"type":"delta","elementId":"md-3","content":"Headers"}}
+{"sample":"mixed-content.md","index":17,"event":{"type":"end","elementId":"md-3","finalContent":"Headers"}}
+{"sample":"mixed-content.md","index":18,"event":{"type":"begin","elementType":"text","elementId":"md-4"}}
+{"sample":"mixed-content.md","index":19,"event":{"type":"delta","elementId":"md-4","content":"Headers"}}
+{"sample":"mixed-content.md","index":20,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"mixed-content.md","index":21,"event":{"type":"delta","elementId":"md-4","content":"should"}}
+{"sample":"mixed-content.md","index":22,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"mixed-content.md","index":23,"event":{"type":"delta","elementId":"md-4","content":"be"}}
+{"sample":"mixed-content.md","index":24,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"mixed-content.md","index":25,"event":{"type":"delta","elementId":"md-4","content":"treated"}}
+{"sample":"mixed-content.md","index":26,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"mixed-content.md","index":27,"event":{"type":"delta","elementId":"md-4","content":"as"}}
+{"sample":"mixed-content.md","index":28,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"mixed-content.md","index":29,"event":{"type":"delta","elementId":"md-4","content":"regular"}}
+{"sample":"mixed-content.md","index":30,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"mixed-content.md","index":31,"event":{"type":"end","elementId":"md-4","finalContent":"Headers should be treated as regular text."}}
+{"sample":"mixed-content.md","index":32,"event":{"type":"begin","elementType":"header","elementId":"md-5","metadata":{"level":3}}}
+{"sample":"mixed-content.md","index":33,"event":{"type":"delta","elementId":"md-5","content":"Code Examples"}}
+{"sample":"mixed-content.md","index":34,"event":{"type":"end","elementId":"md-5","finalContent":"Code Examples"}}
+{"sample":"mixed-content.md","index":35,"event":{"type":"begin","elementType":"code","elementId":"md-6","metadata":{"language":"python"}}}
+{"sample":"mixed-content.md","index":36,"event":{"type":"end","elementId":"md-6","finalContent":"import numpy as np\nfrom sklearn.model_selection import KFold\n\n# Cross-validation implementation\ndef cross_validate(X, y):\n    kf = KFold(n_splits=5)\n    scores = []\n    \n    for train_idx, val_idx in kf.split(X):\n        # Training code here\n        pass\n    \n    return scores"}}
+{"sample":"mixed-content.md","index":37,"event":{"type":"begin","elementType":"header","elementId":"md-7","metadata":{"level":2}}}
+{"sample":"mixed-content.md","index":38,"event":{"type":"delta","elementId":"md-7","content":"Lists and Quotes"}}
+{"sample":"mixed-content.md","index":39,"event":{"type":"end","elementId":"md-7","finalContent":"Lists and Quotes"}}
+{"sample":"mixed-content.md","index":40,"event":{"type":"begin","elementType":"list","elementId":"md-8","metadata":{"ordered":false,"level":1}}}
+{"sample":"mixed-content.md","index":41,"event":{"type":"delta","elementId":"md-8","content":"First"}}
+{"sample":"mixed-content.md","index":42,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":43,"event":{"type":"delta","elementId":"md-8","content":"item"}}
+{"sample":"mixed-content.md","index":44,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"mixed-content.md","index":45,"event":{"type":"delta","elementId":"md-8","content":"Second"}}
+{"sample":"mixed-content.md","index":46,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":47,"event":{"type":"delta","elementId":"md-8","content":"item"}}
+{"sample":"mixed-content.md","index":48,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"mixed-content.md","index":49,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":50,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":51,"event":{"type":"delta","elementId":"md-8","content":"sted"}}
+{"sample":"mixed-content.md","index":52,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":53,"event":{"type":"delta","elementId":"md-8","content":"item"}}
+{"sample":"mixed-content.md","index":54,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"mixed-content.md","index":55,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":56,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":57,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"mixed-content.md","index":58,"event":{"type":"delta","elementId":"md-8","content":">"}}
+{"sample":"mixed-content.md","index":59,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":60,"event":{"type":"delta","elementId":"md-8","content":"This"}}
+{"sample":"mixed-content.md","index":61,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":62,"event":{"type":"delta","elementId":"md-8","content":"is"}}
+{"sample":"mixed-content.md","index":63,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":64,"event":{"type":"delta","elementId":"md-8","content":"a"}}
+{"sample":"mixed-content.md","index":65,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":66,"event":{"type":"delta","elementId":"md-8","content":"blockquote"}}
+{"sample":"mixed-content.md","index":67,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"mixed-content.md","index":68,"event":{"type":"delta","elementId":"md-8","content":">"}}
+{"sample":"mixed-content.md","index":69,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":70,"event":{"type":"delta","elementId":"md-8","content":"It"}}
+{"sample":"mixed-content.md","index":71,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":72,"event":{"type":"delta","elementId":"md-8","content":"can"}}
+{"sample":"mixed-content.md","index":73,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":74,"event":{"type":"delta","elementId":"md-8","content":"span"}}
+{"sample":"mixed-content.md","index":75,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":76,"event":{"type":"delta","elementId":"md-8","content":"multiple"}}
+{"sample":"mixed-content.md","index":77,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"mixed-content.md","index":78,"event":{"type":"end","elementId":"md-8","finalContent":"First item\nSecond item\nNested item\n  \n> This is a blockquote\n> It can span multiple lines"}}
+{"sample":"mixed-content.md","index":79,"event":{"type":"begin","elementType":"header","elementId":"md-9","metadata":{"level":2}}}
+{"sample":"mixed-content.md","index":80,"event":{"type":"delta","elementId":"md-9","content":"Links and Formatting"}}
+{"sample":"mixed-content.md","index":81,"event":{"type":"end","elementId":"md-9","finalContent":"Links and Formatting"}}
+{"sample":"mixed-content.md","index":82,"event":{"type":"begin","elementType":"text","elementId":"md-10"}}
+{"sample":"mixed-content.md","index":83,"event":{"type":"delta","elementId":"md-10","content":"Check"}}
+{"sample":"mixed-content.md","index":84,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":85,"event":{"type":"delta","elementId":"md-10","content":"out"}}
+{"sample":"mixed-content.md","index":86,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":87,"event":{"type":"annotation","elementId":"text","annotation":{"type":"url_citation","title":"OpenAI","url":"https://openai.com","start_index":595,"end_index":623}}}
+{"sample":"mixed-content.md","index":88,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":89,"event":{"type":"delta","elementId":"md-10","content":"for"}}
+{"sample":"mixed-content.md","index":90,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":91,"event":{"type":"delta","elementId":"md-10","content":"more"}}
+{"sample":"mixed-content.md","index":92,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":93,"event":{"type":"delta","elementId":"md-10","content":"information."}}
+{"sample":"mixed-content.md","index":94,"event":{"type":"delta","elementId":"md-10","content":"\n"}}
+{"sample":"mixed-content.md","index":95,"event":{"type":"delta","elementId":"md-10","content":"You"}}
+{"sample":"mixed-content.md","index":96,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":97,"event":{"type":"delta","elementId":"md-10","content":"can"}}
+{"sample":"mixed-content.md","index":98,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":99,"event":{"type":"delta","elementId":"md-10","content":"also"}}
+{"sample":"mixed-content.md","index":100,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":101,"event":{"type":"delta","elementId":"md-10","content":"use"}}
+{"sample":"mixed-content.md","index":102,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":103,"event":{"type":"delta","elementId":"md-10","content":"bold"}}
+{"sample":"mixed-content.md","index":104,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":105,"event":{"type":"delta","elementId":"md-10","content":"and"}}
+{"sample":"mixed-content.md","index":106,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":107,"event":{"type":"delta","elementId":"md-10","content":"italic"}}
+{"sample":"mixed-content.md","index":108,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"mixed-content.md","index":109,"event":{"type":"end","elementId":"md-10","finalContent":"Check out  for more information.\nYou can also use bold and italic text."}}
+{"sample":"mixed-content.md","index":110,"event":{"type":"begin","elementType":"header","elementId":"md-11","metadata":{"level":2}}}
+{"sample":"mixed-content.md","index":111,"event":{"type":"delta","elementId":"md-11","content":"Multiple Consecutive Newlines"}}
+{"sample":"mixed-content.md","index":112,"event":{"type":"end","elementId":"md-11","finalContent":"Multiple Consecutive Newlines"}}
+{"sample":"mixed-content.md","index":113,"event":{"type":"begin","elementType":"text","elementId":"md-12"}}
+{"sample":"mixed-content.md","index":114,"event":{"type":"delta","elementId":"md-12","content":"Like"}}
+{"sample":"mixed-content.md","index":115,"event":{"type":"delta","elementId":"md-12","content":" "}}
+{"sample":"mixed-content.md","index":116,"event":{"type":"delta","elementId":"md-12","content":"this"}}
+{"sample":"mixed-content.md","index":117,"event":{"type":"delta","elementId":"md-12","content":" "}}
+{"sample":"mixed-content.md","index":118,"event":{"type":"delta","elementId":"md-12","content":"section"}}
+{"sample":"mixed-content.md","index":119,"event":{"type":"delta","elementId":"md-12","content":" "}}
+{"sample":"mixed-content.md","index":120,"event":{"type":"delta","elementId":"md-12","content":"with"}}
+{"sample":"mixed-content.md","index":121,"event":{"type":"delta","elementId":"md-12","content":" "}}
+{"sample":"mixed-content.md","index":122,"event":{"type":"delta","elementId":"md-12","content":"extra"}}
+{"sample":"mixed-content.md","index":123,"event":{"type":"delta","elementId":"md-12","content":" "}}
+{"sample":"mixed-content.md","index":124,"event":{"type":"end","elementId":"md-12","finalContent":"Like this section with extra spacing."}}
+{"sample":"mixed-content.md","index":125,"event":{"type":"begin","elementType":"text","elementId":"md-13"}}
+{"sample":"mixed-content.md","index":126,"event":{"type":"delta","elementId":"md-13","content":"And"}}
+{"sample":"mixed-content.md","index":127,"event":{"type":"delta","elementId":"md-13","content":" "}}
+{"sample":"mixed-content.md","index":128,"event":{"type":"delta","elementId":"md-13","content":"even"}}
+{"sample":"mixed-content.md","index":129,"event":{"type":"delta","elementId":"md-13","content":" "}}
+{"sample":"mixed-content.md","index":130,"event":{"type":"delta","elementId":"md-13","content":"more"}}
+{"sample":"mixed-content.md","index":131,"event":{"type":"delta","elementId":"md-13","content":" "}}
+{"sample":"mixed-content.md","index":132,"event":{"type":"delta","elementId":"md-13","content":"spacing"}}
+{"sample":"mixed-content.md","index":133,"event":{"type":"delta","elementId":"md-13","content":" "}}
+{"sample":"mixed-content.md","index":134,"event":{"type":"end","elementId":"md-13","finalContent":"And even more spacing here."}}
+{"sample":"mixed-content.md","index":135,"event":{"type":"begin","elementType":"header","elementId":"md-14","metadata":{"level":2}}}
+{"sample":"mixed-content.md","index":136,"event":{"type":"delta","elementId":"md-14","content":"Inline Code"}}
+{"sample":"mixed-content.md","index":137,"event":{"type":"end","elementId":"md-14","finalContent":"Inline Code"}}
+{"sample":"mixed-content.md","index":138,"event":{"type":"begin","elementType":"text","elementId":"md-15"}}
+{"sample":"mixed-content.md","index":139,"event":{"type":"delta","elementId":"md-15","content":"Use"}}
+{"sample":"mixed-content.md","index":140,"event":{"type":"delta","elementId":"md-15","content":" "}}
+{"sample":"mixed-content.md","index":141,"event":{"type":"delta","elementId":"md-15","content":"print()"}}
+{"sample":"mixed-content.md","index":142,"event":{"type":"delta","elementId":"md-15","content":" "}}
+{"sample":"mixed-content.md","index":143,"event":{"type":"delta","elementId":"md-15","content":"function"}}
+{"sample":"mixed-content.md","index":144,"event":{"type":"delta","elementId":"md-15","content":" "}}
+{"sample":"mixed-content.md","index":145,"event":{"type":"delta","elementId":"md-15","content":"in"}}
+{"sample":"mixed-content.md","index":146,"event":{"type":"delta","elementId":"md-15","content":" "}}
+{"sample":"mixed-content.md","index":147,"event":{"type":"delta","elementId":"md-15","content":"Python"}}
+{"sample":"mixed-content.md","index":148,"event":{"type":"delta","elementId":"md-15","content":" "}}
+{"sample":"mixed-content.md","index":149,"event":{"type":"delta","elementId":"md-15","content":"or"}}
+{"sample":"mixed-content.md","index":150,"event":{"type":"delta","elementId":"md-15","content":" "}}
+{"sample":"mixed-content.md","index":151,"event":{"type":"delta","elementId":"md-15","content":"`console.log"}}
+{"sample":"mixed-content.md","index":152,"event":{"type":"delta","elementId":"md-15","content":")"}}
+{"sample":"mixed-content.md","index":153,"event":{"type":"delta","elementId":"md-15","content":" "}}
+{"sample":"mixed-content.md","index":154,"event":{"type":"delta","elementId":"md-15","content":"in"}}
+{"sample":"mixed-content.md","index":155,"event":{"type":"delta","elementId":"md-15","content":" "}}
+{"sample":"mixed-content.md","index":156,"event":{"type":"end","elementId":"md-15","finalContent":"Use print() function in Python or console.log() in JavaScript."}}
+{"sample":"mixed-content.md","index":157,"event":{"type":"begin","elementType":"header","elementId":"md-16","metadata":{"level":2}}}
+{"sample":"mixed-content.md","index":158,"event":{"type":"delta","elementId":"md-16","content":"Complex Nested Structure"}}
+{"sample":"mixed-content.md","index":159,"event":{"type":"end","elementId":"md-16","finalContent":"Complex Nested Structure"}}
+{"sample":"mixed-content.md","index":160,"event":{"type":"begin","elementType":"code","elementId":"md-17","metadata":{"language":"markdown"}}}
+{"sample":"mixed-content.md","index":161,"event":{"type":"end","elementId":"md-17","finalContent":"# This is a markdown code block\nIt can contain other code blocks:\n```python\nprint(\"Nested!\")"}}
+{"sample":"mixed-content.md","index":162,"event":{"type":"begin","elementType":"code","elementId":"md-18","metadata":{"language":"text"}}}
+{"sample":"mixed-content.md","index":163,"event":{"type":"delta","elementId":"md-18","content":"\nFinal paragraph."}}
+{"sample":"mixed-content.md","index":164,"event":{"type":"end","elementId":"md-18","finalContent":"Final paragraph."}}

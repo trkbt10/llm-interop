@@ -1,0 +1,46 @@
+{"sample":"simple-text.md","index":0,"event":{"type":"begin","elementType":"text","elementId":"md-1"}}
+{"sample":"simple-text.md","index":1,"event":{"type":"delta","elementId":"md-1","content":"This"}}
+{"sample":"simple-text.md","index":2,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"simple-text.md","index":3,"event":{"type":"delta","elementId":"md-1","content":"is"}}
+{"sample":"simple-text.md","index":4,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"simple-text.md","index":5,"event":{"type":"delta","elementId":"md-1","content":"a"}}
+{"sample":"simple-text.md","index":6,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"simple-text.md","index":7,"event":{"type":"delta","elementId":"md-1","content":"simple"}}
+{"sample":"simple-text.md","index":8,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"simple-text.md","index":9,"event":{"type":"delta","elementId":"md-1","content":"text"}}
+{"sample":"simple-text.md","index":10,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"simple-text.md","index":11,"event":{"type":"delta","elementId":"md-1","content":"response"}}
+{"sample":"simple-text.md","index":12,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"simple-text.md","index":13,"event":{"type":"delta","elementId":"md-1","content":"without"}}
+{"sample":"simple-text.md","index":14,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"simple-text.md","index":15,"event":{"type":"delta","elementId":"md-1","content":"any"}}
+{"sample":"simple-text.md","index":16,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"simple-text.md","index":17,"event":{"type":"delta","elementId":"md-1","content":"special"}}
+{"sample":"simple-text.md","index":18,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"simple-text.md","index":19,"event":{"type":"end","elementId":"md-1","finalContent":"This is a simple text response without any special formatting."}}
+{"sample":"simple-text.md","index":20,"event":{"type":"begin","elementType":"text","elementId":"md-2"}}
+{"sample":"simple-text.md","index":21,"event":{"type":"delta","elementId":"md-2","content":"It"}}
+{"sample":"simple-text.md","index":22,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"simple-text.md","index":23,"event":{"type":"delta","elementId":"md-2","content":"contains"}}
+{"sample":"simple-text.md","index":24,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"simple-text.md","index":25,"event":{"type":"delta","elementId":"md-2","content":"multiple"}}
+{"sample":"simple-text.md","index":26,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"simple-text.md","index":27,"event":{"type":"delta","elementId":"md-2","content":"paragraphs"}}
+{"sample":"simple-text.md","index":28,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"simple-text.md","index":29,"event":{"type":"delta","elementId":"md-2","content":"separated"}}
+{"sample":"simple-text.md","index":30,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"simple-text.md","index":31,"event":{"type":"delta","elementId":"md-2","content":"by"}}
+{"sample":"simple-text.md","index":32,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"simple-text.md","index":33,"event":{"type":"delta","elementId":"md-2","content":"double"}}
+{"sample":"simple-text.md","index":34,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"simple-text.md","index":35,"event":{"type":"end","elementId":"md-2","finalContent":"It contains multiple paragraphs separated by double newlines."}}
+{"sample":"simple-text.md","index":36,"event":{"type":"begin","elementType":"text","elementId":"md-3"}}
+{"sample":"simple-text.md","index":37,"event":{"type":"delta","elementId":"md-3","content":"This"}}
+{"sample":"simple-text.md","index":38,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"simple-text.md","index":39,"event":{"type":"delta","elementId":"md-3","content":"is"}}
+{"sample":"simple-text.md","index":40,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"simple-text.md","index":41,"event":{"type":"delta","elementId":"md-3","content":"the"}}
+{"sample":"simple-text.md","index":42,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"simple-text.md","index":43,"event":{"type":"delta","elementId":"md-3","content":"third"}}
+{"sample":"simple-text.md","index":44,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"simple-text.md","index":45,"event":{"type":"end","elementId":"md-3","finalContent":"This is the third paragraph."}}

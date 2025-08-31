@@ -1,0 +1,80 @@
+{"sample":"table-examples.md","index":0,"event":{"type":"begin","elementType":"header","elementId":"md-1","metadata":{"level":2}}}
+{"sample":"table-examples.md","index":1,"event":{"type":"delta","elementId":"md-1","content":"Table Examples"}}
+{"sample":"table-examples.md","index":2,"event":{"type":"end","elementId":"md-1","finalContent":"Table Examples"}}
+{"sample":"table-examples.md","index":3,"event":{"type":"begin","elementType":"text","elementId":"md-2"}}
+{"sample":"table-examples.md","index":4,"event":{"type":"delta","elementId":"md-2","content":"Here"}}
+{"sample":"table-examples.md","index":5,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"table-examples.md","index":6,"event":{"type":"delta","elementId":"md-2","content":"is"}}
+{"sample":"table-examples.md","index":7,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"table-examples.md","index":8,"event":{"type":"delta","elementId":"md-2","content":"a"}}
+{"sample":"table-examples.md","index":9,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"table-examples.md","index":10,"event":{"type":"delta","elementId":"md-2","content":"simple"}}
+{"sample":"table-examples.md","index":11,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"table-examples.md","index":12,"event":{"type":"delta","elementId":"md-2","content":"GitHub-Flavo"}}
+{"sample":"table-examples.md","index":13,"event":{"type":"delta","elementId":"md-2","content":"red"}}
+{"sample":"table-examples.md","index":14,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"table-examples.md","index":15,"event":{"type":"delta","elementId":"md-2","content":"Markdown"}}
+{"sample":"table-examples.md","index":16,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"table-examples.md","index":17,"event":{"type":"delta","elementId":"md-2","content":"table"}}
+{"sample":"table-examples.md","index":18,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"table-examples.md","index":19,"event":{"type":"delta","elementId":"md-2","content":"with"}}
+{"sample":"table-examples.md","index":20,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"table-examples.md","index":21,"event":{"type":"end","elementId":"md-2","finalContent":"Here is a simple GitHub-Flavored Markdown table with alignment:"}}
+{"sample":"table-examples.md","index":22,"event":{"type":"begin","elementType":"table","elementId":"md-3","metadata":{"alignments":["left","center","right"]}}}
+{"sample":"table-examples.md","index":23,"event":{"type":"begin","elementType":"thead","elementId":"md-4"}}
+{"sample":"table-examples.md","index":24,"event":{"type":"begin","elementType":"row","elementId":"md-5"}}
+{"sample":"table-examples.md","index":25,"event":{"type":"begin","elementType":"col","elementId":"md-6","metadata":{"index":0,"alignment":"left"}}}
+{"sample":"table-examples.md","index":26,"event":{"type":"delta","elementId":"md-6","content":"Name"}}
+{"sample":"table-examples.md","index":27,"event":{"type":"end","elementId":"md-6","finalContent":"Name"}}
+{"sample":"table-examples.md","index":28,"event":{"type":"begin","elementType":"col","elementId":"md-7","metadata":{"index":1,"alignment":"center"}}}
+{"sample":"table-examples.md","index":29,"event":{"type":"delta","elementId":"md-7","content":"Age"}}
+{"sample":"table-examples.md","index":30,"event":{"type":"end","elementId":"md-7","finalContent":"Age"}}
+{"sample":"table-examples.md","index":31,"event":{"type":"begin","elementType":"col","elementId":"md-8","metadata":{"index":2,"alignment":"right"}}}
+{"sample":"table-examples.md","index":32,"event":{"type":"delta","elementId":"md-8","content":"City"}}
+{"sample":"table-examples.md","index":33,"event":{"type":"end","elementId":"md-8","finalContent":"City"}}
+{"sample":"table-examples.md","index":34,"event":{"type":"end","elementId":"md-5","finalContent":"Name | Age | City"}}
+{"sample":"table-examples.md","index":35,"event":{"type":"end","elementId":"md-4","finalContent":"Name | Age | City"}}
+{"sample":"table-examples.md","index":36,"event":{"type":"begin","elementType":"tbody","elementId":"md-9"}}
+{"sample":"table-examples.md","index":37,"event":{"type":"begin","elementType":"row","elementId":"md-10"}}
+{"sample":"table-examples.md","index":38,"event":{"type":"begin","elementType":"col","elementId":"md-11","metadata":{"index":0,"alignment":"left"}}}
+{"sample":"table-examples.md","index":39,"event":{"type":"delta","elementId":"md-11","content":"Alice"}}
+{"sample":"table-examples.md","index":40,"event":{"type":"end","elementId":"md-11","finalContent":"Alice"}}
+{"sample":"table-examples.md","index":41,"event":{"type":"begin","elementType":"col","elementId":"md-12","metadata":{"index":1,"alignment":"center"}}}
+{"sample":"table-examples.md","index":42,"event":{"type":"delta","elementId":"md-12","content":"30"}}
+{"sample":"table-examples.md","index":43,"event":{"type":"end","elementId":"md-12","finalContent":"30"}}
+{"sample":"table-examples.md","index":44,"event":{"type":"begin","elementType":"col","elementId":"md-13","metadata":{"index":2,"alignment":"right"}}}
+{"sample":"table-examples.md","index":45,"event":{"type":"delta","elementId":"md-13","content":"Tokyo"}}
+{"sample":"table-examples.md","index":46,"event":{"type":"end","elementId":"md-13","finalContent":"Tokyo"}}
+{"sample":"table-examples.md","index":47,"event":{"type":"end","elementId":"md-10","finalContent":"Alice | 30 | Tokyo"}}
+{"sample":"table-examples.md","index":48,"event":{"type":"begin","elementType":"row","elementId":"md-14"}}
+{"sample":"table-examples.md","index":49,"event":{"type":"begin","elementType":"col","elementId":"md-15","metadata":{"index":0,"alignment":"left"}}}
+{"sample":"table-examples.md","index":50,"event":{"type":"delta","elementId":"md-15","content":"Bob"}}
+{"sample":"table-examples.md","index":51,"event":{"type":"end","elementId":"md-15","finalContent":"Bob"}}
+{"sample":"table-examples.md","index":52,"event":{"type":"begin","elementType":"col","elementId":"md-16","metadata":{"index":1,"alignment":"center"}}}
+{"sample":"table-examples.md","index":53,"event":{"type":"delta","elementId":"md-16","content":"9"}}
+{"sample":"table-examples.md","index":54,"event":{"type":"end","elementId":"md-16","finalContent":"9"}}
+{"sample":"table-examples.md","index":55,"event":{"type":"begin","elementType":"col","elementId":"md-17","metadata":{"index":2,"alignment":"right"}}}
+{"sample":"table-examples.md","index":56,"event":{"type":"delta","elementId":"md-17","content":"Kyoto"}}
+{"sample":"table-examples.md","index":57,"event":{"type":"end","elementId":"md-17","finalContent":"Kyoto"}}
+{"sample":"table-examples.md","index":58,"event":{"type":"end","elementId":"md-14","finalContent":"Bob | 9 | Kyoto"}}
+{"sample":"table-examples.md","index":59,"event":{"type":"end","elementId":"md-9","finalContent":"Alice | 30 | Tokyo\nBob | 9 | Kyoto"}}
+{"sample":"table-examples.md","index":60,"event":{"type":"end","elementId":"md-3","finalContent":"| Name  | Age |   City |\n|:------|:---:|------:|\n| Alice |  30 |  Tokyo |\n| Bob   |   9 |  Kyoto |"}}
+{"sample":"table-examples.md","index":61,"event":{"type":"begin","elementType":"text","elementId":"md-18"}}
+{"sample":"table-examples.md","index":62,"event":{"type":"delta","elementId":"md-18","content":"Text"}}
+{"sample":"table-examples.md","index":63,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"table-examples.md","index":64,"event":{"type":"delta","elementId":"md-18","content":"after"}}
+{"sample":"table-examples.md","index":65,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"table-examples.md","index":66,"event":{"type":"delta","elementId":"md-18","content":"the"}}
+{"sample":"table-examples.md","index":67,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"table-examples.md","index":68,"event":{"type":"delta","elementId":"md-18","content":"table"}}
+{"sample":"table-examples.md","index":69,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"table-examples.md","index":70,"event":{"type":"delta","elementId":"md-18","content":"to"}}
+{"sample":"table-examples.md","index":71,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"table-examples.md","index":72,"event":{"type":"delta","elementId":"md-18","content":"ensure"}}
+{"sample":"table-examples.md","index":73,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"table-examples.md","index":74,"event":{"type":"delta","elementId":"md-18","content":"proper"}}
+{"sample":"table-examples.md","index":75,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"table-examples.md","index":76,"event":{"type":"delta","elementId":"md-18","content":"block"}}
+{"sample":"table-examples.md","index":77,"event":{"type":"delta","elementId":"md-18","content":" "}}
+{"sample":"table-examples.md","index":78,"event":{"type":"delta","elementId":"md-18","content":"termination."}}
+{"sample":"table-examples.md","index":79,"event":{"type":"end","elementId":"md-18","finalContent":"Text after the table to ensure proper block termination."}}

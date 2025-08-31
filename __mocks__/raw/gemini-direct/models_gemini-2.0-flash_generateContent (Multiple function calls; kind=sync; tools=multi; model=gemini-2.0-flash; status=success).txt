@@ -1,0 +1,48 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "functionCall": {
+              "name": "get_weather",
+              "args": {
+                "location": "NYC"
+              }
+            }
+          },
+          {
+            "functionCall": {
+              "name": "calculate",
+              "args": {
+                "expression": "42 * 17"
+              }
+            }
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "avgLogprobs": -0.0031407555708518396
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 66,
+    "candidatesTokenCount": 13,
+    "totalTokenCount": 79,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 66
+      }
+    ],
+    "candidatesTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 13
+      }
+    ]
+  },
+  "modelVersion": "gemini-2.0-flash",
+  "responseId": "ntyzaPntHbjZqtsPoOKh2As"
+}

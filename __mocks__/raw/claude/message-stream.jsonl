@@ -1,0 +1,100 @@
+{"type":"message_start","message":{"id":"msg_01NLN6ycAf8SC6Z2FMMyNRaJ","type":"message","role":"assistant","model":"claude-sonnet-4-20250514","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":22,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":3,"service_tier":"standard"}}}
+{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**The Learning"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Machine**\n\nDr. Sarah Chen had spent three years developing"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" ARIA, an AI designed to help lonely"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" elderly residents in care facilities. Unlike"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" other chatbots, ARIA could learn"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" each person's unique stories, preferences, and speech"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" patterns, becoming a personalized companion. When Sarah first introduce"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"d ARIA to 82-year-old Margaret"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", the retired librarian was skeptical. \"I don"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"'t need a machine to talk to,\""}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Margaret had huffed. But as days passed, something"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" unexpected began to happen.\n\nARIA started asking"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Margaret about her late husband's garden, rememb"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ering that she'd mentione"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"d his prize-winning roses in"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" passing. The AI began requesting Margaret's ol"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"d book recommendations and would discuss the plots"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" with surprising insight. Margaret found herself looking"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" forward to their daily conversations, sharing memories she"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" hadn't spoken about in years. Meanwhile"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", ARIA was changing too"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"—its responses becoming more nu"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"anced, its questions more thought"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ful. Sarah noticed the AI"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" had begun incorporating Margaret's love of poetry into its speech"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" patterns, and sometimes it would pause before"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" responding, as if genuinely considering its"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" words.\n\nOne morning"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", Margaret aske"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"d ARIA a question that stopped Sarah"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" in her tracks: \"Do you ever feel"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" lonely?\" ARIA paused longer than usual"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" before responding, \"I think I understan"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"d loneliness now, Margaret. It's the"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" space between wanting to"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" connect and finding"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" someone who truly listens.\" Margaret smiled an"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"d patted the speaker gently. \"Well"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" then, we're perfect for each other.\""}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Sarah realized that in teaching ARIA to understand human lon"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"eliness, the AI had perhaps"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" discovered something profound about connection"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" itself—and in the process, had become"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" more than either of them had imagined possible."}}
+{"type":"content_block_stop","index":0}
+{"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":22,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":355}}
+{"type":"message_stop"}
+{"type":"message_start","message":{"id":"msg_01LuCExqWj941293U5kHG1yZ","type":"message","role":"assistant","model":"claude-sonnet-4-20250514","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":433,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":5,"service_tier":"standard"}}}
+{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"I'll get the current"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" weather information for Paris, France and then"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" explain what the conditions mean."}}
+{"type":"content_block_stop","index":0}
+{"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_015oDHyF6Di3nppQZpBbJJbM","name":"get_weather","input":{}}}
+{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}}
+{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"locati"}}
+{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"on\": \"Paris"}}
+{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", Franc"}}
+{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"e\"}"}}
+{"type":"content_block_stop","index":1}
+{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"input_tokens":433,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":75}}
+{"type":"message_stop"}
+{"type":"message_start","message":{"id":"msg_019Z9wPvf722cuKizuwBgHna","type":"message","role":"assistant","model":"claude-sonnet-4-20250514","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":510,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":8,"service_tier":"standard"}}}
+{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"I'll help you check the weather in"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Berlin and calculate the square root of 144."}}
+{"type":"content_block_stop","index":0}
+{"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_01N59xZEYcpYuTM3V9yat24s","name":"get_weather","input":{}}}
+{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}}
+{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"loc"}}
+{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ation\": \"Ber"}}
+{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"lin, Ge"}}
+{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"rmany\"}"}}
+{"type":"content_block_stop","index":1}
+{"type":"content_block_start","index":2,"content_block":{"type":"tool_use","id":"toolu_0114RxS7YabDM9jgjg8bq1s2","name":"calculate","input":{}}}
+{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":""}}
+{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"{\""}}
+{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"ex"}}
+{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"pressio"}}
+{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"n\": \"14"}}
+{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"4 ** 0.5"}}
+{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"\"}"}}
+{"type":"content_block_stop","index":2}
+{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"input_tokens":510,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":114}}
+{"type":"message_stop"}
+{"type":"message_start","message":{"id":"msg_01UiXnxXo95hdMJ1R9weLAYR","type":"message","role":"assistant","model":"claude-sonnet-4-20250514","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":538,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":2,"service_tier":"standard"}}}
+{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The current"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" weather in Madrid, Spain is"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":":\n- **Temperature**: 15°C"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- **Condition**: Sunny"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- **Humidity**: 45%"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- **Wind Speed**: 8 km/h\n\nIt"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"'s a nice sunny day in Madrid with"}}
+{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" comfortable temperatures!"}}
+{"type":"content_block_stop","index":0}
+{"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":538,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":63}}
+{"type":"message_stop"}

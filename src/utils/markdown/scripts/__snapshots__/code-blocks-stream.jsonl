@@ -1,0 +1,34 @@
+{"sample":"code-blocks.md","index":0,"event":{"type":"begin","elementType":"text","elementId":"md-1"}}
+{"sample":"code-blocks.md","index":1,"event":{"type":"delta","elementId":"md-1","content":"Here's"}}
+{"sample":"code-blocks.md","index":2,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"code-blocks.md","index":3,"event":{"type":"delta","elementId":"md-1","content":"a"}}
+{"sample":"code-blocks.md","index":4,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"code-blocks.md","index":5,"event":{"type":"delta","elementId":"md-1","content":"simple"}}
+{"sample":"code-blocks.md","index":6,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"code-blocks.md","index":7,"event":{"type":"delta","elementId":"md-1","content":"code"}}
+{"sample":"code-blocks.md","index":8,"event":{"type":"delta","elementId":"md-1","content":" "}}
+{"sample":"code-blocks.md","index":9,"event":{"type":"end","elementId":"md-1","finalContent":"Here's a simple code example:"}}
+{"sample":"code-blocks.md","index":10,"event":{"type":"begin","elementType":"code","elementId":"md-2","metadata":{"language":"python"}}}
+{"sample":"code-blocks.md","index":11,"event":{"type":"end","elementId":"md-2","finalContent":"def hello_world():\n    print(\"Hello, World!\")\n    \n    # This has double newlines inside\n    \n    return True"}}
+{"sample":"code-blocks.md","index":12,"event":{"type":"begin","elementType":"text","elementId":"md-3"}}
+{"sample":"code-blocks.md","index":13,"event":{"type":"delta","elementId":"md-3","content":"And"}}
+{"sample":"code-blocks.md","index":14,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"code-blocks.md","index":15,"event":{"type":"delta","elementId":"md-3","content":"here's"}}
+{"sample":"code-blocks.md","index":16,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"code-blocks.md","index":17,"event":{"type":"delta","elementId":"md-3","content":"another"}}
+{"sample":"code-blocks.md","index":18,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"code-blocks.md","index":19,"event":{"type":"delta","elementId":"md-3","content":"example"}}
+{"sample":"code-blocks.md","index":20,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"code-blocks.md","index":21,"event":{"type":"delta","elementId":"md-3","content":"with"}}
+{"sample":"code-blocks.md","index":22,"event":{"type":"delta","elementId":"md-3","content":" "}}
+{"sample":"code-blocks.md","index":23,"event":{"type":"end","elementId":"md-3","finalContent":"And here's another example with JavaScript:"}}
+{"sample":"code-blocks.md","index":24,"event":{"type":"begin","elementType":"code","elementId":"md-4","metadata":{"language":"javascript"}}}
+{"sample":"code-blocks.md","index":25,"event":{"type":"end","elementId":"md-4","finalContent":"function greet(name) {\n    console.log(`Hello, ${name}!`);\n    \n    // Multiple newlines here too\n    \n    \n    return name.length;\n}"}}
+{"sample":"code-blocks.md","index":26,"event":{"type":"begin","elementType":"text","elementId":"md-5"}}
+{"sample":"code-blocks.md","index":27,"event":{"type":"delta","elementId":"md-5","content":"Text"}}
+{"sample":"code-blocks.md","index":28,"event":{"type":"delta","elementId":"md-5","content":" "}}
+{"sample":"code-blocks.md","index":29,"event":{"type":"delta","elementId":"md-5","content":"after"}}
+{"sample":"code-blocks.md","index":30,"event":{"type":"delta","elementId":"md-5","content":" "}}
+{"sample":"code-blocks.md","index":31,"event":{"type":"delta","elementId":"md-5","content":"code"}}
+{"sample":"code-blocks.md","index":32,"event":{"type":"delta","elementId":"md-5","content":" "}}
+{"sample":"code-blocks.md","index":33,"event":{"type":"end","elementId":"md-5","finalContent":"Text after code blocks."}}

@@ -1,0 +1,35 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "Ahoy, matey! So ye want to know about the ocean, eh? Well, buckle yer swash, 'cause it's a tale as vast and deep as the ocean itself!\n\nThe ocean, she be a vast body o' saltwater that covers over 70% o' the Earth's surface! That's a whole lot o' water, enough to make even the saltiest o' sea dogs feel small. She be divided into five main oceans:\n\n*   **The Pacific Ocean:** The biggest o' them all, home to all sorts o' creatures.\n*   **The Atlantic Ocean:** Right between the Americas, Europe, and Africa.\n*   **The Indian Ocean:** Warm waters be home to many treasures.\n*   **The Arctic Ocean:** A frozen expanse near the North Pole.\n*   **The Southern Ocean:** This encircles Antarctica.\n\nBut the ocean ain't just a big puddle o' water"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "MAX_TOKENS",
+      "avgLogprobs": -0.45761303925634028
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 17,
+    "candidatesTokenCount": 199,
+    "totalTokenCount": 216,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 17
+      }
+    ],
+    "candidatesTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 199
+      }
+    ]
+  },
+  "modelVersion": "gemini-2.0-flash",
+  "responseId": "nNyzaM3yBqKaqtsPvt7T6Qs"
+}

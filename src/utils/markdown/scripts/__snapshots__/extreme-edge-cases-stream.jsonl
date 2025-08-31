@@ -1,0 +1,69 @@
+{"sample":"extreme-edge-cases.md","index":0,"event":{"type":"begin","elementType":"code","elementId":"md-1","metadata":{"language":"text"}}}
+{"sample":"extreme-edge-cases.md","index":1,"event":{"type":"end","elementId":"md-1","finalContent":""}}
+{"sample":"extreme-edge-cases.md","index":2,"event":{"type":"begin","elementType":"text","elementId":"md-2"}}
+{"sample":"extreme-edge-cases.md","index":3,"event":{"type":"delta","elementId":"md-2","content":"Empty"}}
+{"sample":"extreme-edge-cases.md","index":4,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"extreme-edge-cases.md","index":5,"event":{"type":"delta","elementId":"md-2","content":"code"}}
+{"sample":"extreme-edge-cases.md","index":6,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"extreme-edge-cases.md","index":7,"event":{"type":"delta","elementId":"md-2","content":"block"}}
+{"sample":"extreme-edge-cases.md","index":8,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"extreme-edge-cases.md","index":9,"event":{"type":"end","elementId":"md-2","finalContent":"Empty code block above."}}
+{"sample":"extreme-edge-cases.md","index":10,"event":{"type":"begin","elementType":"code","elementId":"md-3","metadata":{"language":"text"}}}
+{"sample":"extreme-edge-cases.md","index":11,"event":{"type":"end","elementId":"md-3","finalContent":"````\nTriple backticks inside code block:"}}
+{"sample":"extreme-edge-cases.md","index":12,"event":{"type":"begin","elementType":"text","elementId":"md-4"}}
+{"sample":"extreme-edge-cases.md","index":13,"event":{"type":"delta","elementId":"md-4","content":"Inner"}}
+{"sample":"extreme-edge-cases.md","index":14,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"extreme-edge-cases.md","index":15,"event":{"type":"delta","elementId":"md-4","content":"block"}}
+{"sample":"extreme-edge-cases.md","index":16,"event":{"type":"delta","elementId":"md-4","content":"\n"}}
+{"sample":"extreme-edge-cases.md","index":17,"event":{"type":"delta","elementId":"md-4","content":"```"}}
+{"sample":"extreme-edge-cases.md","index":18,"event":{"type":"delta","elementId":"md-4","content":"\n"}}
+{"sample":"extreme-edge-cases.md","index":19,"event":{"type":"end","elementId":"md-4","finalContent":"Inner block\n`\n`````"}}
+{"sample":"extreme-edge-cases.md","index":20,"event":{"type":"begin","elementType":"text","elementId":"md-5"}}
+{"sample":"extreme-edge-cases.md","index":21,"event":{"type":"delta","elementId":"md-5","content":"Text"}}
+{"sample":"extreme-edge-cases.md","index":22,"event":{"type":"delta","elementId":"md-5","content":" "}}
+{"sample":"extreme-edge-cases.md","index":23,"event":{"type":"delta","elementId":"md-5","content":"with"}}
+{"sample":"extreme-edge-cases.md","index":24,"event":{"type":"delta","elementId":"md-5","content":" "}}
+{"sample":"extreme-edge-cases.md","index":25,"event":{"type":"delta","elementId":"md-5","content":"many"}}
+{"sample":"extreme-edge-cases.md","index":26,"event":{"type":"delta","elementId":"md-5","content":" "}}
+{"sample":"extreme-edge-cases.md","index":27,"event":{"type":"delta","elementId":"md-5","content":"consecutive"}}
+{"sample":"extreme-edge-cases.md","index":28,"event":{"type":"delta","elementId":"md-5","content":" "}}
+{"sample":"extreme-edge-cases.md","index":29,"event":{"type":"end","elementId":"md-5","finalContent":"Text with many consecutive newlines:"}}
+{"sample":"extreme-edge-cases.md","index":30,"event":{"type":"begin","elementType":"text","elementId":"md-6"}}
+{"sample":"extreme-edge-cases.md","index":31,"event":{"type":"delta","elementId":"md-6","content":"Multiple"}}
+{"sample":"extreme-edge-cases.md","index":32,"event":{"type":"delta","elementId":"md-6","content":" "}}
+{"sample":"extreme-edge-cases.md","index":33,"event":{"type":"delta","elementId":"md-6","content":"empty"}}
+{"sample":"extreme-edge-cases.md","index":34,"event":{"type":"delta","elementId":"md-6","content":" "}}
+{"sample":"extreme-edge-cases.md","index":35,"event":{"type":"delta","elementId":"md-6","content":"lines"}}
+{"sample":"extreme-edge-cases.md","index":36,"event":{"type":"delta","elementId":"md-6","content":" "}}
+{"sample":"extreme-edge-cases.md","index":37,"event":{"type":"end","elementId":"md-6","finalContent":"Multiple empty lines above."}}
+{"sample":"extreme-edge-cases.md","index":38,"event":{"type":"begin","elementType":"text","elementId":"md-7"}}
+{"sample":"extreme-edge-cases.md","index":39,"event":{"type":"delta","elementId":"md-7","content":"Even"}}
+{"sample":"extreme-edge-cases.md","index":40,"event":{"type":"delta","elementId":"md-7","content":" "}}
+{"sample":"extreme-edge-cases.md","index":41,"event":{"type":"delta","elementId":"md-7","content":"more"}}
+{"sample":"extreme-edge-cases.md","index":42,"event":{"type":"delta","elementId":"md-7","content":" "}}
+{"sample":"extreme-edge-cases.md","index":43,"event":{"type":"delta","elementId":"md-7","content":"empty"}}
+{"sample":"extreme-edge-cases.md","index":44,"event":{"type":"delta","elementId":"md-7","content":" "}}
+{"sample":"extreme-edge-cases.md","index":45,"event":{"type":"end","elementId":"md-7","finalContent":"Even more empty lines."}}
+{"sample":"extreme-edge-cases.md","index":46,"event":{"type":"begin","elementType":"text","elementId":"md-8"}}
+{"sample":"extreme-edge-cases.md","index":47,"event":{"type":"delta","elementId":"md-8","content":"Code"}}
+{"sample":"extreme-edge-cases.md","index":48,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"extreme-edge-cases.md","index":49,"event":{"type":"delta","elementId":"md-8","content":"block"}}
+{"sample":"extreme-edge-cases.md","index":50,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"extreme-edge-cases.md","index":51,"event":{"type":"delta","elementId":"md-8","content":"with"}}
+{"sample":"extreme-edge-cases.md","index":52,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"extreme-edge-cases.md","index":53,"event":{"type":"delta","elementId":"md-8","content":"only"}}
+{"sample":"extreme-edge-cases.md","index":54,"event":{"type":"delta","elementId":"md-8","content":" "}}
+{"sample":"extreme-edge-cases.md","index":55,"event":{"type":"delta","elementId":"md-8","content":"newlines:"}}
+{"sample":"extreme-edge-cases.md","index":56,"event":{"type":"delta","elementId":"md-8","content":"\n"}}
+{"sample":"extreme-edge-cases.md","index":57,"event":{"type":"end","elementId":"md-8","finalContent":"Code block with only newlines:\n```"}}
+{"sample":"extreme-edge-cases.md","index":58,"event":{"type":"begin","elementType":"code","elementId":"md-9","metadata":{"language":"text"}}}
+{"sample":"extreme-edge-cases.md","index":59,"event":{"type":"end","elementId":"md-9","finalContent":"Mixed backticks:\n`` inline `` and ```block```\n\nUnterminated inline code: `this never ends...\n\nCode block that looks like it ends but doesn't:\n```python\nprint(\"```\")  # This is not the end\nstill in code"}}
+{"sample":"extreme-edge-cases.md","index":60,"event":{"type":"begin","elementType":"text","elementId":"md-10"}}
+{"sample":"extreme-edge-cases.md","index":61,"event":{"type":"delta","elementId":"md-10","content":"Real"}}
+{"sample":"extreme-edge-cases.md","index":62,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"extreme-edge-cases.md","index":63,"event":{"type":"delta","elementId":"md-10","content":"end"}}
+{"sample":"extreme-edge-cases.md","index":64,"event":{"type":"delta","elementId":"md-10","content":" "}}
+{"sample":"extreme-edge-cases.md","index":65,"event":{"type":"end","elementId":"md-10","finalContent":"Real end above."}}
+{"sample":"extreme-edge-cases.md","index":66,"event":{"type":"begin","elementType":"code","elementId":"md-11","metadata":{"language":"text"}}}
+{"sample":"extreme-edge-cases.md","index":67,"event":{"type":"delta","elementId":"md-11","content":"Code at the very end with no newline"}}
+{"sample":"extreme-edge-cases.md","index":68,"event":{"type":"end","elementId":"md-11","finalContent":"Code at the very end with no newline"}}

@@ -1,0 +1,18 @@
+{
+  "name": "models/gemini-2.0-flash",
+  "version": "2.0",
+  "displayName": "Gemini 2.0 Flash",
+  "description": "Gemini 2.0 Flash",
+  "inputTokenLimit": 1048576,
+  "outputTokenLimit": 8192,
+  "supportedGenerationMethods": [
+    "generateContent",
+    "countTokens",
+    "createCachedContent",
+    "batchGenerateContent"
+  ],
+  "temperature": 1,
+  "topP": 0.95,
+  "topK": 40,
+  "maxTemperature": 2
+}

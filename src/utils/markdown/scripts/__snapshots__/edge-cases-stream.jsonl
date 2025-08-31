@@ -1,0 +1,32 @@
+{"sample":"edge-cases.md","index":0,"event":{"type":"begin","elementType":"code","elementId":"md-1","metadata":{"language":"text"}}}
+{"sample":"edge-cases.md","index":1,"event":{"type":"end","elementId":"md-1","finalContent":"Code block at the very start"}}
+{"sample":"edge-cases.md","index":2,"event":{"type":"begin","elementType":"text","elementId":"md-2"}}
+{"sample":"edge-cases.md","index":3,"event":{"type":"delta","elementId":"md-2","content":"Text"}}
+{"sample":"edge-cases.md","index":4,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"edge-cases.md","index":5,"event":{"type":"delta","elementId":"md-2","content":"after"}}
+{"sample":"edge-cases.md","index":6,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"edge-cases.md","index":7,"event":{"type":"delta","elementId":"md-2","content":"initial"}}
+{"sample":"edge-cases.md","index":8,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"edge-cases.md","index":9,"event":{"type":"delta","elementId":"md-2","content":"code"}}
+{"sample":"edge-cases.md","index":10,"event":{"type":"delta","elementId":"md-2","content":" "}}
+{"sample":"edge-cases.md","index":11,"event":{"type":"end","elementId":"md-2","finalContent":"Text after initial code block."}}
+{"sample":"edge-cases.md","index":12,"event":{"type":"begin","elementType":"code","elementId":"md-3","metadata":{"language":"no-language"}}}
+{"sample":"edge-cases.md","index":13,"event":{"type":"end","elementId":"md-3","finalContent":"Code block without language specification"}}
+{"sample":"edge-cases.md","index":14,"event":{"type":"begin","elementType":"text","elementId":"md-4"}}
+{"sample":"edge-cases.md","index":15,"event":{"type":"delta","elementId":"md-4","content":"Text"}}
+{"sample":"edge-cases.md","index":16,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"edge-cases.md","index":17,"event":{"type":"delta","elementId":"md-4","content":"with"}}
+{"sample":"edge-cases.md","index":18,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"edge-cases.md","index":19,"event":{"type":"delta","elementId":"md-4","content":"incomplete"}}
+{"sample":"edge-cases.md","index":20,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"edge-cases.md","index":21,"event":{"type":"delta","elementId":"md-4","content":"code"}}
+{"sample":"edge-cases.md","index":22,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"edge-cases.md","index":23,"event":{"type":"delta","elementId":"md-4","content":"block"}}
+{"sample":"edge-cases.md","index":24,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"edge-cases.md","index":25,"event":{"type":"delta","elementId":"md-4","content":"at"}}
+{"sample":"edge-cases.md","index":26,"event":{"type":"delta","elementId":"md-4","content":" "}}
+{"sample":"edge-cases.md","index":27,"event":{"type":"end","elementId":"md-4","finalContent":"Text with incomplete code block at end:"}}
+{"sample":"edge-cases.md","index":28,"event":{"type":"begin","elementType":"code","elementId":"md-5","metadata":{"language":"python"}}}
+{"sample":"edge-cases.md","index":29,"event":{"type":"delta","elementId":"md-5","content":"def incomplete():\n"}}
+{"sample":"edge-cases.md","index":30,"event":{"type":"delta","elementId":"md-5","content":"    # This code block is cut off..."}}
+{"sample":"edge-cases.md","index":31,"event":{"type":"end","elementId":"md-5","finalContent":"def incomplete():\n    # This code block is cut off..."}}

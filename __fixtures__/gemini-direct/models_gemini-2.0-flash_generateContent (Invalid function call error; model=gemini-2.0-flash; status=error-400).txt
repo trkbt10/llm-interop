@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": 400,
+    "message": "The request is not supported by this model.",
+    "status": "INVALID_ARGUMENT"
+  }
+}

@@ -1,20 +1,31 @@
 # llm-interop — Introduction
 
-llm-interop is a lightweight toolkit that helps you interoperate between popular LLM provider shapes while keeping your app code simple. It focuses on two things:
+llm-interop is a lightweight toolkit that helps you interoperate between popular LLM providers while keeping your app code simple. It focuses on two things:
 
 - Emulating HTTP endpoints as a fetch-compatible function so SDKs can be driven locally without a real server.
 - Converting between provider formats (OpenAI, Claude, Gemini) so you can reuse the same higher-level logic.
 
 What you get
-- Drop-in fetch emulators for OpenAI, Anthropic Claude, and Google Gemini.
-- Streaming support via Server-Sent Events (SSE), with shape conversion when needed.
-- Small, composable adapters you can mix and match.
+- A single, OpenAI-style surface you can point at different providers (OpenAI, Claude, Gemini) just by changing `provider.type`.
+- Drop-in fetch emulators for provider-native SDKs when you need to test those directly.
+- Streaming via Server-Sent Events (SSE), with on-the-fly shape conversion when needed.
 
-Quick links
-- OpenAI: docs/readme/10-fetch-emulator-openai.md
-- Anthropic: docs/readme/10-fetch-emulator-anthropic.md
-- Gemini: docs/readme/10-fetch-emulator-gemini.md
+How to use
+- See the next section “Unified usage” for a concise copy‑paste example.
+
+Unified usage (recommended)
+```ts
+import OpenAI from "openai";
+import { emulateOpenAIEndpoint } from "llm-interop/fetch/openai";
+
+// Switch provider by changing type: 'openai' | 'claude' | 'gemini'
+const provider = { type: "gemini", apiKey: process.env.API_KEY } as const;
+const fetchHandler = emulateOpenAIEndpoint({ provider });
+
+const client = new OpenAI({ apiKey: "dummy", baseURL: "http://local", fetch: fetchHandler });
+const res = await client.responses.create({ model: "gpt-5-mini", input: "Hello" });
+```
 
 Notes
-- All examples work in Node and compatible runtimes with fetch available.
-- Set provider credentials via environment variables in your own code or test harness.
+- Works in Node and any runtime with `fetch`.
+- Provide real API keys for the selected `provider.type` via your environment.

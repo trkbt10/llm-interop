@@ -16,6 +16,8 @@
     "test:cov": "vitest run --coverage",
     "test:cov:unit": "vitest run --coverage --exclude='**/*.{network,integration}.{spec,test}.{ts,tsx}'",
     "build": "vite build",
+    "docs:build": "node scripts/doc-compiler.mjs",
+    "docs:check": "node scripts/doc-compiler.mjs --check",
     "clean": "rimraf dist",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",

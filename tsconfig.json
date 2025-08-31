@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "types": ["node", "vitest/globals"]
   },
-  "include": ["src/**/*", "spec/**/*", "debug/**/*"]
+  "include": ["src/**/*", "spec/**/*", "debug/**/*", "scripts/**/*"]
 }

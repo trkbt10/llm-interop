@@ -12,7 +12,7 @@ import rulesTestAndMocksImports, { allowMocksRuleSet } from "./eslint/rules/rule
 import rulesNoMocks from "./eslint/rules/rules-no-mocks.js";
 
 export default [
-  { ignores: ["node_modules/**", "dist/**", "build/**", "*.config.ts", ".code_styles/**", "samples/**"] },
+  { ignores: ["node_modules/**", "dist/**", "build/**", "*.config.ts", ".code_styles/**", "samples/**", "scripts/**"] },
 
   ...tseslint.config(
     js.configs.recommended,

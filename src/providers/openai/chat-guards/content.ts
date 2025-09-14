@@ -84,7 +84,10 @@ export function isStringContent(content: unknown): content is string {
  * Check if content is an array of content parts
  */
 export function isContentPartArray(content: unknown): content is ChatCompletionContentPart[] {
-  return Array.isArray(content) && content.every(item => isChatCompletionContentPart(item));
+  if (!Array.isArray(content)) {
+    return false;
+  }
+  return content.every(item => isChatCompletionContentPart(item));
 }
 
 /**
@@ -138,7 +141,10 @@ export function isChatCompletionPredictionContent(value: unknown): value is Chat
     return false;
   }
   const content = value as Record<string, unknown>;
-  return content.type === "content" && Array.isArray(content.content);
+  if (content.type !== "content") {
+    return false;
+  }
+  return Array.isArray(content.content);
 }
 
 /**

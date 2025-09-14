@@ -103,14 +103,20 @@ export function isChatCompletionMessage(value: unknown): value is ChatCompletion
     return false;
   }
   const msg = value as Record<string, unknown>;
-  return typeof msg.role === "string" && isChatCompletionRole(msg.role);
+  if (typeof msg.role !== "string") {
+    return false;
+  }
+  return isChatCompletionRole(msg.role);
 }
 
 /**
  * Check if a message has refusal content
  */
 export function hasRefusal(message: ChatCompletionMessage): boolean {
-  return message.refusal !== null && message.refusal !== undefined;
+  if (message.refusal === null || message.refusal === undefined) {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -119,7 +125,10 @@ export function hasRefusal(message: ChatCompletionMessage): boolean {
 export function hasToolCalls(
   message: ChatCompletionMessage
 ): message is ChatCompletionMessage & { tool_calls: NonNullable<ChatCompletionMessage["tool_calls"]> } {
-  return message.tool_calls !== null && message.tool_calls !== undefined && Array.isArray(message.tool_calls);
+  if (message.tool_calls === null || message.tool_calls === undefined) {
+    return false;
+  }
+  return Array.isArray(message.tool_calls);
 }
 
 /**
@@ -128,7 +137,10 @@ export function hasToolCalls(
 export function hasFunctionCall(
   message: ChatCompletionMessage
 ): message is ChatCompletionMessage & { function_call: NonNullable<ChatCompletionMessage["function_call"]> } {
-  return message.function_call !== null && message.function_call !== undefined;
+  if (message.function_call === null || message.function_call === undefined) {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -155,7 +167,10 @@ export function isCustomToolCall(
 export function hasAudio(
   message: ChatCompletionMessage
 ): message is ChatCompletionMessage & { audio: NonNullable<ChatCompletionMessage["audio"]> } {
-  return message.audio !== null && message.audio !== undefined;
+  if (message.audio === null || message.audio === undefined) {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -164,5 +179,8 @@ export function hasAudio(
 export function hasContent(
   message: ChatCompletionMessage
 ): message is ChatCompletionMessage & { content: NonNullable<ChatCompletionMessage["content"]> } {
-  return message.content !== null && message.content !== undefined;
+  if (message.content === null || message.content === undefined) {
+    return false;
+  }
+  return true;
 }

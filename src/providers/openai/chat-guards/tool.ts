@@ -103,7 +103,13 @@ export function isToolChoiceString(
 export function isNamedToolChoice(
   tc: ChatCompletionToolChoiceOption
 ): tc is ChatCompletionNamedToolChoice {
-  return isObject(tc) && "type" in tc && (tc.type === "function" || tc.type === "custom");
+  if (!isObject(tc)) {
+    return false;
+  }
+  if (!("type" in tc)) {
+    return false;
+  }
+  return (tc as { type?: unknown }).type === "function" || (tc as { type?: unknown }).type === "custom";
 }
 
 /**
@@ -112,7 +118,13 @@ export function isNamedToolChoice(
 export function isNamedToolChoiceCustom(
   tc: ChatCompletionToolChoiceOption
 ): tc is ChatCompletionNamedToolChoiceCustom {
-  return isObject(tc) && "type" in tc && tc.type === "custom";
+  if (!isObject(tc)) {
+    return false;
+  }
+  if (!("type" in tc)) {
+    return false;
+  }
+  return (tc as { type?: unknown }).type === "custom";
 }
 
 /**

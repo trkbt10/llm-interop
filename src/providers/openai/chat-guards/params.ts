@@ -42,7 +42,10 @@ export function isChatCompletionCreateParams(value: unknown): value is ChatCompl
   }
   const params = value as Record<string, unknown>;
   // Messages and model are required
-  return Array.isArray(params.messages) && typeof params.model === "string";
+  if (!Array.isArray(params.messages)) {
+    return false;
+  }
+  return typeof params.model === "string";
 }
 
 /**
@@ -69,7 +72,10 @@ export function isChatCompletionUpdateParams(value: unknown): value is ChatCompl
   }
   const params = value as Record<string, unknown>;
   // metadata is the only field
-  return params.metadata !== undefined && isObject(params.metadata);
+  if (params.metadata === undefined) {
+    return false;
+  }
+  return isObject(params.metadata);
 }
 
 /**
@@ -100,61 +106,97 @@ export function isChatCompletionListParams(value: unknown): value is ChatComplet
  * Check if params have tools configured
  */
 export function hasTools(params: ChatCompletionCreateParams): boolean {
-  return params.tools !== undefined && Array.isArray(params.tools) && params.tools.length > 0;
+  if (params.tools === undefined) {
+    return false;
+  }
+  if (!Array.isArray(params.tools)) {
+    return false;
+  }
+  return params.tools.length > 0;
 }
 
 /**
  * Check if params have functions configured (deprecated)
  */
 export function hasFunctions(params: ChatCompletionCreateParams): boolean {
-  return params.functions !== undefined && Array.isArray(params.functions) && params.functions.length > 0;
+  if (params.functions === undefined) {
+    return false;
+  }
+  if (!Array.isArray(params.functions)) {
+    return false;
+  }
+  return params.functions.length > 0;
 }
 
 /**
  * Check if params have response format configured
  */
 export function hasResponseFormat(params: ChatCompletionCreateParams): boolean {
-  return params.response_format !== undefined && params.response_format !== null;
+  if (params.response_format === undefined || params.response_format === null) {
+    return false;
+  }
+  return true;
 }
 
 /**
  * Check if params have audio configuration
  */
 export function hasAudioParams(params: ChatCompletionCreateParams): boolean {
-  return params.audio !== undefined && params.audio !== null;
+  if (params.audio === undefined || params.audio === null) {
+    return false;
+  }
+  return true;
 }
 
 /**
  * Check if params have modalities configured
  */
 export function hasModalities(params: ChatCompletionCreateParams): boolean {
-  return params.modalities !== undefined && Array.isArray(params.modalities) && params.modalities.length > 0;
+  if (params.modalities === undefined) {
+    return false;
+  }
+  if (!Array.isArray(params.modalities)) {
+    return false;
+  }
+  return params.modalities.length > 0;
 }
 
 /**
  * Check if params have prediction content
  */
 export function hasPrediction(params: ChatCompletionCreateParams): boolean {
-  return params.prediction !== undefined && params.prediction !== null;
+  if (params.prediction === undefined || params.prediction === null) {
+    return false;
+  }
+  return true;
 }
 
 /**
  * Check if params have store configuration
  */
 export function hasStore(params: ChatCompletionCreateParams): boolean {
-  return params.store !== undefined && params.store !== null;
+  if (params.store === undefined || params.store === null) {
+    return false;
+  }
+  return true;
 }
 
 /**
  * Check if params have metadata
  */
 export function hasMetadata(params: ChatCompletionCreateParams): boolean {
-  return params.metadata !== undefined && params.metadata !== null;
+  if (params.metadata === undefined || params.metadata === null) {
+    return false;
+  }
+  return true;
 }
 
 /**
  * Check if params have reasoning effort configured
  */
 export function hasReasoningEffort(params: ChatCompletionCreateParams): boolean {
-  return params.reasoning_effort !== undefined && params.reasoning_effort !== null;
+  if (params.reasoning_effort === undefined || params.reasoning_effort === null) {
+    return false;
+  }
+  return true;
 }

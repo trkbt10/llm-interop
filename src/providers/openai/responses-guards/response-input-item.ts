@@ -36,10 +36,16 @@ export function isResponseEasyInputMessage(item: ResponseInputItem): item is Eas
   const hasRole = "role" in item;
   const hasContent = "content" in item;
   const hasType = "type" in item;
-  if (hasRole && hasContent && !hasType) {
-    return true;
+  if (!hasRole) {
+    return false;
   }
-  return false;
+  if (!hasContent) {
+    return false;
+  }
+  if (hasType) {
+    return false;
+  }
+  return true;
 }
 
 /**

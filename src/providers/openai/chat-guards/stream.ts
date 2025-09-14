@@ -18,13 +18,22 @@ export function isChatCompletionChunk(value: unknown): value is ChatCompletionCh
     return false;
   }
   const chunk = value as Record<string, unknown>;
-  return (
-    typeof chunk.id === "string" &&
-    chunk.object === "chat.completion.chunk" &&
-    typeof chunk.created === "number" &&
-    typeof chunk.model === "string" &&
-    Array.isArray(chunk.choices)
-  );
+  if (typeof chunk.id !== "string") {
+    return false;
+  }
+  if (chunk.object !== "chat.completion.chunk") {
+    return false;
+  }
+  if (typeof chunk.created !== "number") {
+    return false;
+  }
+  if (typeof chunk.model !== "string") {
+    return false;
+  }
+  if (!Array.isArray(chunk.choices)) {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -41,7 +50,12 @@ export function isChatCompletionStream(value: unknown): value is AsyncIterable<C
  * Check if a chunk has finish reason
  */
 export function hasFinishReason(chunk: ChatCompletionChunk): boolean {
-  return chunk.choices.some(choice => choice.finish_reason !== null && choice.finish_reason !== undefined);
+  return chunk.choices.some(choice => {
+    if (choice.finish_reason === null || choice.finish_reason === undefined) {
+      return false;
+    }
+    return true;
+  });
 }
 
 /**
@@ -55,36 +69,51 @@ export function isFinalChunk(chunk: ChatCompletionChunk): boolean {
  * Check if a chunk has delta content
  */
 export function hasDeltaContent(chunk: ChatCompletionChunk): boolean {
-  return chunk.choices.some(choice => 
-    choice.delta && choice.delta.content !== null && choice.delta.content !== undefined
-  );
+  return chunk.choices.some(choice => {
+    if (!choice.delta) {
+      return false;
+    }
+    return choice.delta.content !== null && choice.delta.content !== undefined;
+  });
 }
 
 /**
  * Check if a chunk has delta tool calls
  */
 export function hasDeltaToolCalls(chunk: ChatCompletionChunk): boolean {
-  return chunk.choices.some(choice => 
-    choice.delta && choice.delta.tool_calls !== undefined && Array.isArray(choice.delta.tool_calls)
-  );
+  return chunk.choices.some(choice => {
+    if (!choice.delta) {
+      return false;
+    }
+    if (choice.delta.tool_calls === undefined) {
+      return false;
+    }
+    return Array.isArray(choice.delta.tool_calls);
+  });
 }
 
 /**
  * Check if a chunk has delta function call (deprecated)
  */
 export function hasDeltaFunctionCall(chunk: ChatCompletionChunk): boolean {
-  return chunk.choices.some(choice => 
-    choice.delta && choice.delta.function_call !== null && choice.delta.function_call !== undefined
-  );
+  return chunk.choices.some(choice => {
+    if (!choice.delta) {
+      return false;
+    }
+    return choice.delta.function_call !== null && choice.delta.function_call !== undefined;
+  });
 }
 
 /**
  * Check if a chunk has delta refusal
  */
 export function hasDeltaRefusal(chunk: ChatCompletionChunk): boolean {
-  return chunk.choices.some(choice => 
-    choice.delta && choice.delta.refusal !== null && choice.delta.refusal !== undefined
-  );
+  return chunk.choices.some(choice => {
+    if (!choice.delta) {
+      return false;
+    }
+    return choice.delta.refusal !== null && choice.delta.refusal !== undefined;
+  });
 }
 
 /**
@@ -92,7 +121,9 @@ export function hasDeltaRefusal(chunk: ChatCompletionChunk): boolean {
  */
 export function hasDeltaAudio(chunk: ChatCompletionChunk): boolean {
   return chunk.choices.some(choice => {
-    if (!choice.delta) return false;
+    if (!choice.delta) {
+      return false;
+    }
     const delta = choice.delta as Record<string, unknown>;
     return delta.audio !== null && delta.audio !== undefined;
   });
@@ -102,14 +133,20 @@ export function hasDeltaAudio(chunk: ChatCompletionChunk): boolean {
  * Check if a chunk has usage information
  */
 export function hasUsage(chunk: ChatCompletionChunk): boolean {
-  return chunk.usage !== null && chunk.usage !== undefined;
+  if (chunk.usage === null || chunk.usage === undefined) {
+    return false;
+  }
+  return true;
 }
 
 /**
  * Check if a chunk has service tier information
  */
 export function hasServiceTier(chunk: ChatCompletionChunk): boolean {
-  return chunk.service_tier !== null && chunk.service_tier !== undefined;
+  if (chunk.service_tier === null || chunk.service_tier === undefined) {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -117,7 +154,12 @@ export function hasServiceTier(chunk: ChatCompletionChunk): boolean {
  */
 export function extractDeltaContent(chunk: ChatCompletionChunk): string[] {
   return chunk.choices
-    .filter(choice => choice.delta && choice.delta.content)
+    .filter(choice => {
+      if (!choice.delta) {
+        return false;
+      }
+      return Boolean((choice.delta as Record<string, unknown>).content);
+    })
     .map(choice => choice.delta.content as string);
 }
 

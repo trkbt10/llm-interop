@@ -25,11 +25,21 @@ export function isChatCompletion(value: unknown): value is ChatCompletion {
     return false;
   }
   const completion = value as Record<string, unknown>;
-  if (typeof completion.id !== "string") { return false; }
-  if (completion.object !== "chat.completion") { return false; }
-  if (typeof completion.created !== "number") { return false; }
-  if (typeof completion.model !== "string") { return false; }
-  if (!Array.isArray(completion.choices)) { return false; }
+  if (typeof completion.id !== "string") {
+    return false;
+  }
+  if (completion.object !== "chat.completion") {
+    return false;
+  }
+  if (typeof completion.created !== "number") {
+    return false;
+  }
+  if (typeof completion.model !== "string") {
+    return false;
+  }
+  if (!Array.isArray(completion.choices)) {
+    return false;
+  }
   return true;
 }
 
@@ -41,8 +51,12 @@ export function isChatCompletionDeleted(value: unknown): value is ChatCompletion
     return false;
   }
   const deleted = value as Record<string, unknown>;
-  if (typeof deleted.id !== "string") { return false; }
-  if (deleted.object !== "chat.completion.deleted") { return false; }
+  if (typeof deleted.id !== "string") {
+    return false;
+  }
+  if (deleted.object !== "chat.completion.deleted") {
+    return false;
+  }
   return deleted.deleted === true;
 }
 
@@ -55,7 +69,7 @@ export function isParsedChatCompletion<T>(value: unknown): value is ParsedChatCo
   }
   const parsed = value as ParsedChatCompletion<T>;
   // Check if choices are ParsedChoice
-  return parsed.choices.every(choice => isParsedChoice(choice));
+  return parsed.choices.every((choice) => isParsedChoice(choice));
 }
 
 /**
@@ -66,8 +80,12 @@ export function isParsedChoice<T>(choice: unknown): choice is ParsedChoice<T> {
     return false;
   }
   const parsedChoice = choice as Record<string, unknown>;
-  if (typeof parsedChoice.index !== "number") { return false; }
-  if (!isObject(parsedChoice.message)) { return false; }
+  if (typeof parsedChoice.index !== "number") {
+    return false;
+  }
+  if (!isObject(parsedChoice.message)) {
+    return false;
+  }
   return isParsedMessage(parsedChoice.message);
 }
 
@@ -80,7 +98,10 @@ export function isParsedMessage<T>(message: unknown): message is ParsedChatCompl
   }
   const parsedMsg = message as Record<string, unknown>;
   // Has parsed field or parsed_tool_calls
-  return "parsed" in parsedMsg || "parsed_tool_calls" in parsedMsg;
+  if ("parsed" in parsedMsg) {
+    return true;
+  }
+  return "parsed_tool_calls" in parsedMsg;
 }
 
 /**
@@ -91,8 +112,12 @@ export function isParsedFunctionToolCall(toolCall: unknown): toolCall is ParsedF
     return false;
   }
   const parsed = toolCall as Record<string, unknown>;
-  if (parsed.type !== "function") { return false; }
-  if (!isObject(parsed.function)) { return false; }
+  if (parsed.type !== "function") {
+    return false;
+  }
+  if (!isObject(parsed.function)) {
+    return false;
+  }
   return "parsed_arguments" in (parsed.function as Record<string, unknown>);
 }
 
@@ -104,10 +129,18 @@ export function isChatCompletionTokenLogprob(value: unknown): value is ChatCompl
     return false;
   }
   const logprob = value as Record<string, unknown>;
-  if (typeof logprob.token !== "string") { return false; }
-  if (typeof logprob.logprob !== "number") { return false; }
-  if (!Array.isArray(logprob.bytes)) { return false; }
-  if (!Array.isArray(logprob.top_logprobs)) { return false; }
+  if (typeof logprob.token !== "string") {
+    return false;
+  }
+  if (typeof logprob.logprob !== "number") {
+    return false;
+  }
+  if (!Array.isArray(logprob.bytes)) {
+    return false;
+  }
+  if (!Array.isArray(logprob.top_logprobs)) {
+    return false;
+  }
   return true;
 }
 
@@ -120,8 +153,12 @@ export function isChatCompletionStoreMessage(value: unknown): value is ChatCompl
   }
   const msg = value as Record<string, unknown>;
   // Must have id and metadata in addition to regular message fields
-  if (typeof msg.id !== "string") { return false; }
-  if (!isObject(msg.metadata)) { return false; }
+  if (typeof msg.id !== "string") {
+    return false;
+  }
+  if (!isObject(msg.metadata)) {
+    return false;
+  }
   return typeof msg.role === "string";
 }
 

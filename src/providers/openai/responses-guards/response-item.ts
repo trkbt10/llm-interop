@@ -89,7 +89,10 @@ export function isResponseFunctionToolCallItem(item: ResponseItem): item is Resp
   }
   const hasId = "id" in item;
   const hasCallId = "call_id" in item;
-  return hasId && hasCallId;
+  if (!hasId) {
+    return false;
+  }
+  return hasCallId;
 }
 
 /**

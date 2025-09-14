@@ -21,18 +21,18 @@ function createOverwriteJsonlWriter(path: string): LocalJsonlWriter {
     async writeRawLine(line: string) {
       return new Promise((resolve, reject) => {
         const jsonl = JSON.stringify(line) + "\n";
-        stream.write(jsonl, (err) => (err ? reject(err) : resolve()));
+        stream.write(jsonl, (err: Error | null | undefined) => (err ? reject(err) : resolve()));
       });
     },
     async writeJSON(obj: unknown) {
       return new Promise((resolve, reject) => {
         const jsonl = JSON.stringify(obj) + "\n";
-        stream.write(jsonl, (err) => (err ? reject(err) : resolve()));
+        stream.write(jsonl, (err: Error | null | undefined) => (err ? reject(err) : resolve()));
       });
     },
     async close() {
       return new Promise((resolve, reject) => {
-        stream.end((err) => (err ? reject(err) : resolve()));
+        stream.end((err: Error | null | undefined) => (err ? reject(err) : resolve()));
       });
     },
   };
@@ -43,6 +43,7 @@ const apiKey = process.env.GOOGLE_AI_STUDIO_API_KEY ?? process.env.GEMINI_API_KE
 if (!apiKey) {
   throw new Error("GOOGLE_AI_STUDIO_API_KEY or GEMINI_API_KEY environment variable is required");
 }
+const apiKeyStr: string = apiKey;
 
 const BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
 const BASE_DIR = "__mocks__/raw/gemini-direct";
@@ -92,7 +93,7 @@ async function makeDirectCall(
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     // Prefer header auth over query param per Google guidance.
-    "x-goog-api-key": apiKey,
+    "x-goog-api-key": apiKeyStr,
     ...(stream && sse ? { Accept: "text/event-stream" } : {}),
   };
 
@@ -165,7 +166,7 @@ async function makeDirectCall(
       for (const rawLine of rawText.split("\n")) {
         stream.write(rawLine + "\n");
       }
-      await new Promise<void>((resolve, reject) => stream.end(err => err ? reject(err) : resolve()));
+      await new Promise<void>((resolve, reject) => stream.end((err: Error | null | undefined) => (err ? reject(err) : resolve())));
       responseBody = { type: "stream", events: [], rawText };
     }
   } else {
@@ -201,7 +202,7 @@ async function makeDirectCall(
   console.log(`   Status: ${response.status} ${response.statusText}`);
   
   // Per-call writers already closed
-  if (throwOnError && !('ok' in response ? (response as any).ok : (response.status >= 200 && response.status < 300))) {
+  if (throwOnError && !response.ok) {
     const err: any = new Error(`Gemini API error ${response.status} ${response.statusText} at ${endpoint}`);
     err.status = response.status;
     err.statusText = response.statusText;

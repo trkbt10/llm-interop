@@ -117,4 +117,15 @@ export type Provider = {
      */
     autoFallbackToEmulator?: boolean;
   };
+  /** Node-backed coding agent configuration (CLI runners). Not used on web builds. */
+  codingAgent?: {
+    /** Which driver to use: e.g., "claude-code", "codex-cli", "gemini-cli" */
+    kind?: string;
+    /** Path to CLI binary (node runtime only). */
+    binPath: string;
+    /** Extra arguments passed to the binary. */
+    args?: string[];
+    /** Upstream output shape from the CLI. */
+    produces?: "json" | "jsonl" | "text";
+  };
 };

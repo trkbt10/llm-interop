@@ -92,6 +92,7 @@ const responsesWeatherTool = {
     },
     required: ["location"],
   },
+  strict: true,
 };
 
 const responsesCalculatorTool = {
@@ -108,6 +109,7 @@ const responsesCalculatorTool = {
     },
     required: ["expression"],
   },
+  strict: true,
 };
 
 async function captureChatCompletions(baseDir: string, model: string) {
@@ -276,7 +278,7 @@ async function captureResponsesToolRoundTrip(baseDir: string) {
         return { tool_call_id: tc.id, output };
       });
 
-      const second: any = await client.responses.submit_tool_outputs(first.id, { tool_outputs } as any);
+      const second: any = await (client.responses as any).submit_tool_outputs(first.id, { tool_outputs } as any);
       await writer.write(second);
       console.log("✓ Submitted tool outputs and captured follow-up");
     } else {

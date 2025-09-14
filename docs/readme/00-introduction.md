@@ -10,8 +10,8 @@ What you get
 - Drop-in fetch emulators for provider-native SDKs when you need to test those directly.
 - Streaming via Server-Sent Events (SSE), with on-the-fly shape conversion when needed.
 
-How to use
-- See the next section “Unified usage” for a concise copy‑paste example.
+ How to use
+ - See the next section “Unified usage” for a concise copy‑paste example.
 
 Unified usage (recommended)
 ```ts

@@ -4,6 +4,7 @@
 import type { Provider } from "../config/types";
 import { buildOpenAICompatibleClientForClaude } from "../adapters/claude-to-openai/responses-api/openai-compatible";
 import { buildOpenAICompatibleClientForGemini } from "../adapters/gemini-to-openai/openai-compatible";
+import { buildOpenAICompatibleClientForCodingAgent } from "../adapters/coding-agent-to-openai/openai-compatible";
 import { buildOpenAIPassthroughAdapter } from "../adapters/openai-compatible/openai-passthrough";
 import { buildOpenAIGenericAdapter } from "../adapters/openai-compatible";
 import type { OpenAICompatibleClient } from "./openai-client-types";
@@ -32,6 +33,9 @@ export function buildOpenAICompatibleClient(provider: Provider, modelHint?: stri
   }
   if (provider.type === "claude") {
     return buildOpenAICompatibleClientForClaude(provider, modelHint);
+  }
+  if (provider.type === "coding-agent") {
+    return buildOpenAICompatibleClientForCodingAgent(provider, modelHint);
   }
 
   // Use specific adapter for OpenAI, generic adapter for others

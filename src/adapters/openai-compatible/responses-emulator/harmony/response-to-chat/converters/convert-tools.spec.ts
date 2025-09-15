@@ -2,7 +2,7 @@
  * @file Tests for tool conversion to Harmony format.
  */
 import { convertToolsToHarmonyFormat, getBuiltinToolTypes } from "./convert-tools";
-import type { Tool, FunctionTool, WebSearchTool } from "../../types";
+import type { Tool, FunctionTool } from "../../types";
 
 describe("convertToolsToHarmonyFormat", () => {
   it("should return empty string for no tools", () => {
@@ -105,7 +105,8 @@ describe("convertToolsToHarmonyFormat", () => {
 
   it("should ignore built-in tools in main output", () => {
     const tools: Tool[] = [
-      { type: "web_search_preview_2025_03_11" } as WebSearchTool,
+      // Using legacy preview identifier to verify runtime mapping
+      { type: "web_search_preview_2025_03_11" } as Tool,
       { type: "code_interpreter" } as Tool.CodeInterpreter,
       {
         type: "function",
@@ -139,7 +140,7 @@ describe("getBuiltinToolTypes", () => {
   });
 
   it("should detect browser tool for web_search", () => {
-    const tools: Tool[] = [{ type: "web_search_preview_2025_03_11" } as WebSearchTool];
+    const tools: Tool[] = [{ type: "web_search_preview_2025_03_11" } as Tool];
 
     expect(getBuiltinToolTypes(tools)).toEqual(["browser"]);
   });
@@ -152,7 +153,7 @@ describe("getBuiltinToolTypes", () => {
 
   it("should detect both browser and python", () => {
     const tools: Tool[] = [
-      { type: "web_search_preview_2025_03_11" } as WebSearchTool,
+      { type: "web_search_preview_2025_03_11" } as Tool,
       { type: "code_interpreter" } as Tool.CodeInterpreter,
       {
         type: "function",

@@ -48,7 +48,7 @@ export function mapChatToolsToResponses(tools: ChatCompletionCreateParams["tools
         type: "function",
         name: t.function.name,
         description,
-        parameters: params,
+        parameters: params ?? null,
         strict: false,
       };
       out.push(tool);

@@ -85,7 +85,9 @@ export async function* accumulateBlockContent(
   if (remaining.length === 1 && remaining[0] === "\n") {
     for (const block of state.activeBlocks) {
       block.content += "\n";
-      if (block.type === "code") continue;
+      if (block.type === "code") {
+        continue;
+      }
       // For plain text paragraphs, avoid emitting a standalone trailing newline; defer to flush step
       if (block.type === "text") {
         continue;
@@ -150,9 +152,12 @@ export async function* accumulateBlockContent(
 
   // Emit deltas for incremental content using word/space-aware chunking (non-code blocks)
   for (const block of state.activeBlocks) {
-    if (block.type === "code") continue;
+    if (block.type === "code") {
+      continue;
+    }
     const transformed = state.transformBlockContent(block);
     const already = block.lastEmittedLength ?? 0;
+    // eslint-disable-next-line no-restricted-syntax -- Controlled local mutation for newline trimming and chunking
     let piece = transformed.slice(already);
     // If only a newline was added since last emission, emit a single newline delta
     if (piece === "\n") {
@@ -167,10 +172,16 @@ export async function* accumulateBlockContent(
       continue;
     }
     // Let the regular segmentation handle newlines to avoid missing tail text
-    if (block.type === "text" && piece.endsWith("\n") && state.processedIndex + 1 >= state.buffer.length) {
-      piece = piece.slice(0, -1);
+    if (block.type === "text") {
+      if (piece.endsWith("\n")) {
+        if (state.processedIndex + 1 >= state.buffer.length) {
+          piece = piece.slice(0, -1);
+        }
+      }
     }
-    if (piece.length === 0) continue;
+    if (piece.length === 0) {
+      continue;
+    }
 
     // Special handling for list blocks: emit per line to avoid off-by-one due to marker stripping
     if (block.type === "list") {
@@ -191,6 +202,7 @@ export async function* accumulateBlockContent(
 
     const createSegments = (text: string, emphasisMatches: typeof matches): Seg[] => {
       const segments: Seg[] = [];
+      // eslint-disable-next-line no-restricted-syntax -- Index while scanning emphasis boundaries
       let pos = 0;
       for (const m of emphasisMatches) {
         if (m.startIndex > pos) {
@@ -215,14 +227,17 @@ export async function* accumulateBlockContent(
       startConsumed: number,
     ): { chunks: MarkdownParseEvent[]; totalConsumed: number } => {
       const chunks: MarkdownParseEvent[] = [];
+      // eslint-disable-next-line no-restricted-syntax -- Accumulator for emitted characters across segments
       let consumed = startConsumed;
       for (const seg of segs) {
         if (seg.kind === "plain") {
           const processTextSegment = (text: string): { chunks: string[]; flushed: number } => {
             const textChunks: string[] = [];
+            // eslint-disable-next-line no-restricted-syntax -- Local pointer for incremental emission
             let flushed = 0;
             while (flushed < text.length) {
               const rest = text.slice(flushed);
+              // eslint-disable-next-line no-restricted-syntax -- Local buffer for the next emitted chunk
               let out = "";
               if (rest[0] === "\n") {
                 const m = rest.match(/^\n+/);
@@ -233,14 +248,18 @@ export async function* accumulateBlockContent(
               } else {
                 const nextDelim = rest.search(/[ \n]/);
                 if (nextDelim === -1) {
-                  if (rest.length < maxSize) break;
+                  if (rest.length < maxSize) {
+                    break;
+                  }
                   out = rest.slice(0, maxSize);
                 } else {
                   const candidate = rest.slice(0, nextDelim);
                   out = candidate.length >= maxSize ? candidate.slice(0, maxSize) : candidate;
                 }
               }
-              if (!out) break;
+              if (!out) {
+                break;
+              }
               textChunks.push(out);
               flushed += out.length;
             }
@@ -254,9 +273,15 @@ export async function* accumulateBlockContent(
         } else {
           const id = state.generateId();
           const getElementType = (style: string) => {
-            if (style === "strong") return "strong" as const;
-            if (style === "emphasis") return "emphasis" as const;
-            if (style === "strikethrough") return "strikethrough" as const;
+            if (style === "strong") {
+              return "strong" as const;
+            }
+            if (style === "emphasis") {
+              return "emphasis" as const;
+            }
+            if (style === "strikethrough") {
+              return "strikethrough" as const;
+            }
             return "code" as const;
           };
           const elementType = getElementType(seg.style);

@@ -49,11 +49,9 @@ function isResponseStreaming(p: ResponseCreateParams): boolean {
  * @returns Complete OpenAI-compatible client with Chat Completions, Responses, and Models APIs
  */
 export function buildOpenAICompatibleClientForGemini(provider: Provider, modelHint?: string): OpenAICompatibleClient {
-  const apiKey = selectApiKey(provider);
-  if (!apiKey) {
-    throw new Error("Gemini provider requires an apiKey");
-  }
-  const client = new GeminiFetchClient({ apiKey, baseURL: provider.baseURL });
+  const resolvedKey = selectApiKey(provider);
+  // Allow constructing client even without a key (tests and 401 handled upstream if needed)
+  const client = new GeminiFetchClient({ apiKey: resolvedKey ? resolvedKey : "", baseURL: provider.baseURL });
   // eslint-disable-next-line no-restricted-syntax -- State maintained across function calls for performance
   let resolveToolName: ((callId: string) => string | undefined) | undefined;
 

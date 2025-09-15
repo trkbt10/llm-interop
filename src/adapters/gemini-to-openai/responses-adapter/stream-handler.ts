@@ -26,7 +26,11 @@ type StreamState = {
   isInitialized: boolean;
   currentTextItem?: { id: string; text: string };
   textBuffer: string;
-  inCodeBlock: boolean;
+  // Parsing modes stack: text or fenced code block
+  modeStack: Array<
+    | { type: "text" }
+    | { type: "fence"; fenceChar: "`" | "~"; fenceLen: number; info?: string }
+  >;
   pendingEvents: ResponseStreamEvent[];
 };
 
@@ -172,42 +176,91 @@ const createResponseCompleted = (state: StreamState, finishReason?: string): Res
 
 // ===== Helper Functions =====
 
-const processTextBuffer = (state: StreamState): void => {
-  const events: ResponseStreamEvent[] = [];
-  // eslint-disable-next-line no-restricted-syntax -- Required for performance in text processing loop
-  let pos = 0;
-  // eslint-disable-next-line no-restricted-syntax -- Required for performance in text processing loop
-  let lastEmitPos = 0;
+const topMode = (state: StreamState) => state.modeStack[state.modeStack.length - 1];
 
-  while (pos < state.textBuffer.length) {
-    // Track code blocks
-    if (state.textBuffer.substring(pos, pos + 3) === "```") {
-      state.inCodeBlock = !state.inCodeBlock;
-      pos += 3;
-      continue;
+const processTextBuffer = (state: StreamState): void => {
+  const buf = state.textBuffer;
+  // eslint-disable-next-line no-restricted-syntax -- Index pointer for scanning buffer
+  let pos = 0;
+  // eslint-disable-next-line no-restricted-syntax -- Tracks last emitted position to slice deltas efficiently
+  let lastEmit = 0;
+  const events: ResponseStreamEvent[] = [];
+
+  const isLineStart = (i: number) => i === 0 || buf[i - 1] === "\n";
+
+  const countRun = (i: number, ch: string) => {
+    // eslint-disable-next-line no-restricted-syntax -- Local counter for scanning contiguous fence chars
+    let n = 0;
+    while (i + n < buf.length && buf[i + n] === ch) {
+      n++;
+    }
+    return n;
+  };
+
+  while (pos < buf.length) {
+    // Fence detection at line start
+    if (isLineStart(pos)) {
+      const ch = buf[pos];
+      if (ch === "`" || ch === "~") {
+        const run = countRun(pos, ch);
+        if (run >= 3) {
+          // find end of line
+          // eslint-disable-next-line no-restricted-syntax -- Track end-of-line index when scanning fences
+          let lineEnd = buf.indexOf("\n", pos);
+          if (lineEnd === -1) {
+            lineEnd = buf.length;
+          }
+          const fenceLine = buf.substring(pos, lineEnd);
+          const onlyFenceAndSpaces = new RegExp(`^[${ch}]` + `{${run},}\\s*$`).test(fenceLine);
+          const mode = topMode(state);
+          if (mode.type === "fence") {
+            // Closing fence: same char, length >= open, no extra text
+            if (mode.fenceChar === ch && run >= mode.fenceLen && onlyFenceAndSpaces) {
+              // include closing fence line fully
+              const closeEnd = lineEnd < buf.length ? lineEnd + 1 : lineEnd;
+              const chunk = buf.substring(lastEmit, closeEnd);
+              if (chunk) {
+                events.push(createTextDelta(state, chunk));
+              }
+              state.modeStack.pop();
+              lastEmit = closeEnd;
+              pos = closeEnd;
+              continue;
+            }
+          } else {
+            // Opening fence: enter fence mode, postpone emission until closing
+            state.modeStack.push({ type: "fence", fenceChar: ch, fenceLen: run });
+            // move past whole fence line
+            pos = lineEnd < buf.length ? lineEnd + 1 : lineEnd;
+            // do not change lastEmit so that the whole block (including any text before fence line)
+            // is emitted as a single delta at close time
+            continue;
+          }
+        }
+      }
     }
 
-    // Split on \n\n outside code blocks
+    // paragraph split only in text mode
     if (
-      !state.inCodeBlock &&
-      pos + 1 < state.textBuffer.length &&
-      state.textBuffer[pos] === "\n" &&
-      state.textBuffer[pos + 1] === "\n"
+      topMode(state).type === "text" &&
+      buf[pos] === "\n" &&
+      pos + 1 < buf.length &&
+      buf[pos + 1] === "\n"
     ) {
-      // Emit text up to and including \n\n
-      const chunk = state.textBuffer.substring(lastEmitPos, pos + 2);
+      const chunk = buf.substring(lastEmit, pos + 2);
       if (chunk) {
         events.push(createTextDelta(state, chunk));
       }
-      lastEmitPos = pos + 2;
+      lastEmit = pos + 2;
       pos += 2;
       continue;
     }
+
     pos++;
   }
 
-  // Keep unprocessed text in buffer
-  state.textBuffer = state.textBuffer.substring(lastEmitPos);
+  // Keep unprocessed tail in buffer
+  state.textBuffer = buf.substring(lastEmit);
   state.pendingEvents = [...state.pendingEvents, ...events];
 };
 
@@ -298,7 +351,7 @@ const createInitialState = (model: string): StreamState => {
     isInitialized: false,
     currentTextItem: undefined,
     textBuffer: "",
-    inCodeBlock: false,
+    modeStack: [{ type: "text" }],
     pendingEvents: [],
   };
 };

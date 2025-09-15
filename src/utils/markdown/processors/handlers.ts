@@ -22,7 +22,7 @@ export type DetectedBlock = {
 export async function* handleDetectedBlock(
   state: ParserState,
   detected: DetectedBlock,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- keep signature stable for generator contract and future use
   _remaining: string,
 ): AsyncGenerator<MarkdownParseEvent, void, unknown> {
   const id = state.generateId();
@@ -145,6 +145,7 @@ export async function* handleDoubleNewline(
     }
     const transformed = state.transformBlockContent(block);
     const already = block.lastEmittedLength ?? 0;
+    // eslint-disable-next-line no-restricted-syntax -- Local mutation to trim trailing newline for plain text
     let remainder = transformed.slice(already);
     // For plain text paragraphs, don't emit trailing newline to align with trimmed finalContent
     if (block.type === "text" && remainder.endsWith("\n")) {
@@ -159,6 +160,7 @@ export async function* handleDoubleNewline(
 
       const createSegments = (text: string, emphasisMatches: typeof matches): Seg[] => {
         const segments: Seg[] = [];
+        // eslint-disable-next-line no-restricted-syntax -- Index pointer while segmenting by emphasis markers
         let pos = 0;
         for (const m of emphasisMatches) {
           if (m.startIndex > pos) {
@@ -182,9 +184,11 @@ export async function* handleDoubleNewline(
         if (seg.kind === "plain") {
           const processTextSegment = (text: string): string[] => {
             const chunks: string[] = [];
+            // eslint-disable-next-line no-restricted-syntax -- Local pointer for incremental emission
             let flushed = 0;
             while (flushed < text.length) {
               const rest = text.slice(flushed);
+              // eslint-disable-next-line no-restricted-syntax -- Local buffer for the next emitted chunk
               let out = "";
               if (rest[0] === "\n") {
                 const m = rest.match(/^\n+/);
@@ -218,9 +222,15 @@ export async function* handleDoubleNewline(
         } else {
           const id = state.generateId();
           const getElementType = (style: string) => {
-            if (style === "strong") return "strong" as const;
-            if (style === "emphasis") return "emphasis" as const;
-            if (style === "strikethrough") return "strikethrough" as const;
+            if (style === "strong") {
+              return "strong" as const;
+            }
+            if (style === "emphasis") {
+              return "emphasis" as const;
+            }
+            if (style === "strikethrough") {
+              return "strikethrough" as const;
+            }
             return "code" as const;
           };
           const elementType = getElementType(seg.style);

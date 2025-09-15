@@ -28,14 +28,10 @@ export function createStreamingMarkdownParser(config: MarkdownParserConfig = {})
 
     while (state.processedIndex < state.buffer.length) {
       // Prefer the innermost active code block (stack top) for nested fences
-      let activeCodeBlock: BlockState | undefined;
-      for (let i = state.activeBlocks.length - 1; i >= 0; i--) {
-        const b = state.activeBlocks[i];
-        if (b.type === "code") {
-          activeCodeBlock = b;
-          break;
-        }
-      }
+      const activeCodeBlock: BlockState | undefined = state.activeBlocks
+        .slice()
+        .reverse()
+        .find((b) => b.type === "code");
 
       if (activeCodeBlock) {
         // When inside a code fence, process it exclusively
@@ -72,14 +68,13 @@ export function createStreamingMarkdownParser(config: MarkdownParserConfig = {})
       }
       const transformed = state.transformBlockContent(block);
       const already = block.lastEmittedLength ?? 0;
-      let remainder = transformed.slice(already);
-      if (remainder.length === 0) {
+      const rawRemainder = transformed.slice(already);
+      if (rawRemainder.length === 0) {
         continue;
       }
       // For plain text paragraphs, don't emit trailing newline to keep parity with trimmed finalContent
-      if (block.type === "text" && remainder.endsWith("\n")) {
-        remainder = remainder.slice(0, -1);
-      }
+      const remainder =
+        block.type === "text" && rawRemainder.endsWith("\n") ? rawRemainder.slice(0, -1) : rawRemainder;
       if (remainder.length > 0) {
         yield { type: "delta", elementId: block.id, content: remainder };
       }

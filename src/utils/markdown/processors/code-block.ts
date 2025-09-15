@@ -28,7 +28,9 @@ export async function* processCodeBlock(
     state.activeBlocks = state.activeBlocks.filter((b) => b.id !== activeCodeBlock.id);
     state.processedIndex += content.length + endMatch[0].length;
     // Skip single newline after closing fence
-    if (state.buffer[state.processedIndex] === "\n") state.processedIndex++;
+    if (state.buffer[state.processedIndex] === "\n") {
+      state.processedIndex++;
+    }
     return;
   }
 

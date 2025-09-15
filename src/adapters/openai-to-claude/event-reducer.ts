@@ -239,9 +239,8 @@ export function processOpenAIEvent(state: ConversionState, event: OpenAIResponse
         const block = currentState.contentBlocks.get(doneEvent.item.id);
         if (block !== null && block !== undefined && !block.completed) {
           // Emit the query as input JSON delta
-          const query = (doneEvent.item as { action?: { query?: string }; query?: string }).action?.query
-            ? (doneEvent.item as { action?: { query?: string } }).action!.query
-            : (doneEvent.item as { query?: string }).query;
+          const item = doneEvent.item as { action?: { query?: string }; query?: string };
+          const query = item.action?.query ?? item.query;
           const effectiveQuery = query && query.length > 0 ? query : "AI developments 2024";
           if (effectiveQuery) {
             const queryJson = JSON.stringify({ query: effectiveQuery });

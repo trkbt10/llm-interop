@@ -24,7 +24,8 @@ import type { CodingAgentDriver } from "./drivers/types";
 import { createClaudeCodeDriver } from "./drivers/claude-code";
 import { createCodexDriver } from "./drivers/codex-cli";
 import { createGeminiCLIDriver } from "./drivers/gemini-cli";
-import { readFileSync, writeFileSync } from "node:fs";
+import { promises as fsp } from "node:fs";
+import { readFileSafe } from "../../utils/fs";
 import type { ChatCompletionMessageParam, ChatCompletionCreateParamsStreaming, ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
 import { convertResponseInputToMessages } from "../openai-compatible/responses-emulator/responses-adapter/input-converter";
 import { convertChatCompletionToResponse } from "../openai-compatible/responses-emulator/responses-adapter/chat-to-response-converter";
@@ -52,16 +53,16 @@ export function buildOpenAICompatibleClientForCodingAgent(
       const prompt = formatMessagesForClaudeCode(plainMessages);
 
       const driver = selectDriver(provider);
-      const session = createSession();
+      const session = await createSession();
       await driver.start(prompt, session.paths);
 
       if (params.stream) {
         // True incremental streaming from file tail
         return streamTextToChatChunks(model, tailFile(session.paths.outputPath, { idleMs: 400 }));
       }
-      const output = safeRead(session.paths.outputPath);
+      const output = await readFileSafe(session.paths.outputPath);
       if (provider.codingAgent?.produces === "json" && driver.parseResult) {
-        const parsed = driver.parseResult(safeRead(session.paths.resultPath));
+        const parsed = driver.parseResult(await readFileSafe(session.paths.resultPath));
         const text = parsed?.text ?? output;
         return finalizeTextCompletion(model, text);
       }
@@ -175,10 +176,10 @@ function selectDriver(provider: Provider): CodingAgentDriver {
     return {
       async start(prompt, session) {
         const out = `Echo: ${prompt}`;
-        writeFileSync(session.outputPath, out);
+        await fsp.writeFile(session.outputPath, out);
         if (provider.codingAgent?.produces === "json") {
           const json = JSON.stringify({ type: "result", result: out });
-          writeFileSync(session.resultPath ?? "", json);
+          await fsp.writeFile(session.resultPath ?? "", json);
         }
         return {};
       },
@@ -195,13 +196,4 @@ function selectDriver(provider: Provider): CodingAgentDriver {
   throw new Error(`Unsupported coding agent kind: ${kind}`);
 }
 
-function safeRead(path?: string): string {
-  if (!path) {
-    return "";
-  }
-  try {
-    return readFileSync(path, { encoding: "utf8" as BufferEncoding });
-  } catch {
-    return "";
-  }
-}
+// safeRead replaced by readFileSafe util

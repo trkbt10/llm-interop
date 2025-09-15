@@ -1,7 +1,15 @@
+/**
+ * @file Convert a completed markdown string into OpenAI ChatCompletionChunk stream
+ * Emits assistant role prelude and code fences to preserve structure for consumers.
+ */
 import type { ChatCompletionChunk } from "openai/resources/chat/completions";
 import { createStreamingMarkdownParser } from "../../../utils/markdown/streaming-parser";
 import type { MarkdownParseEvent, BeginEvent } from "../../../utils/markdown/types";
 
+/**
+ * Convert full markdown text into a sequence of ChatCompletionChunk items.
+ * Preserves inline code blocks by emitting unicode backticks and language tags.
+ */
 export async function* textToChatChunks(
   model: string,
   text: string,
@@ -60,4 +68,3 @@ function renderEvent(ev: MarkdownParseEvent, openCodes: Set<string>): string {
   }
   return "";
 }
-

@@ -1,7 +1,15 @@
+/**
+ * @file Convert a streaming markdown source into OpenAI ChatCompletionChunk stream
+ * Emits assistant role prelude and code fence boundaries as structured deltas.
+ */
 import type { ChatCompletionChunk } from "openai/resources/chat/completions";
 import { createStreamingMarkdownParser } from "../../../utils/markdown/streaming-parser";
 import type { MarkdownParseEvent, BeginEvent } from "../../../utils/markdown/types";
 
+/**
+ * Convert an AsyncIterable<string> of markdown into ChatCompletionChunk items.
+ * Suitable for piping streaming LLM output while preserving code fence boundaries.
+ */
 export async function* streamTextToChatChunks(
   model: string,
   source: AsyncIterable<string>,
@@ -60,4 +68,3 @@ function renderEvent(ev: MarkdownParseEvent, openCodes: Set<string>): string {
   }
   return "";
 }
-

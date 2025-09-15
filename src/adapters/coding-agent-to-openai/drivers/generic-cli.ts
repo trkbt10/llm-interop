@@ -1,22 +1,15 @@
 /**
  * @file Generic CLI driver implementation for coding-agent adapter
  */
-import { appendFileSync, writeFileSync } from "node:fs";
-import { execFileSync, spawn } from "node:child_process";
+import { createWriteStream } from "node:fs";
+import { promises as fsp } from "node:fs";
+import { execFileString } from "../../../utils/proc/exec";
+import { spawnStream } from "../../../utils/proc/spawn";
 import { assertNoLoginPromptOrThrow, extractErrorText } from "./login-detect";
 import { assertNoCliErrorOutput } from "./error-detect";
 import type { AgentSessionPaths, CodingAgentDriver } from "./types";
-
-function stripCodeFence(text: string): string {
-  const fence = /^```[a-zA-Z0-9_-]*\n([\s\S]*?)```\s*$/m;
-  const trimmed = text.trim();
-  const m = trimmed.match(fence);
-  if (!m) {
-    return text;
-  }
-  const inner0 = m[1];
-  return inner0.endsWith("\n") ? inner0.slice(0, -1) : inner0;
-}
+import { readFileSafe } from "../../../utils/fs";
+import { stripCodeFence } from "../core/text";
 
 function parseJsonResult(stdout: string): { text: string } {
   try {
@@ -39,83 +32,44 @@ export function createGenericCLIDriver(
 ): CodingAgentDriver {
   return {
     async start(prompt: string, session: AgentSessionPaths) {
-      writeFileSync(session.inputPath, prompt);
+      await fsp.writeFile(session.inputPath, prompt);
       const argv = Array.isArray(args) ? [...args] : [];
       if (produces === "text" || produces === "jsonl") {
-        const child = spawn(binPath, argv, { cwd: session.rootDir });
-        let partial = "";
-        child.stdout.on("data", (buf: Buffer) => {
-          const s = buf.toString("utf8");
-          if (produces === "text") {
-            appendFileSync(session.outputPath, s);
-            return;
-          }
-          // jsonl: parse per complete line
-          partial += s;
-          const lines = partial.split(/\r?\n/);
-          partial = lines.pop() ?? "";
-          for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed) continue;
-            try {
-              const obj = JSON.parse(trimmed) as { result?: string };
-              const out = typeof obj.result === "string" ? obj.result : "";
-              if (out) appendFileSync(session.outputPath, out);
-            } catch {
-              // ignore bad line
-            }
-          }
-        });
-        const errChunks: string[] = [];
-        child.stderr.on("data", (buf: Buffer) => errChunks.push(buf.toString("utf8")));
-        await new Promise<void>((resolve, reject) => {
-          child.on("error", reject);
-          child.on("close", (code: number) => {
-            const stderr = errChunks.join("");
-            try {
-              assertNoLoginPromptOrThrow("", stderr);
-              // Additionally check for structured errors in stderr or the output snapshot
-              const snapshot = readOutput(session.outputPath);
-              assertNoCliErrorOutput(snapshot, stderr);
-            } catch (e) {
-              reject(e);
-              return;
-            }
-            // flush trailing partial for jsonl (best-effort)
-            if (produces === "jsonl" && partial.trim()) {
-              try {
-                const obj = JSON.parse(partial.trim()) as { result?: string };
-                const out = typeof obj.result === "string" ? obj.result : "";
-                if (out) appendFileSync(session.outputPath, out);
-              } catch {
-                // ignore
-              }
-            }
-            if (code === 0) resolve();
-            else reject(new Error(`CLI exited with code ${code}`));
-          });
+        const out = createWriteStream(session.outputPath, { encoding: "utf8" as BufferEncoding });
+        await spawnStream({
+          cmd: binPath,
+          args: argv,
+          cwd: session.rootDir,
+          mode: produces === "jsonl" ? "jsonl" : "text",
+          writable: out,
+          onValidateClose: async (stderr: string) => {
+            assertNoLoginPromptOrThrow("", stderr);
+            const snapshot = await readFileSafe(session.outputPath);
+            assertNoCliErrorOutput(snapshot, stderr);
+          },
         });
       } else {
-        let stdout = "";
-        try {
-          stdout = execFileSync(binPath, argv, {
-            input: prompt,
+        const stdout = await execFileString(
+          binPath,
+          argv,
+          {
             encoding: "utf8" as BufferEncoding,
             timeout: 5 * 60 * 1000,
             maxBuffer: 8 * 1024 * 1024,
             cwd: session.rootDir,
-          });
-        } catch (err) {
+          },
+          prompt,
+        ).catch((err) => {
           const text = extractErrorText(err);
           assertNoLoginPromptOrThrow("", text);
           throw err;
-        }
+        });
         assertNoLoginPromptOrThrow(stdout);
         assertNoCliErrorOutput(stdout);
         if (session.resultPath) {
-          writeFileSync(session.resultPath, stdout);
+          await fsp.writeFile(session.resultPath, stdout);
         }
-        writeFileSync(session.outputPath, parseJsonResult(stdout).text);
+        await fsp.writeFile(session.outputPath, parseJsonResult(stdout).text);
       }
       return {};
     },
@@ -128,12 +82,4 @@ export function createGenericCLIDriver(
   };
 }
 
-function readOutput(path: string): string {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fs = require("node:fs") as typeof import("node:fs");
-    return fs.readFileSync(path, { encoding: "utf8" as BufferEncoding });
-  } catch {
-    return "";
-  }
-}
+// No local exec/fs helpers; using shared utils

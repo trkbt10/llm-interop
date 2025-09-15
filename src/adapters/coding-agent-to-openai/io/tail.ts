@@ -1,7 +1,16 @@
-import { readFileSync, statSync } from "node:fs";
+/**
+ * @file File tailing utility used by CLI drivers
+ * Streams appended content until the file stays idle for a short period.
+ */
+import { promises as fsp } from "node:fs";
 
 export type TailOptions = { pollMs?: number; idleMs?: number };
 
+/**
+ * Stream chunks appended to a file, polling until idle.
+ * - Starts reading from the current end (does not emit existing content).
+ * - Yields new slices as they are written; completes after idleMs of no growth once any data has been seen.
+ */
 export async function* tailFile(
   path: string,
   opts: TailOptions = {},
@@ -14,9 +23,9 @@ export async function* tailFile(
     seenAny: boolean;
   };
   for (;;) {
-    const size = safeSize(path);
+    const size = await safeSize(path);
     if (size > state.off) {
-      const content = readFileSync(path, { encoding: "utf8" as BufferEncoding });
+      const content = await fsp.readFile(path, { encoding: "utf8" as BufferEncoding });
       const slice = content.slice(state.off);
       state.off = size;
       state.lastGrowAt = Date.now();
@@ -33,9 +42,10 @@ export async function* tailFile(
   }
 }
 
-function safeSize(path: string): number {
+async function safeSize(path: string): Promise<number> {
   try {
-    return statSync(path).size;
+    const st = await fsp.stat(path);
+    return st.size;
   } catch {
     return 0;
   }

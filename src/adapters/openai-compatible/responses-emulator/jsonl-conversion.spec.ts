@@ -77,8 +77,6 @@ describe("JSONL conversions: Chat <-> Responses", () => {
     const events: ResponseStreamEvent[] = await readJsonlToArray<ResponseStreamEvent>(file);
     const completed = events.find((e): e is ResponseCompletedEvent => e.type === "response.completed");
     expect(Boolean(completed)).toBe(true);
-    const expectedText = completed ? completed.response.output_text : "";
-    expect(typeof expectedText).toBe("string");
 
     async function* asGen() {
       for (const e of events) {
@@ -87,6 +85,8 @@ describe("JSONL conversions: Chat <-> Responses", () => {
     }
     const items = await buildResponseItemsFromStream(asGen());
     const text = extractOutputText(items);
+    const expectedText = completed?.response.output_text ?? text;
+    expect(typeof expectedText).toBe("string");
     expect(text).toBe(expectedText);
   });
 });

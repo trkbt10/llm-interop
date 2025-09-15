@@ -25,7 +25,7 @@ async function* createStreamFromJSONL(jsonlContent: string): AsyncGenerator<Resp
 describe("openAIToClaudeStream", () => {
   it("should convert OpenAI stream chunks to Claude stream events", async () => {
     // Load mock data
-    const mockDataPath = join(__dirname, "../__mocks__/openai-responses-stream-raw.jsonl");
+    const mockDataPath = join(__dirname, "__mocks__/openai-responses-stream-raw.jsonl");
     const jsonlContent = readFileSync(mockDataPath, "utf-8");
 
     // Convert to Claude stream using the reducer
@@ -57,7 +57,7 @@ describe("openAIToClaudeStream", () => {
 
   it("should convert OpenAI web search stream to Claude stream events", async () => {
     // Load mock data
-    const mockDataPath = join(__dirname, "../__mocks__/openai-websearch-stream-raw.jsonl");
+    const mockDataPath = join(__dirname, "__mocks__/openai-websearch-stream-raw.jsonl");
     const jsonlContent = readFileSync(mockDataPath, "utf-8");
 
     // Convert to Claude stream using the reducer

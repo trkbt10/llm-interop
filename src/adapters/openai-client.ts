@@ -44,5 +44,11 @@ export function buildOpenAICompatibleClient(provider: Provider, modelHint?: stri
   }
 
   // Generic OpenAI-compatible providers
-  return buildOpenAIGenericAdapter(provider, modelHint);
+  {
+    const genericProvider: Provider = {
+      ...provider,
+      baseURL: provider.baseURL && provider.baseURL.trim().length > 0 ? provider.baseURL : "http://localhost:11434/v1",
+    };
+    return buildOpenAIGenericAdapter(genericProvider, modelHint);
+  }
 }

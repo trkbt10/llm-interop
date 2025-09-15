@@ -27,7 +27,7 @@ async function* createStreamFromJSONL(jsonlContent: string): AsyncGenerator<Resp
 describe("openAIToClaudeStream - Mixed Blocks", () => {
   it("should convert OpenAI mixed blocks stream to Claude stream events", async () => {
     // Load mock data
-    const mockDataPath = join(__dirname, "../__mocks__/openai-mixed-blocks-raw.jsonl");
+    const mockDataPath = join(__dirname, "__mocks__/openai-mixed-blocks-raw.jsonl");
     const jsonlContent = readFileSync(mockDataPath, "utf-8");
 
     // Convert to Claude stream using the reducer
@@ -74,7 +74,7 @@ describe("openAIToClaudeStream - Mixed Blocks", () => {
   });
 
   it("should handle multiple block types in single stream", async () => {
-    const mockDataPath = join(__dirname, "../__mocks__/openai-mixed-blocks-raw.jsonl");
+    const mockDataPath = join(__dirname, "__mocks__/openai-mixed-blocks-raw.jsonl");
     const jsonlContent = readFileSync(mockDataPath, "utf-8");
 
     const messageId = "msg_mixed_types";
@@ -102,7 +102,7 @@ describe("openAIToClaudeStream - Mixed Blocks", () => {
   });
 
   it("should maintain correct block ordering", async () => {
-    const mockDataPath = join(__dirname, "../__mocks__/openai-mixed-blocks-raw.jsonl");
+    const mockDataPath = join(__dirname, "__mocks__/openai-mixed-blocks-raw.jsonl");
     const jsonlContent = readFileSync(mockDataPath, "utf-8");
 
     const messageId = "msg_block_ordering";

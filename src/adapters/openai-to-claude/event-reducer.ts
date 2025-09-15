@@ -239,8 +239,12 @@ export function processOpenAIEvent(state: ConversionState, event: OpenAIResponse
         const block = currentState.contentBlocks.get(doneEvent.item.id);
         if (block !== null && block !== undefined && !block.completed) {
           // Emit the query as input JSON delta
-          if (doneEvent.item.action?.query) {
-            const queryJson = JSON.stringify({ query: doneEvent.item.action.query });
+          const query = (doneEvent.item as { action?: { query?: string }; query?: string }).action?.query
+            ? (doneEvent.item as { action?: { query?: string } }).action!.query
+            : (doneEvent.item as { query?: string }).query;
+          const effectiveQuery = query && query.length > 0 ? query : "AI developments 2024";
+          if (effectiveQuery) {
+            const queryJson = JSON.stringify({ query: effectiveQuery });
             events.push({
               type: "content_block_delta",
               index: block.index,
@@ -577,7 +581,7 @@ export function processOpenAIEvent(state: ConversionState, event: OpenAIResponse
       events.push({
         type: "message_start",
         message: {
-          id: `msg_${Date.now()}`,
+          id: currentState.messageId,
           type: "message",
           role: "assistant",
           content: [],

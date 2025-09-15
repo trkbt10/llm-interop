@@ -42,7 +42,7 @@ export function mapChatToolsToResponses(tools: ChatCompletionCreateParams["tools
   for (const t of tools) {
     if (isOpenAIChatFunctionTool(t)) {
       const raw = (t.function as { parameters?: unknown }).parameters;
-      const params: Record<string, unknown> | null = isObject(raw) ? (raw as Record<string, unknown>) : null;
+      const params: Record<string, unknown> | undefined = isObject(raw) ? (raw as Record<string, unknown>) : undefined;
       const description = typeof t.function.description === "string" ? t.function.description : undefined;
       const tool: Tool = {
         type: "function",

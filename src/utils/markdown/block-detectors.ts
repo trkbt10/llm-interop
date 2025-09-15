@@ -19,16 +19,21 @@ export type DetectedBlock = {
  * Detect fenced code block (```)
  */
 export function detectCodeBlock(text: string): DetectedBlock | undefined {
-  const match = text.match(/^```([\w-]*)\n?/);
+  // Support 3 or more backticks; capture exact fence to require matching close fence
+  const match = text.match(/^(```+)([^\n]*)\n?/);
   if (!match || match.index !== 0) {
     return undefined;
   }
 
+  const fence = match[1];
+  const langSpec = match[2].trim();
+  const language = langSpec ? langSpec.split(/\s+/)[0] : "text";
+
   return {
     type: "code",
-    metadata: { language: match[1] ? match[1] : "text" },
+    metadata: { language },
     startMarker: match[0],
-    endMarker: "```",
+    endMarker: fence,
     matchLength: match[0].length,
   };
 }

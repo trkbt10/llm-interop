@@ -141,7 +141,9 @@ export function processListContent(content: string, metadata?: MarkdownElementMe
     processedLines.push(line);
   }
 
-  return processedLines.join("\n");
+  const joined = processedLines.join("\n");
+  // Preserve trailing newline if present in original content
+  return content.endsWith("\n") ? `${joined}\n` : joined;
 }
 
 // Factory function for creating block states

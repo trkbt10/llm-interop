@@ -44,8 +44,12 @@ describe("StreamingMarkdownParser - cross-validation-example.md", () => {
     for await (const event of parser.processChunk(content)) {
       events.push(event);
     }
+    for await (const event of parser.complete()) {
+      events.push(event);
+    }
 
-    const endEvent = events.find((e): e is EndEvent => e.type === "end");
+    const codeBegin = events.find((e): e is BeginEvent => e.type === "begin" && e.elementType === "code");
+    const endEvent = events.find((e): e is EndEvent => e.type === "end" && e.elementId === codeBegin?.elementId);
 
     // Check for key parts of the code
     expect(endEvent?.finalContent).toContain("import numpy as np");

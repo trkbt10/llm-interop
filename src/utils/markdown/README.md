@@ -7,12 +7,25 @@ This module provides a generic streaming markdown parser that can be used across
 ### Basic Usage
 
 ````typescript
-import { StreamingMarkdownParser } from "./src/utils/markdown/streaming-parser";
+import { createStreamingMarkdownParser } from "./src/utils/markdown/streaming-parser";
 
-const parser = new StreamingMarkdownParser();
+const parser = createStreamingMarkdownParser();
 
-// Process text chunks as they arrive
-for await (const event of parser.processChunk("# Hello\n```js\nconsole.log('test');\n```")) {
+// 1) Stream: consume an AsyncIterable<string>
+async function* source() {
+  yield "# Hello\n";
+  yield "```js\nconsole.log('test');\n```";
+}
+
+for await (const event of parser.processStream(source())) {
+  console.log(event);
+}
+
+// 2) Single text: call complete() after the last chunk
+for await (const event of parser.processChunk("# Title\nBody")) {
+  console.log(event);
+}
+for await (const event of parser.complete()) {
   console.log(event);
 }
 ````
@@ -20,28 +33,21 @@ for await (const event of parser.processChunk("# Hello\n```js\nconsole.log('test
 ### Provider-Specific Implementation
 
 ```typescript
-import { StreamingMarkdownParser } from "./src/utils/markdown/streaming-parser";
+import { createStreamingMarkdownParser } from "./src/utils/markdown/streaming-parser";
 import type { MarkdownParseEvent } from "./src/utils/markdown/types";
 
 // Create a provider-specific parser
-export class ClaudeMarkdownParser extends StreamingMarkdownParser {
-  constructor() {
-    super({
+const parser = createStreamingMarkdownParser({
       idPrefix: "claude",
       preserveWhitespace: true,
       // Enable only specific elements
       enabledElements: new Set(["code", "header", "list"]),
-    });
-  }
+});
 
-  // Override to add custom behavior
-  async *processChunk(text: string): AsyncGenerator<MarkdownParseEvent> {
-    // Pre-process Claude-specific formatting
-    const processedText = text.replace(/\[CLAUDE\]/g, "");
-
-    // Use parent implementation
-    yield* super.processChunk(processedText);
-  }
+// Pre-process then feed chunks
+const input = "[CLAUDE] **bold**".replace(/\[CLAUDE\]/g, "");
+for await (const ev of parser.processChunk(input)) {
+  // ...
 }
 ```
 

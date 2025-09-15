@@ -17,6 +17,9 @@ describe("StreamingMarkdownParser - simple-text.md", () => {
     for await (const event of parser.processChunk(content)) {
       events.push(event);
     }
+    for await (const event of parser.complete()) {
+      events.push(event);
+    }
 
     // Should produce begin/delta/end events for text paragraphs
     const begins = events.filter((e) => e.type === "begin");

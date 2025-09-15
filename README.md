@@ -1,5 +1,7 @@
 # llm-interop — Introduction
 
+One interface, many LLM providers. Swap backends without rewriting your app.
+
 llm-interop is a lightweight toolkit that helps you interoperate between popular LLM providers while keeping your app code simple. It focuses on two things:
 
 - Emulating HTTP endpoints as a fetch-compatible function so SDKs can be driven locally without a real server.
@@ -29,6 +31,25 @@ const res = await client.responses.create({ model: "gpt-5-mini", input: "Hello" 
 Notes
 - Works in Node and any runtime with `fetch`.
 - Provide real API keys for the selected `provider.type` via your environment.
+
+# Supported Providers
+
+Matrix by API and streaming mode, as implemented in adapters and fetch ports.
+
+| Provider | `provider.type` | Responses API (sync) | Responses API (stream) | Chat Completions (sync) | Chat Completions (stream) | Models list |
+| --- | --- | --- | --- | --- | --- | --- |
+| OpenAI | `openai` | Yes (native) | Yes (native) | Yes (native) | Yes (native) | Yes |
+| Anthropic Claude | `claude` | Yes (converted) | Yes (converted) | Yes (converted) | Yes (converted) | Yes |
+| Google Gemini | `gemini` | Yes (converted) | Yes (converted) | Yes (converted) | Yes (converted) | Yes |
+| x.ai Grok (OpenAI‑compatible) | `grok` | Yes (native if upstream exposes /v1/responses; else emulated via Chat) | Yes (native or emulated) | Yes (native) | Yes (native) | Yes |
+| Groq (OpenAI‑compatible) | `groq` | Emulated via Chat (set `openaiCompat.emulateResponsesWithChat`) | Emulated via Chat | Yes (native) | Yes (native) | Yes |
+| Other OpenAI‑compatible vendors | any string | Native if upstream supports /v1/responses; otherwise emulated via Chat | Native or emulated | Yes (native) | Yes (native) | Yes |
+
+Notes
+- For OpenAI‑compatible vendors that do not implement `/v1/responses`, enable `openaiCompat.emulateResponsesWithChat` and optionally `openaiCompat.autoFallbackToEmulator`.
+- Streaming is SSE where applicable; Gemini can stream via SSE or JSONL and is converted to OpenAI stream events.
+- The OpenAI emulator also provides a debug‑only Ollama‑style route `GET /api/tags` (not a real Ollama backend).
+- Local Coding Agent support is documented separately and not part of this matrix (see "Coding‑Agent Backend").
 
 # Configuration Reference
 
@@ -350,6 +371,14 @@ Notes
 # Coding‑Agent Backend
 
 This adapter lets you run a local coding agent (e.g., Claude Code, Codex CLI, Gemini CLI) behind the unified OpenAI‑compatible surface. It translates the agent's stdout into markdown deltas and exposes both Chat Completions and Responses APIs (sync/stream).
+
+## Capabilities Matrix
+
+| API | sync | stream |
+| --- | --- | --- |
+| Responses API | Yes (emulated over Chat) | Yes (emulated) |
+| Chat Completions | Yes | Yes |
+| Models list | Stub (single configured id) | – |
 
 ## What it does
 

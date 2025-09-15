@@ -1,5 +1,7 @@
 # llm-interop — Introduction
 
+One interface, many LLM providers. Swap backends without rewriting your app.
+
 llm-interop is a lightweight toolkit that helps you interoperate between popular LLM providers while keeping your app code simple. It focuses on two things:
 
 - Emulating HTTP endpoints as a fetch-compatible function so SDKs can be driven locally without a real server.

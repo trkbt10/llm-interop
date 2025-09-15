@@ -2,6 +2,14 @@
 
 This adapter lets you run a local coding agent (e.g., Claude Code, Codex CLI, Gemini CLI) behind the unified OpenAI‑compatible surface. It translates the agent's stdout into markdown deltas and exposes both Chat Completions and Responses APIs (sync/stream).
 
+## Capabilities Matrix
+
+| API | sync | stream |
+| --- | --- | --- |
+| Responses API | Yes (emulated over Chat) | Yes (emulated) |
+| Chat Completions | Yes | Yes |
+| Models list | Stub (single configured id) | – |
+
 ## What it does
 
 - Spawns a CLI coding agent in a fresh tmp session (no edits to your repo). All I/O happens under `tmp/coding-agent-XXXXXX`:

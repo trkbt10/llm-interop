@@ -25,7 +25,7 @@ export async function* tailFile(
   for (;;) {
     const size = await safeSize(path);
     if (size > state.off) {
-      const content = await fsp.readFile(path, { encoding: "utf8" as BufferEncoding });
+      const content = await readFileStrict(path, pollMs);
       const slice = content.slice(state.off);
       state.off = size;
       state.lastGrowAt = Date.now();
@@ -46,7 +46,25 @@ async function safeSize(path: string): Promise<number> {
   try {
     const st = await fsp.stat(path);
     return st.size;
-  } catch {
-    return 0;
+  } catch (err) {
+    const e = err as NodeJS.ErrnoException;
+    if (e && e.code === "ENOENT") {
+      return 0;
+    }
+    throw err;
+  }
+}
+
+async function readFileStrict(path: string, delayMs: number): Promise<string> {
+  try {
+    return await fsp.readFile(path, { encoding: "utf8" as BufferEncoding });
+  } catch (err) {
+    const e = err as NodeJS.ErrnoException;
+    if (e && e.code === "ENOENT") {
+      // File disappeared between stat and read; treat as no data this tick
+      await new Promise((r) => setTimeout(r, delayMs));
+      return "";
+    }
+    throw err;
   }
 }

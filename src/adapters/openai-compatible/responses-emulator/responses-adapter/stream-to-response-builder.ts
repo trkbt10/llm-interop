@@ -8,6 +8,7 @@ import type {
   ResponseOutputMessage,
   ResponseOutputText,
   ResponseTextDeltaEvent,
+  ResponseTextDoneEvent,
   ResponseFunctionCallArgumentsDeltaEvent,
   ResponseFunctionCallArgumentsDoneEvent,
   ResponseOutputItemAddedEvent,
@@ -114,6 +115,10 @@ function processStreamEvent(event: ResponseStreamEvent, state: ResponseBuilderSt
 
     case "response.output_text.delta":
       handleTextDelta(event, state);
+      break;
+
+    case "response.output_text.done":
+      handleTextDone(event as ResponseTextDoneEvent, state);
       break;
 
     case "response.function_call_arguments.delta":
@@ -235,6 +240,27 @@ function handleTextDelta(event: ResponseTextDeltaEvent, state: ResponseBuilderSt
   if (state.currentText !== undefined) {
     state.currentText += event.delta;
   }
+}
+
+function handleTextDone(event: ResponseTextDoneEvent, state: ResponseBuilderState): void {
+  // Ensure a message container exists
+  if (!state.currentMessage) {
+    state.currentMessage = { type: "message", role: "assistant", content: [] } as Partial<ResponseOutputMessage>;
+  }
+  if (!state.currentMessage.content) {
+    state.currentMessage.content = [];
+  }
+  const text: string = (event as { text?: string }).text ?? state.currentText ?? "";
+  if (text.length > 0) {
+    const textContent: ResponseOutputText = {
+      type: "output_text",
+      text,
+      annotations: [],
+      logprobs: [],
+    };
+    state.currentMessage.content.push(textContent);
+  }
+  state.currentText = undefined;
 }
 
 function handleFunctionCallArgumentsDelta(

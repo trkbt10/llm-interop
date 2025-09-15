@@ -31,15 +31,7 @@ export async function* streamTextToChatChunks(
 
   const parser = createStreamingMarkdownParser({});
   const openCodes = new Set<string>();
-  for await (const piece of source) {
-    for await (const ev of parser.processChunk(piece)) {
-      const s = renderEvent(ev, openCodes);
-      if (s) {
-        yield mk({ content: s });
-      }
-    }
-  }
-  for await (const ev of parser.complete()) {
+  for await (const ev of parser.processStream(source)) {
     const s = renderEvent(ev, openCodes);
     if (s) {
       yield mk({ content: s });

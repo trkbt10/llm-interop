@@ -93,6 +93,10 @@ export function validateGeminiResponseLike(v: unknown, path = "$"): Issue[] {
     push(issues, path, "not an object");
     return issues;
   }
+  // Accept Google error envelope objects for fixture screening
+  if ("error" in (v as Record<string, unknown>)) {
+    return issues;
+  }
   const cands = (v as Record<string, unknown>).candidates;
   if (!Array.isArray(cands)) {
     push(issues, `${path}.candidates`, "missing candidates[]");

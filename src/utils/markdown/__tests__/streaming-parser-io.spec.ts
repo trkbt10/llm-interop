@@ -42,6 +42,11 @@ describe("StreamingMarkdownParser - IO Operations", () => {
         }
       }
 
+      // Ensure closure (in case chunk boundary left a trailing partial)
+      for await (const event of parser.complete()) {
+        events.push(event);
+      }
+
       // Should still produce valid events
       const beginEvents = events.filter((e) => e.type === "begin");
       const endEvents = events.filter((e) => e.type === "end");

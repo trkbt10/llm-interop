@@ -25,10 +25,20 @@ export type ParserState = {
   idCounter: number;
   config: MarkdownParserConfig;
 
+  // Unified mode stack for true recursion (top-of-stack drives processing)
+  modeStack: Array<
+    | { kind: "text" }
+    | { kind: "fence"; fenceChar: string; fenceLen: number; info?: string; blockId: string }
+  >;
+
   // Methods
   generateId(): string;
   processBlockContent(block: BlockState): string;
   transformBlockContent(block: BlockState): string;
+  pushTextMode(): void;
+  pushFenceMode(fenceChar: string, fenceLen: number, info: string | undefined, blockId: string): void;
+  popMode(): void;
+  topMode(): ParserState["modeStack"][number];
   reset(): void;
 };
 
@@ -59,6 +69,7 @@ export function createParserState(config: MarkdownParserConfig = {}): ParserStat
     activeBlocks: [],
     idCounter: 0,
     config: mergedConfig,
+    modeStack: [{ kind: "text" }],
 
     generateId(): string {
       return `${this.config.idPrefix}-${++this.idCounter}`;
@@ -82,10 +93,29 @@ export function createParserState(config: MarkdownParserConfig = {}): ParserStat
       return stripInlineEmphasis(block.content);
     },
 
+    pushTextMode(): void {
+      this.modeStack.push({ kind: "text" });
+    },
+
+    pushFenceMode(fenceChar: string, fenceLen: number, info: string | undefined, blockId: string): void {
+      this.modeStack.push({ kind: "fence", fenceChar, fenceLen, info, blockId });
+    },
+
+    popMode(): void {
+      if (this.modeStack.length > 1) {
+        this.modeStack.pop();
+      }
+    },
+
+    topMode() {
+      return this.modeStack[this.modeStack.length - 1];
+    },
+
     reset(): void {
       this.buffer = "";
       this.processedIndex = 0;
       this.activeBlocks = [];
+      this.modeStack = [{ kind: "text" }];
       // Keep idCounter to ensure unique IDs across resets
     },
   };

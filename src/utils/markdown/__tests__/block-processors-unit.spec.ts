@@ -230,7 +230,7 @@ describe("Block Processors - Unit Tests", () => {
       expect(state.processedIndex).toBe(1);
     });
 
-    it("should emit delta on newline", async () => {
+    it("should not emit standalone trailing newline delta for text (defer to flush)", async () => {
       const state = createParserState();
       state.buffer = "line\n";
       state.processedIndex = 4;
@@ -244,8 +244,8 @@ describe("Block Processors - Unit Tests", () => {
         events.push(event);
       }
 
-      expect(events).toHaveLength(1);
-      expect(events[0].type).toBe("delta");
+      // For text blocks, trailing single newline at buffer end is not emitted immediately
+      expect(events).toHaveLength(0);
       expect(block.content).toBe("line\n");
       expect(state.processedIndex).toBe(5);
     });

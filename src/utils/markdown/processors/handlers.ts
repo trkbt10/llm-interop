@@ -108,7 +108,7 @@ export async function* handleDetectedBlock(
   }
 
   // Multi-line block: activate
-  state.activeBlocks.push({
+  const newBlock = {
     id,
     type: detected.type as MarkdownElementType,
     content: "",
@@ -117,8 +117,17 @@ export async function* handleDetectedBlock(
     endMarker: detected.endMarker,
     contentStartIndex: state.processedIndex + detected.matchLength,
     lastEmittedLength: 0,
-  });
+  };
+  state.activeBlocks.push(newBlock);
   state.processedIndex += detected.matchLength;
+
+  // Push fence mode for code blocks to enable true nesting
+  if (detected.type === "code" && detected.endMarker) {
+    const fenceChar = detected.endMarker[0] ?? "`";
+    const fenceLen = detected.endMarker.length;
+    const info = typeof detected.metadata?.language === "string" ? detected.metadata.language : undefined;
+    state.pushFenceMode(fenceChar, fenceLen, info, id);
+  }
 }
 
 /**
@@ -230,4 +239,3 @@ export async function* handleDoubleNewline(
   state.activeBlocks = state.activeBlocks.filter((b) => b.endMarker !== undefined);
   state.processedIndex += 2;
 }
-

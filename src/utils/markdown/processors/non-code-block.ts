@@ -81,6 +81,26 @@ export async function* accumulateBlockContent(
   state: ParserState,
   remaining: string,
 ): AsyncGenerator<MarkdownParseEvent, void, unknown> {
+  // If the remaining input is exactly a single newline, emit a single newline delta
+  if (remaining.length === 1 && remaining[0] === "\n") {
+    for (const block of state.activeBlocks) {
+      block.content += "\n";
+      if (block.type === "code") continue;
+      // For plain text paragraphs, avoid emitting a standalone trailing newline; defer to flush step
+      if (block.type === "text") {
+        continue;
+      }
+      const transformedNow = state.transformBlockContent(block);
+      const already = block.lastEmittedLength ?? 0;
+      const piece = transformedNow.slice(already);
+      if (piece.length > 0) {
+        yield { type: "delta", elementId: block.id, content: piece };
+        block.lastEmittedLength = already + piece.length;
+      }
+    }
+    state.processedIndex += 1;
+    return;
+  }
   const quoteBlocks = state.activeBlocks.filter((b) => b.type === "quote");
   if (quoteBlocks.length > 0 && remaining[0] === "\n") {
     const canDecide = remaining.length >= 2;
@@ -134,8 +154,14 @@ export async function* accumulateBlockContent(
     const transformed = state.transformBlockContent(block);
     const already = block.lastEmittedLength ?? 0;
     let piece = transformed.slice(already);
-    // Fast-path: if the just-accumulated char is a newline, emit a single newline delta
-    if (remaining[0] === "\n") {
+    // If only a newline was added since last emission, emit a single newline delta
+    if (piece === "\n") {
+      yield { type: "delta", elementId: block.id, content: "\n" };
+      block.lastEmittedLength = already + 1;
+      continue;
+    }
+    // Fast-path: if the just-accumulated char is a newline AND there is no other new text pending, emit it
+    if (remaining[0] === "\n" && piece.length === 1) {
       yield { type: "delta", elementId: block.id, content: "\n" };
       block.lastEmittedLength = transformed.length;
       continue;

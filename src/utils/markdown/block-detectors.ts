@@ -16,24 +16,28 @@ export type DetectedBlock = {
 };
 
 /**
- * Detect fenced code block (```)
+ * Detect fenced code block (``` or ~~~), CommonMark-style
+ * - Only at beginning of line
+ * - Capture fence char and length (>=3)
+ * - Info string (language etc.) is captured as metadata (first token)
  */
 export function detectCodeBlock(text: string): DetectedBlock | undefined {
-  // Support 3 or more backticks; capture exact fence to require matching close fence
-  const match = text.match(/^(```+)([^\n]*)\n?/);
+  // Matches line-start fences of backticks or tildes with length >= 3
+  // Require newline at end of the opening fence line to avoid half-line starts across chunks
+  const match = text.match(/^((`|~)\2{2,})([^\n]*)\n/);
   if (!match || match.index !== 0) {
     return undefined;
   }
 
-  const fence = match[1];
-  const langSpec = match[2].trim();
-  const language = langSpec ? langSpec.split(/\s+/)[0] : "text";
+  const fence = match[1]; // sequence of ` or ~ of length >= 3
+  const info = (match[3] ?? "").trim();
+  const language = info ? info.split(/\s+/)[0] : "text";
 
   return {
     type: "code",
-    metadata: { language },
+    metadata: { language, fenceChar: fence[0], fenceLen: fence.length },
     startMarker: match[0],
-    endMarker: fence,
+    endMarker: fence, // store opening fence sequence for reference
     matchLength: match[0].length,
   };
 }

@@ -4,6 +4,7 @@
  */
 
 import type { MarkdownParseEvent, MarkdownParserConfig } from "./types";
+import type { BlockState } from "./parser-state";
 
 import { createParserState } from "./parser-state";
 import { processCodeBlock, processNonCodeBlock } from "./block-processors";
@@ -26,9 +27,18 @@ export function createStreamingMarkdownParser(config: MarkdownParserConfig = {})
     state.buffer += text;
 
     while (state.processedIndex < state.buffer.length) {
-      const activeCodeBlock = state.activeBlocks.find((b) => b.type === "code");
+      // Prefer the innermost active code block (stack top) for nested fences
+      let activeCodeBlock: BlockState | undefined;
+      for (let i = state.activeBlocks.length - 1; i >= 0; i--) {
+        const b = state.activeBlocks[i];
+        if (b.type === "code") {
+          activeCodeBlock = b;
+          break;
+        }
+      }
 
       if (activeCodeBlock) {
+        // When inside a code fence, process it exclusively
         yield* processCodeBlock(state, activeCodeBlock);
         continue;
       }

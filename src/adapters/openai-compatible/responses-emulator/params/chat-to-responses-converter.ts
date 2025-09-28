@@ -15,7 +15,11 @@ import type {
   ResponseCreateParamsNonStreaming,
   ResponseCreateParamsStreaming,
 } from "openai/resources/responses/responses";
-import { buildResponseInputFromChatMessages, mapChatToolsToResponses, mapChatToolChoiceToResponses } from "./converter";
+import {
+  buildResponseInputFromChatMessages,
+  mapChatToolsToResponses,
+  mapChatToolChoiceToResponses,
+} from "../../chat/converters/chat-to-responses";
 
 /**
  * Convert ChatCompletionCreateParams to ResponseCreateParams

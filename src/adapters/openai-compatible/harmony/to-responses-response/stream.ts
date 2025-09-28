@@ -31,11 +31,15 @@ export async function* createHarmonyToResponsesStream(
 
   for await (const chunk of chunks) {
     const frames = parser.push(chunk);
-    yield* emitFrames(builder, frames);
+    for (const event of emitFrames(builder, frames)) {
+      yield event;
+    }
   }
 
   const trailingFrames = parser.flush();
-  yield* emitFrames(builder, trailingFrames);
+  for (const event of emitFrames(builder, trailingFrames)) {
+    yield event;
+  }
 
   for (const event of builder.finish()) {
     yield event;

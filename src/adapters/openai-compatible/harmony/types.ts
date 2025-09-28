@@ -3,7 +3,12 @@
  */
 
 import type {
-  Tool,
+  Tool as ResponsesTool,
+  FunctionTool as ResponsesFunctionTool,
+  ResponseCreateParamsBase as ResponsesCreateParamsBase,
+  ResponseInputMessageContentList as ResponsesInputMessageContentList,
+  ResponseOutputRefusal as ResponsesOutputRefusal,
+  ResponseOutputText as ResponsesOutputText,
   ResponseTextConfig,
   ToolChoiceOptions,
   ToolChoiceAllowed,
@@ -12,6 +17,7 @@ import type {
   ToolChoiceMcp,
   ToolChoiceCustom,
 } from "openai/resources/responses/responses";
+import type { Reasoning as ResponsesReasoning } from "openai/resources/shared";
 
 export type ToolChoice =
   | ToolChoiceOptions
@@ -20,6 +26,14 @@ export type ToolChoice =
   | ToolChoiceCustom
   | ToolChoiceTypes
   | ToolChoiceMcp;
+
+export type Tool = ResponsesTool;
+export type FunctionTool = ResponsesFunctionTool;
+export type ResponseCreateParamsBase = ResponsesCreateParamsBase;
+export type ResponseOutputText = ResponsesOutputText;
+export type ResponseOutputRefusal = ResponsesOutputRefusal;
+export type ResponseInputMessageContentList = ResponsesInputMessageContentList;
+export type Reasoning = ResponsesReasoning;
 
 // Import constants
 import type {

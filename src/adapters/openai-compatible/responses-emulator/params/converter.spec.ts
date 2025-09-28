@@ -8,7 +8,7 @@ import {
   convertOpenAIChatToolToResponsesTool,
   mapChatToolChoiceToResponses,
   buildResponseInputFromChatMessages,
-} from "./converter";
+} from "../../chat/converters/chat-to-responses";
 import type { ChatCompletionTool, ChatCompletionContentPart } from "openai/resources/chat/completions";
 import type { ResponseInputItem } from "openai/resources/responses/responses";
 import { isResponseInputMessage } from "../../harmony/utils/type-guards";

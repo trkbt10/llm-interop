@@ -202,7 +202,10 @@ export const createHarmonyResponsesEventBuilder = (
     }
 
     state.text += addition;
-    state.item.content[0].text = state.text;
+    const firstContent = state.item.content[0];
+    if (firstContent && firstContent.type === "output_text") {
+      firstContent.text = state.text;
+    }
 
     return events;
   };
@@ -227,7 +230,10 @@ export const createHarmonyResponsesEventBuilder = (
     }
 
     state.text += addition;
-    state.item.content[0].text = state.text;
+    const firstContent = state.item.content[0];
+    if (firstContent && firstContent.type === "output_text") {
+      firstContent.text = state.text;
+    }
 
     return events;
   };

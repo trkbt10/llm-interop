@@ -310,13 +310,23 @@ export const createHarmonyStreamParser = (): HarmonyStreamParser => {
     const recipient = recipientRaw ? recipientRaw.trim() : undefined;
     const role = state.currentMessage.role ?? state.currentRole;
 
+    const implicitToolCall = shouldTreatAsImplicitToolCall({
+      channel,
+      recipient,
+      constrainType: state.currentMessage.constrainType,
+      content,
+    });
+
+    const finalStop: HarmonyStopReason = stopReason === "call" || implicitToolCall ? "call" : stopReason;
+    const isToolCall = finalStop === "call";
+
     const message: ParsedHarmonyMessage = {
       channel,
       content,
       recipient,
       constrainType: state.currentMessage.constrainType,
-      isToolCall: stopReason === "call",
-      stopReason,
+      isToolCall,
+      stopReason: finalStop,
       role,
     };
 
@@ -421,6 +431,36 @@ const normalizeChannel = (value?: string): ParsedHarmonyMessage["channel"] => {
     default:
       throw createHarmonyParseError("Unknown harmony channel", { channel: value });
   }
+};
+
+const shouldTreatAsImplicitToolCall = ({
+  channel,
+  recipient,
+  constrainType,
+  content,
+}: {
+  channel?: ParsedHarmonyMessage["channel"];
+  recipient?: string;
+  constrainType?: string;
+  content?: string;
+}): boolean => {
+  if (channel !== HARMONY_CHANNELS.COMMENTARY) {
+    return false;
+  }
+  if (!recipient || !recipient.startsWith(`${FUNCTION_NAMESPACE}.`)) {
+    return false;
+  }
+  if (constrainType && constrainType.toLowerCase() !== "json") {
+    return false;
+  }
+  const body = content?.trim();
+  if (!body) {
+    return false;
+  }
+  if (!(body.startsWith("{") || body.startsWith("["))) {
+    return false;
+  }
+  return true;
 };
 
 const normalizeContent = (raw: string): string => {

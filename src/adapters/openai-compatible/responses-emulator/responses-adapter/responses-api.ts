@@ -16,6 +16,7 @@ import { convertToolsForChat, convertToolChoiceForChat } from "./tool-converter"
 import { harmonizeResponseParams, type HarmonizerOptions } from "../../harmony/response-to-chat";
 import { convertHarmonyToResponses } from "../../harmony/to-responses-response/converter";
 import { createHarmonyToResponsesStream } from "../../harmony/to-responses-response/stream";
+import { mapChatToolCallsToHarmony } from "../../harmony/to-responses-response/map-chat-tool-calls";
 
 /**
  * ResponsesAPI class that converts between Responses API and Chat Completions API
@@ -150,8 +151,9 @@ export class ResponsesAPI {
       // Convert Harmony-styled output to a final Responses object via events
       const msg = completion.choices?.[0]?.message;
       const contentStr: string = typeof msg?.content === "string" ? msg.content : String(msg?.content ?? "");
+      const harmonyToolCalls = mapChatToolCallsToHarmony(msg?.tool_calls);
       const events = await convertHarmonyToResponses(
-        { role: "assistant", content: contentStr },
+        { role: "assistant", content: contentStr, tool_calls: harmonyToolCalls },
         { requestId: completion.id, model: completion.model, stream: false },
       );
       // Find response.completed

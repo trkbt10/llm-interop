@@ -11,9 +11,9 @@ import OpenAI, { OpenAI as OpenAIClass } from "openai";
 import type { ChatCompletionCreateParams, ChatCompletion } from "openai/resources/chat/completions";
 import { prepareJsonlWriter } from "../../src/utils/jsonl/helpers";
 
-import type { ResponseCreateParamsBase } from "../../src/adapters/openai-compatible/responses-emulator/harmony/types";
-import { harmonizeResponseParams } from "../../src/adapters/openai-compatible/responses-emulator/harmony/response-to-chat/index";
-import { extractChatCompletionParams } from "../../src/adapters/openai-compatible/responses-emulator/harmony/utils/extract-chat-params";
+import type { ResponseCreateParamsBase } from "../../src/adapters/openai-compatible/harmony/types";
+import { harmonizeResponseParams } from "../../src/adapters/openai-compatible/harmony/response-to-chat/index";
+import { extractChatCompletionParams } from "../../src/adapters/openai-compatible/harmony/utils/extract-chat-params";
 import {
   convertToolsForChat,
   convertToolChoiceForChat,

@@ -11,7 +11,7 @@ import {
 } from "./converter";
 import type { ChatCompletionTool, ChatCompletionContentPart } from "openai/resources/chat/completions";
 import type { ResponseInputItem } from "openai/resources/responses/responses";
-import { isResponseInputMessage } from "../harmony/utils/type-guards";
+import { isResponseInputMessage } from "../../harmony/utils/type-guards";
 
 describe("converter utilities", () => {
   describe("extractTextFromContent", () => {

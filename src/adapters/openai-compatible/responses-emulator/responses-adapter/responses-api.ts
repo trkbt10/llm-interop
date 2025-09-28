@@ -13,9 +13,9 @@ import { convertChatCompletionToResponse } from "./chat-to-response-converter";
 import { createStreamHandlerState, handleStream } from "./stream-handler";
 import { convertResponseInputToMessages } from "./input-converter";
 import { convertToolsForChat, convertToolChoiceForChat } from "./tool-converter";
-import { harmonizeResponseParams, type HarmonizerOptions } from "../harmony/response-to-chat";
-import { convertHarmonyToResponses } from "../harmony/to-responses-response/converter";
-import { createHarmonyToResponsesStream } from "../harmony/to-responses-response/stream";
+import { harmonizeResponseParams, type HarmonizerOptions } from "../../harmony/response-to-chat";
+import { convertHarmonyToResponses } from "../../harmony/to-responses-response/converter";
+import { createHarmonyToResponsesStream } from "../../harmony/to-responses-response/stream";
 
 /**
  * ResponsesAPI class that converts between Responses API and Chat Completions API

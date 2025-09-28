@@ -42,7 +42,8 @@ You usually don’t need these when `transformHarmony` is enabled, but the low�
 
 Convert a single Harmony response to Responses events
 ```ts
-import { convertHarmonyToResponses, type HarmonyMessage } from "llm-interop/adapters/openai-compatible/responses-emulator/harmony";
+import { convertHarmonyToResponses } from "llm-interop/adapters/openai-compatible/harmony/to-responses-response/converter";
+import type { HarmonyMessage } from "llm-interop/adapters/openai-compatible/harmony/types";
 
 const harmony: HarmonyMessage = { role: "assistant", messages: [{ channel: "final", content: "Hello from Harmony" }] };
 const events = await convertHarmonyToResponses(harmony, { stream: false, model: "openai/gpt-oss-120b" });
@@ -50,7 +51,7 @@ const events = await convertHarmonyToResponses(harmony, { stream: false, model: 
 
 Stream Harmony → Responses
 ```ts
-import { createHarmonyToResponsesStream } from "llm-interop/adapters/openai-compatible/responses-emulator/harmony";
+import { createHarmonyToResponsesStream } from "llm-interop/adapters/openai-compatible/harmony/to-responses-response/stream";
 
 async function* harmonyChunks() {
   yield { channel: "final", content: "Hello" };

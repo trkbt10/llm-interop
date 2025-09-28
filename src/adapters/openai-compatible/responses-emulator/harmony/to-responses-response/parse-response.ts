@@ -1,7 +1,16 @@
+/**
+ * @file Parse Harmony-formatted assistant output into structured Responses data.
+ */
 import { HARMONY_CHANNELS } from "../constants";
 import type { HarmonyMessage } from "../types";
 import type { HarmonyParsedToolCall, ParsedHarmonyMessage, ParsedHarmonyResponse } from "./types";
-import { HarmonyParseError, containsHarmonySyntax, createHarmonyStreamParser, normalizeToolCalls } from "./stream-parser";
+import {
+  createHarmonyParseError,
+  containsHarmonySyntax,
+  createHarmonyStreamParser,
+  isHarmonyParseError,
+  normalizeToolCalls,
+} from "./stream-parser";
 
 export const parseHarmonyResponse = async (response: HarmonyMessage): Promise<ParsedHarmonyResponse> => {
   const messages: ParsedHarmonyMessage[] = [];
@@ -29,15 +38,16 @@ export const parseHarmonyResponse = async (response: HarmonyMessage): Promise<Pa
 
   const streamParser = createHarmonyStreamParser();
 
-  let frames;
-  try {
-    frames = [...streamParser.push(content), ...streamParser.flush()];
-  } catch (error) {
-    if (error instanceof HarmonyParseError) {
-      throw error;
+  const frames = (() => {
+    try {
+      return [...streamParser.push(content), ...streamParser.flush()];
+    } catch (error) {
+      if (isHarmonyParseError(error)) {
+        throw error;
+      }
+      throw createHarmonyParseError("Failed to parse harmony response", { error: String(error) });
     }
-    throw new HarmonyParseError("Failed to parse harmony response", { error: String(error) });
-  }
+  })();
 
   for (const frame of frames) {
     messages.push(frame.message);
@@ -52,7 +62,7 @@ export const parseHarmonyResponse = async (response: HarmonyMessage): Promise<Pa
   }
 
   if (messages.length === 0) {
-    throw new HarmonyParseError("Harmony response yielded no messages");
+    throw createHarmonyParseError("Harmony response yielded no messages");
   }
 
   return finalizeResult({

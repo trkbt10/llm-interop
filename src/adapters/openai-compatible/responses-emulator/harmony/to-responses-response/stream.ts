@@ -7,10 +7,13 @@
 import { HARMONY_CHANNELS } from "../constants";
 import { createHarmonyStreamParser } from "./stream-parser";
 import type { HarmonyStreamParser } from "./stream-parser";
-import { HarmonyResponsesEventBuilder } from "./converter";
+import { createHarmonyResponsesEventBuilder, type HarmonyResponsesEventBuilder } from "./converter";
 import type { HarmonyToResponsesOptions } from "./types";
 import type { ResponseStreamEvent } from "openai/resources/responses/responses";
 
+/**
+ * Converts Harmony response chunks into OpenAI Responses stream events.
+ */
 export async function* createHarmonyToResponsesStream(
   chunks: AsyncIterable<string>,
   options: HarmonyToResponsesOptions = {},
@@ -22,7 +25,7 @@ export async function* createHarmonyToResponsesStream(
   } satisfies HarmonyToResponsesOptions & { idPrefix: string; stream: boolean };
 
   const parser = createHarmonyStreamParser();
-  const builder = new HarmonyResponsesEventBuilder(resolvedOptions);
+  const builder = createHarmonyResponsesEventBuilder(resolvedOptions);
 
   yield builder.start();
 

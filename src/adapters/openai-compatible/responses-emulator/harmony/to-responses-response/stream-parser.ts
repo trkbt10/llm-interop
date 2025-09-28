@@ -1,3 +1,7 @@
+/**
+ * @file Streaming Harmony parser utilities.
+ */
+
 import { HARMONY_CHANNELS, HARMONY_TOKENS, FUNCTION_NAMESPACE } from "../constants";
 import type { HarmonyParsedToolCall, HarmonyParserFrame, HarmonyStopReason, ParsedHarmonyMessage } from "./types";
 
@@ -48,18 +52,35 @@ type ParserState = {
   plainModeLocked: boolean;
 };
 
-export class HarmonyParseError extends Error {
-  constructor(message: string, readonly detail?: Record<string, unknown>) {
-    super(message);
-    this.name = "HarmonyParseError";
-  }
-}
-
 export type HarmonyStreamParser = {
   push: (chunk: string) => HarmonyParserFrame[];
   flush: () => HarmonyParserFrame[];
 };
 
+export type HarmonyParseError = Error & { detail?: Record<string, unknown> };
+
+export const createHarmonyParseError = (
+  message: string,
+  detail?: Record<string, unknown>,
+): HarmonyParseError => {
+  const error = new Error(message) as HarmonyParseError;
+  error.name = "HarmonyParseError";
+  if (detail) {
+    error.detail = detail;
+  }
+  return error;
+};
+
+export const isHarmonyParseError = (value: unknown): value is HarmonyParseError => {
+  if (!(value instanceof Error)) {
+    return false;
+  }
+  return value.name === "HarmonyParseError";
+};
+
+/**
+ * Creates a streaming parser that consumes Harmony tokens incrementally.
+ */
 export const createHarmonyStreamParser = (): HarmonyStreamParser => {
   const state: ParserState = {
     buffer: "",
@@ -93,7 +114,7 @@ export const createHarmonyStreamParser = (): HarmonyStreamParser => {
     } else if (state.stage === ParserStage.COLLECTING_CONTENT && state.currentMessage) {
       frames.push(...finalizeCurrentMessage("end"));
     } else if (state.stage !== ParserStage.DEFAULT && state.stage !== ParserStage.AWAITING_ROLE) {
-      throw new HarmonyParseError("Unexpected end of stream", { stage: state.stage });
+      throw createHarmonyParseError("Unexpected end of stream", { stage: state.stage });
     }
 
     if (!state.tokensSeen && state.plainBuffer.length > 0) {
@@ -115,39 +136,43 @@ export const createHarmonyStreamParser = (): HarmonyStreamParser => {
     return frames;
   };
 
+  const performParseStep = (frames: HarmonyParserFrame[]): boolean => {
+    if (state.stage === ParserStage.AWAITING_STOP_RECIPIENT && state.buffer.startsWith(TOKEN_PREFIX)) {
+      if (state.pendingStop) {
+        frames.push(...finalizeCurrentMessage(state.pendingStop));
+      }
+    }
+
+    const tokenStart = state.buffer.indexOf(TOKEN_PREFIX);
+    if (tokenStart === -1) {
+      if (state.buffer) {
+        handleText(state.buffer, frames);
+        state.buffer = "";
+      }
+      return false;
+    }
+
+    if (tokenStart > 0) {
+      const text = state.buffer.slice(0, tokenStart);
+      handleText(text, frames);
+      state.buffer = state.buffer.slice(tokenStart);
+      return true;
+    }
+
+    const tokenEnd = state.buffer.indexOf(TOKEN_SUFFIX, TOKEN_PREFIX.length);
+    if (tokenEnd === -1) {
+      return false;
+    }
+
+    const token = state.buffer.slice(0, tokenEnd + TOKEN_SUFFIX.length);
+    handleToken(token, frames);
+    state.buffer = state.buffer.slice(tokenEnd + TOKEN_SUFFIX.length);
+    return true;
+  };
+
   const consumeBuffer = (frames: HarmonyParserFrame[]): void => {
-    // eslint-disable-next-line no-constant-condition -- streaming parser iterates until buffer handled or awaiting more data
-    while (true) {
-      if (state.stage === ParserStage.AWAITING_STOP_RECIPIENT && state.buffer.startsWith(TOKEN_PREFIX)) {
-        if (state.pendingStop) {
-          frames.push(...finalizeCurrentMessage(state.pendingStop));
-        }
-      }
-
-      const tokenStart = state.buffer.indexOf(TOKEN_PREFIX);
-      if (tokenStart === -1) {
-        if (state.buffer) {
-          handleText(state.buffer, frames);
-          state.buffer = "";
-        }
-        break;
-      }
-
-      if (tokenStart > 0) {
-        const text = state.buffer.slice(0, tokenStart);
-        handleText(text, frames);
-        state.buffer = state.buffer.slice(tokenStart);
-        continue;
-      }
-
-      const tokenEnd = state.buffer.indexOf(TOKEN_SUFFIX, TOKEN_PREFIX.length);
-      if (tokenEnd === -1) {
-        break;
-      }
-
-      const token = state.buffer.slice(0, tokenEnd + TOKEN_SUFFIX.length);
-      handleToken(token, frames);
-      state.buffer = state.buffer.slice(tokenEnd + TOKEN_SUFFIX.length);
+    while (performParseStep(frames)) {
+      // Continue parsing until the buffer step indicates to pause.
     }
   };
 
@@ -189,7 +214,7 @@ export const createHarmonyStreamParser = (): HarmonyStreamParser => {
         state.stage = ParserStage.AWAITING_STOP_RECIPIENT;
         break;
       default:
-        throw new HarmonyParseError("Unknown harmony token", { token });
+        throw createHarmonyParseError("Unknown harmony token", { token });
     }
   };
 
@@ -253,7 +278,7 @@ export const createHarmonyStreamParser = (): HarmonyStreamParser => {
           state.plainBuffer.push(raw);
           break;
         }
-        throw new HarmonyParseError("Unexpected text outside harmony message", {
+        throw createHarmonyParseError("Unexpected text outside harmony message", {
           stage: state.stage,
           text: trimmed.slice(0, 24),
         });
@@ -281,7 +306,9 @@ export const createHarmonyStreamParser = (): HarmonyStreamParser => {
     const rawContent = state.currentMessage.contentParts.join("");
     const content = normalizeContent(rawContent);
     const channel = normalizeChannel(state.currentMessage.channel);
-    const recipient = state.currentMessage.recipient?.trim() || undefined;
+    const recipientRaw = state.currentMessage.recipient;
+    const recipient = recipientRaw ? recipientRaw.trim() : undefined;
+    const role = state.currentMessage.role ?? state.currentRole;
 
     const message: ParsedHarmonyMessage = {
       channel,
@@ -290,7 +317,7 @@ export const createHarmonyStreamParser = (): HarmonyStreamParser => {
       constrainType: state.currentMessage.constrainType,
       isToolCall: stopReason === "call",
       stopReason,
-      role: state.currentMessage.role || state.currentRole,
+      role,
     };
 
     state.currentMessage = undefined;
@@ -392,7 +419,7 @@ const normalizeChannel = (value?: string): ParsedHarmonyMessage["channel"] => {
     case HARMONY_CHANNELS.FINAL:
       return channel;
     default:
-      throw new HarmonyParseError("Unknown harmony channel", { channel: value });
+      throw createHarmonyParseError("Unknown harmony channel", { channel: value });
   }
 };
 
@@ -412,16 +439,19 @@ const extractFunctionName = (recipient?: string): string | undefined => {
     return undefined;
   }
 
-  const withoutNamespace = trimmed.startsWith(`${FUNCTION_NAMESPACE}.`)
-    ? trimmed.slice(FUNCTION_NAMESPACE.length + 1)
-    : trimmed;
+  const namespacePrefix = `${FUNCTION_NAMESPACE}.`;
+  const withoutNamespace = trimmed.startsWith(namespacePrefix) ? trimmed.slice(namespacePrefix.length) : trimmed;
 
   if (!withoutNamespace) {
     return undefined;
   }
 
   const parts = withoutNamespace.split(".");
-  return parts[parts.length - 1] || undefined;
+  const last = parts[parts.length - 1];
+  if (!last) {
+    return undefined;
+  }
+  return last;
 };
 
 export const containsHarmonySyntax = (content: string): boolean => {

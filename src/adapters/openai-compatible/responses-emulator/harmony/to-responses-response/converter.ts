@@ -7,7 +7,7 @@
 import { HARMONY_CHANNELS } from "../constants";
 import type { HarmonyMessage } from "../types";
 import { parseHarmonyResponse } from "./parse-response";
-import type { HarmonyParsedToolCall, HarmonyToResponsesOptions, ParsedHarmonyResponse } from "./types";
+import type { HarmonyParsedToolCall, HarmonyToResponsesOptions } from "./types";
 import type {
   ResponseStreamEvent,
   ResponseCreatedEvent,
@@ -37,7 +37,7 @@ export const convertHarmonyToResponses = async (
     ...options,
   } satisfies HarmonyToResponsesOptions & { idPrefix: string; stream: boolean };
 
-  const builder = new HarmonyResponsesEventBuilder(resolvedOptions);
+  const builder = createHarmonyResponsesEventBuilder(resolvedOptions);
   const events: ResponseStreamEvent[] = [];
 
   events.push(builder.start());
@@ -83,55 +83,120 @@ type TextItemState = {
   text: string;
   open: boolean;
 };
+export type HarmonyResponsesEventBuilder = {
+  start: () => ResponseCreatedEvent;
+  appendReasoning: (content: string) => ResponseStreamEvent[];
+  appendFinal: (content: string) => ResponseStreamEvent[];
+  appendToolCall: (toolCall: HarmonyParsedToolCall) => ResponseStreamEvent[];
+  finish: () => ResponseStreamEvent[];
+};
 
-export class HarmonyResponsesEventBuilder {
-  public readonly responseId: string;
-  public readonly createdAt: number;
-  private readonly model: string;
+/**
+ * Creates a stateful helper for streaming Harmony output as Responses events.
+ */
+export const createHarmonyResponsesEventBuilder = (
+  options: BuilderOptions,
+  context: { responseId?: string; createdAt?: number } = {},
+): HarmonyResponsesEventBuilder => {
+  const responseId = context.responseId ?? resolveResponseId(options);
+  const createdAt = context.createdAt ?? Math.floor(Date.now() / 1000);
+  const model = resolveModel(options);
 
-  private started = false;
-  private sequenceNumber = 0;
-  private outputIndexCounter = 0;
-  private readonly outputs: Array<ResponseOutputMessage | ResponseFunctionToolCall> = [];
+  const outputs: Array<ResponseOutputMessage | ResponseFunctionToolCall> = [];
 
-  private reasoningState: TextItemState | undefined;
-  private finalState: TextItemState | undefined;
+  const builderState: {
+    started: boolean;
+    sequenceNumber: number;
+    outputIndexCounter: number;
+    reasoningState?: TextItemState;
+    finalState?: TextItemState;
+  } = {
+    started: false,
+    sequenceNumber: 0,
+    outputIndexCounter: 0,
+  };
 
-  constructor(private readonly options: BuilderOptions, context: { responseId?: string; createdAt?: number } = {}) {
-    this.responseId = context.responseId ?? resolveResponseId(options);
-    this.createdAt = context.createdAt ?? Math.floor(Date.now() / 1000);
-    this.model = resolveModel(options);
-  }
-
-  start(): ResponseCreatedEvent {
-    if (this.started) {
-      throw new Error("HarmonyResponsesEventBuilder.start must only be called once");
+  const ensureStarted = () => {
+    if (!builderState.started) {
+      throw new Error("HarmonyResponsesEventBuilder.start must be called before appending output");
     }
-    this.started = true;
-    return createResponseCreated(this.responseId, this.createdAt, this.model, this.nextSequence());
-  }
+  };
 
-  appendReasoning(content: string): ResponseStreamEvent[] {
-    this.ensureStarted();
+  const nextSequence = () => {
+    builderState.sequenceNumber += 1;
+    return builderState.sequenceNumber;
+  };
+
+  const reserveOutputIndex = () => {
+    builderState.outputIndexCounter += 1;
+    return builderState.outputIndexCounter;
+  };
+
+  const ensureReasoningState = (events: ResponseStreamEvent[]): TextItemState => {
+    if (builderState.reasoningState) {
+      return builderState.reasoningState;
+    }
+
+    const itemId = `${responseId}_reasoning`;
+    const item = createReasoningItem(itemId, "");
+    outputs.push(item);
+    const arrayIndex = outputs.length - 1;
+    const outputIndexEvent = reserveOutputIndex();
+
+    events.push(createOutputItemAdded(item, nextSequence(), outputIndexEvent));
+
+    builderState.reasoningState = {
+      itemId,
+      item,
+      arrayIndex,
+      contentIndex: 0,
+      text: "",
+      open: true,
+    };
+
+    return builderState.reasoningState;
+  };
+
+  const ensureFinalState = (events: ResponseStreamEvent[]): TextItemState => {
+    if (builderState.finalState) {
+      return builderState.finalState;
+    }
+
+    const itemId = `${responseId}_text`;
+    const item = createMessageItem(itemId, "");
+    outputs.push(item);
+    const arrayIndex = outputs.length - 1;
+    const outputIndexEvent = reserveOutputIndex();
+
+    events.push(createOutputItemAdded(item, nextSequence(), outputIndexEvent));
+
+    builderState.finalState = {
+      itemId,
+      item,
+      arrayIndex,
+      contentIndex: 0,
+      text: "",
+      open: true,
+    };
+
+    return builderState.finalState;
+  };
+
+  const appendReasoning = (content: string): ResponseStreamEvent[] => {
+    ensureStarted();
     const normalized = normalizeOutputText(content);
     if (!normalized) {
       return [];
     }
 
     const events: ResponseStreamEvent[] = [];
-    const state = this.ensureReasoningState(events);
+    const state = ensureReasoningState(events);
     const addition = state.text ? `\n\n${normalized}` : normalized;
 
-    const segments = this.options.stream ? splitIntoChunks(addition, REASONING_CHUNK_SIZE) : [addition];
+    const segments = options.stream ? splitIntoChunks(addition, REASONING_CHUNK_SIZE) : [addition];
     for (const segment of segments) {
       events.push(
-        createTextDelta(
-          state.itemId,
-          segment,
-          state.arrayIndex,
-          state.contentIndex,
-          this.nextSequence(),
-        ),
+        createTextDelta(state.itemId, segment, state.arrayIndex, state.contentIndex, nextSequence()),
       );
       state.contentIndex += segment.length;
     }
@@ -140,29 +205,23 @@ export class HarmonyResponsesEventBuilder {
     state.item.content[0].text = state.text;
 
     return events;
-  }
+  };
 
-  appendFinal(content: string): ResponseStreamEvent[] {
-    this.ensureStarted();
+  const appendFinal = (content: string): ResponseStreamEvent[] => {
+    ensureStarted();
     const normalized = normalizeOutputText(content);
     if (!normalized) {
       return [];
     }
 
     const events: ResponseStreamEvent[] = [];
-    const state = this.ensureFinalState(events);
+    const state = ensureFinalState(events);
     const addition = state.text ? `\n\n${normalized}` : normalized;
 
-    const segments = this.options.stream ? splitIntoChunks(addition, TEXT_CHUNK_SIZE) : [addition];
+    const segments = options.stream ? splitIntoChunks(addition, TEXT_CHUNK_SIZE) : [addition];
     for (const segment of segments) {
       events.push(
-        createTextDelta(
-          state.itemId,
-          segment,
-          state.arrayIndex,
-          state.contentIndex,
-          this.nextSequence(),
-        ),
+        createTextDelta(state.itemId, segment, state.arrayIndex, state.contentIndex, nextSequence()),
       );
       state.contentIndex += segment.length;
     }
@@ -171,159 +230,99 @@ export class HarmonyResponsesEventBuilder {
     state.item.content[0].text = state.text;
 
     return events;
-  }
+  };
 
-  appendToolCall(toolCall: HarmonyParsedToolCall): ResponseStreamEvent[] {
-    this.ensureStarted();
+  const appendToolCall = (toolCall: HarmonyParsedToolCall): ResponseStreamEvent[] => {
+    ensureStarted();
 
-    const itemId = `${this.responseId}_tool_${toolCall.id}`;
+    const itemId = `${responseId}_tool_${toolCall.id}`;
     const item = createFunctionCallItem(itemId, toolCall);
-    this.outputs.push(item);
-    const arrayIndex = this.outputs.length - 1;
-    const outputIndexEvent = this.reserveOutputIndex();
+    outputs.push(item);
+    const arrayIndex = outputs.length - 1;
+    const outputIndexEvent = reserveOutputIndex();
 
     const events: ResponseStreamEvent[] = [];
-    events.push(createOutputItemAdded(item, this.nextSequence(), outputIndexEvent));
+    events.push(createOutputItemAdded(item, nextSequence(), outputIndexEvent));
 
-    if (this.options.stream) {
-      events.push(createFunctionCallArgumentsDelta(itemId, arrayIndex, this.nextSequence()));
+    if (options.stream) {
+      events.push(createFunctionCallArgumentsDelta(itemId, arrayIndex, nextSequence()));
       const segments = splitIntoChunks(toolCall.arguments, ARGUMENT_CHUNK_SIZE);
       for (const segment of segments) {
-        events.push(createFunctionCallArgumentsDelta(itemId, arrayIndex, this.nextSequence(), segment));
+        events.push(createFunctionCallArgumentsDelta(itemId, arrayIndex, nextSequence(), segment));
       }
     }
 
-    events.push(
-      createFunctionCallArgumentsDone(itemId, arrayIndex, toolCall.arguments, this.nextSequence()),
-    );
-    events.push(createOutputItemDone(item, this.nextSequence(), arrayIndex));
+    events.push(createFunctionCallArgumentsDone(itemId, arrayIndex, toolCall.arguments, nextSequence()));
+    events.push(createOutputItemDone(item, nextSequence(), arrayIndex));
 
     return events;
-  }
+  };
 
-  finish(): ResponseStreamEvent[] {
-    this.ensureStarted();
+  const finish = (): ResponseStreamEvent[] => {
+    ensureStarted();
     const events: ResponseStreamEvent[] = [];
 
-    if (this.reasoningState && this.reasoningState.open) {
+    if (builderState.reasoningState && builderState.reasoningState.open) {
       events.push(
         createTextDone(
-          this.reasoningState.itemId,
-          this.reasoningState.text,
-          this.reasoningState.arrayIndex,
-          this.reasoningState.contentIndex,
-          this.nextSequence(),
+          builderState.reasoningState.itemId,
+          builderState.reasoningState.text,
+          builderState.reasoningState.arrayIndex,
+          builderState.reasoningState.contentIndex,
+          nextSequence(),
         ),
       );
       events.push(
         createOutputItemDone(
-          this.reasoningState.item,
-          this.nextSequence(),
-          this.reasoningState.arrayIndex,
+          builderState.reasoningState.item,
+          nextSequence(),
+          builderState.reasoningState.arrayIndex,
         ),
       );
-      this.reasoningState.open = false;
+      builderState.reasoningState.open = false;
     }
 
-    if (this.finalState && this.finalState.open) {
+    if (builderState.finalState && builderState.finalState.open) {
       events.push(
         createTextDone(
-          this.finalState.itemId,
-          this.finalState.text,
-          this.finalState.arrayIndex,
-          this.finalState.contentIndex,
-          this.nextSequence(),
+          builderState.finalState.itemId,
+          builderState.finalState.text,
+          builderState.finalState.arrayIndex,
+          builderState.finalState.contentIndex,
+          nextSequence(),
         ),
       );
       events.push(
         createOutputItemDone(
-          this.finalState.item,
-          this.nextSequence(),
-          this.finalState.arrayIndex,
+          builderState.finalState.item,
+          nextSequence(),
+          builderState.finalState.arrayIndex,
         ),
       );
-      this.finalState.open = false;
+      builderState.finalState.open = false;
     }
 
-    events.push(
-      createResponseCompleted(
-        this.responseId,
-        this.createdAt,
-        this.model,
-        this.outputs,
-        this.nextSequence(),
-      ),
-    );
+    events.push(createResponseCompleted(responseId, createdAt, model, outputs, nextSequence()));
 
     return events;
-  }
+  };
 
-  private ensureReasoningState(events: ResponseStreamEvent[]): TextItemState {
-    if (this.reasoningState) {
-      return this.reasoningState;
+  const start = (): ResponseCreatedEvent => {
+    if (builderState.started) {
+      throw new Error("HarmonyResponsesEventBuilder.start must only be called once");
     }
+    builderState.started = true;
+    return createResponseCreated(responseId, createdAt, model, nextSequence());
+  };
 
-    const itemId = `${this.responseId}_reasoning`;
-    const item = createReasoningItem(itemId, "");
-    this.outputs.push(item);
-    const arrayIndex = this.outputs.length - 1;
-    const outputIndexEvent = this.reserveOutputIndex();
-
-    events.push(createOutputItemAdded(item, this.nextSequence(), outputIndexEvent));
-
-    this.reasoningState = {
-      itemId,
-      item,
-      arrayIndex,
-      contentIndex: 0,
-      text: "",
-      open: true,
-    };
-
-    return this.reasoningState;
-  }
-
-  private ensureFinalState(events: ResponseStreamEvent[]): TextItemState {
-    if (this.finalState) {
-      return this.finalState;
-    }
-
-    const itemId = `${this.responseId}_text`;
-    const item = createMessageItem(itemId, "");
-    this.outputs.push(item);
-    const arrayIndex = this.outputs.length - 1;
-    const outputIndexEvent = this.reserveOutputIndex();
-
-    events.push(createOutputItemAdded(item, this.nextSequence(), outputIndexEvent));
-
-    this.finalState = {
-      itemId,
-      item,
-      arrayIndex,
-      contentIndex: 0,
-      text: "",
-      open: true,
-    };
-
-    return this.finalState;
-  }
-
-  private ensureStarted(): void {
-    if (!this.started) {
-      throw new Error("HarmonyResponsesEventBuilder.start must be called before appending output");
-    }
-  }
-
-  private nextSequence(): number {
-    this.sequenceNumber += 1;
-    return this.sequenceNumber;
-  }
-
-  private reserveOutputIndex(): number {
-    this.outputIndexCounter += 1;
-    return this.outputIndexCounter;
-  }
-}
+  return {
+    start,
+    appendReasoning,
+    appendFinal,
+    appendToolCall,
+    finish,
+  };
+};
 
 function resolveResponseId(options: HarmonyToResponsesOptions & { idPrefix: string }): string {
   const { requestId } = options;

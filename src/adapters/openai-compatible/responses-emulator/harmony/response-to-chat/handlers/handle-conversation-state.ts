@@ -2,8 +2,9 @@
  * @file Handle conversation state for multi-turn conversations.
  */
 
-import type { ResponseCreateParamsBase, ChatCompletionMessageParam } from "../../types";
+import { ChatCompletionMessageParam } from "openai/resources";
 import { convertInputToMessages } from "../converters/convert-input-to-messages";
+import { ResponseCreateParamsBase } from "openai/resources/responses/responses.js";
 
 /**
  * Manages conversation continuity and message sequencing for multi-turn Harmony workflows.

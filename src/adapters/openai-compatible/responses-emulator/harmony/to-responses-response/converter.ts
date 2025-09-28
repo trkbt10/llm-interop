@@ -4,9 +4,10 @@
  * Converts parsed Harmony messages to OpenAI Responses API events
  */
 
-// Markdown parser imports removed - not used in current implementation
-import { parseHarmonyResponse } from "./parser";
-import type { HarmonyMessage, HarmonyToResponsesOptions, ParsedHarmonyResponse } from "./types";
+import { HARMONY_CHANNELS } from "../constants";
+import type { HarmonyMessage } from "../types";
+import { parseHarmonyResponse } from "./parse-response";
+import type { HarmonyParsedToolCall, HarmonyToResponsesOptions, ParsedHarmonyResponse } from "./types";
 import type {
   ResponseStreamEvent,
   ResponseCreatedEvent,
@@ -21,191 +22,321 @@ import type {
   ResponseFunctionToolCall,
 } from "openai/resources/responses/responses";
 
-/**
- * Convert a Harmony response to Responses API format
- */
+const REASONING_CHUNK_SIZE = 100;
+const TEXT_CHUNK_SIZE = 50;
+const ARGUMENT_CHUNK_SIZE = 50;
+
 export const convertHarmonyToResponses = async (
   response: HarmonyMessage,
   options: HarmonyToResponsesOptions = {},
 ): Promise<ResponseStreamEvent[]> => {
-  const events: ResponseStreamEvent[] = [];
   const parsed = await parseHarmonyResponse(response);
-
-  const defaultOptions = {
+  const resolvedOptions = {
     idPrefix: "harmony",
     stream: false,
     ...options,
-  };
+  } satisfies HarmonyToResponsesOptions & { idPrefix: string; stream: boolean };
 
-  const responseId = resolveResponseId(defaultOptions);
-  const created = Math.floor(Date.now() / 1000);
+  const builder = new HarmonyResponsesEventBuilder(resolvedOptions);
+  const events: ResponseStreamEvent[] = [];
 
-  // Track indices for events
-  const indices = {
-    sequenceNumber: 0,
-    outputIndex: 0,
-    contentIndex: 0,
-  };
+  events.push(builder.start());
 
-  const incrementSequence = () => ++indices.sequenceNumber;
-  const incrementOutput = () => ++indices.outputIndex;
-  const setContentIndex = (value: number) => {
-    indices.contentIndex = value;
-  };
-
-  // Add response.created event
-  events.push(createResponseCreated(responseId, created, resolveModel(defaultOptions), incrementSequence()));
-
-  // Process reasoning text if present
-  if (parsed.reasoning) {
-    const reasoningItemId = `${responseId}_reasoning`;
-    const reasoningItem = createReasoningItem(reasoningItemId, parsed.reasoning);
-
-    events.push(createOutputItemAdded(reasoningItem, incrementSequence(), incrementOutput()));
-
-    if (defaultOptions.stream) {
-      // Stream reasoning in chunks
-      const chunks = splitIntoChunks(parsed.reasoning, 100);
-      for (const chunk of chunks) {
-        const event = createTextDelta(
-          reasoningItemId,
-          chunk,
-          indices.outputIndex - 1,
-          indices.contentIndex,
-          incrementSequence(),
-        );
-        setContentIndex(event.content_index + event.delta.length);
-        events.push(event);
-      }
+  const analysisMessages = parsed.messages.filter((m) => m.channel === HARMONY_CHANNELS.ANALYSIS);
+  if (analysisMessages.length > 0) {
+    for (const message of analysisMessages) {
+      events.push(...builder.appendReasoning(message.content));
     }
-
-    if (!defaultOptions.stream) {
-      // Add complete reasoning as single delta
-      const event = createTextDelta(
-        reasoningItemId,
-        parsed.reasoning,
-        indices.outputIndex - 1,
-        indices.contentIndex,
-        incrementSequence(),
-      );
-      setContentIndex(event.content_index + event.delta.length);
-      events.push(event);
-    }
-
-    events.push(
-      createTextDone(
-        reasoningItemId,
-        parsed.reasoning,
-        indices.outputIndex - 1,
-        indices.contentIndex,
-        incrementSequence(),
-      ),
-    );
-    events.push(createOutputItemDone(reasoningItem, incrementSequence(), indices.outputIndex - 1));
+  } else if (parsed.reasoning) {
+    events.push(...builder.appendReasoning(parsed.reasoning));
   }
 
-  // Process tool calls
-  if (parsed.toolCalls && parsed.toolCalls.length > 0) {
+  if (parsed.toolCalls) {
     for (const toolCall of parsed.toolCalls) {
-      const toolItemId = `${responseId}_tool_${toolCall.id}`;
-      const toolItem = createFunctionCallItem(toolItemId, toolCall);
-
-      events.push(createOutputItemAdded(toolItem, incrementSequence(), incrementOutput()));
-
-      if (defaultOptions.stream) {
-        // Stream function name
-        events.push(createFunctionCallArgumentsDelta(toolItemId, indices.outputIndex - 1, incrementSequence()));
-
-        // Stream arguments in chunks
-        const argChunks = splitIntoChunks(toolCall.arguments, 50);
-        for (const chunk of argChunks) {
-          events.push(
-            createFunctionCallArgumentsDelta(toolItemId, indices.outputIndex - 1, incrementSequence(), chunk),
-          );
-        }
-      }
-
-      events.push(
-        createFunctionCallArgumentsDone(toolItemId, indices.outputIndex - 1, toolCall.arguments, incrementSequence()),
-      );
-      events.push(createOutputItemDone(toolItem, incrementSequence(), indices.outputIndex - 1));
+      events.push(...builder.appendToolCall(toolCall));
     }
   }
 
-  // Process final message content
-  const finalMessages = parsed.messages.filter((m) => m.channel === "final");
-  if (finalMessages.length > 0) {
-    const textItemId = `${responseId}_text`;
-    const fullText = finalMessages.map((m) => m.content).join("\n\n");
-    const textItem = createMessageItem(textItemId, fullText);
-
-    events.push(createOutputItemAdded(textItem, incrementSequence(), incrementOutput()));
-
-    // Reset content index for new item
-    setContentIndex(0);
-
-    if (defaultOptions.stream) {
-      // Stream text in chunks
-      const chunks = splitIntoChunks(fullText, 50);
-      for (const chunk of chunks) {
-        const event = createTextDelta(
-          textItemId,
-          chunk,
-          indices.outputIndex - 1,
-          indices.contentIndex,
-          incrementSequence(),
-        );
-        setContentIndex(event.content_index + event.delta.length);
-        events.push(event);
-      }
-    }
-
-    if (!defaultOptions.stream) {
-      // Add complete text as single delta
-      const event = createTextDelta(
-        textItemId,
-        fullText,
-        indices.outputIndex - 1,
-        indices.contentIndex,
-        incrementSequence(),
-      );
-      setContentIndex(event.content_index + event.delta.length);
-      events.push(event);
-    }
-
-    events.push(
-      createTextDone(textItemId, fullText, indices.outputIndex - 1, indices.contentIndex, incrementSequence()),
-    );
-    events.push(createOutputItemDone(textItem, incrementSequence(), indices.outputIndex - 1));
+  const finalMessages = parsed.messages.filter((m) => m.channel === HARMONY_CHANNELS.FINAL);
+  for (const message of finalMessages) {
+    events.push(...builder.appendFinal(message.content));
   }
 
-  // Add response.completed event
-  events.push(
-    createResponseCompleted(
-      responseId,
-      created,
-      resolveModel(defaultOptions),
-      buildOutputArray(parsed, responseId),
-      incrementSequence(),
-    ),
-  );
+  events.push(...builder.finish());
 
-  return events;
   return events;
 };
 
+export const createHarmonyToResponsesConverter = (options: HarmonyToResponsesOptions = {}) => {
+  return {
+    convert: (response: HarmonyMessage) => convertHarmonyToResponses(response, options),
+  };
+};
+
+type BuilderOptions = HarmonyToResponsesOptions & { idPrefix: string; stream: boolean };
+
+type TextItemState = {
+  itemId: string;
+  item: ResponseOutputMessage;
+  arrayIndex: number;
+  contentIndex: number;
+  text: string;
+  open: boolean;
+};
+
+export class HarmonyResponsesEventBuilder {
+  public readonly responseId: string;
+  public readonly createdAt: number;
+  private readonly model: string;
+
+  private started = false;
+  private sequenceNumber = 0;
+  private outputIndexCounter = 0;
+  private readonly outputs: Array<ResponseOutputMessage | ResponseFunctionToolCall> = [];
+
+  private reasoningState: TextItemState | undefined;
+  private finalState: TextItemState | undefined;
+
+  constructor(private readonly options: BuilderOptions, context: { responseId?: string; createdAt?: number } = {}) {
+    this.responseId = context.responseId ?? resolveResponseId(options);
+    this.createdAt = context.createdAt ?? Math.floor(Date.now() / 1000);
+    this.model = resolveModel(options);
+  }
+
+  start(): ResponseCreatedEvent {
+    if (this.started) {
+      throw new Error("HarmonyResponsesEventBuilder.start must only be called once");
+    }
+    this.started = true;
+    return createResponseCreated(this.responseId, this.createdAt, this.model, this.nextSequence());
+  }
+
+  appendReasoning(content: string): ResponseStreamEvent[] {
+    this.ensureStarted();
+    const normalized = normalizeOutputText(content);
+    if (!normalized) {
+      return [];
+    }
+
+    const events: ResponseStreamEvent[] = [];
+    const state = this.ensureReasoningState(events);
+    const addition = state.text ? `\n\n${normalized}` : normalized;
+
+    const segments = this.options.stream ? splitIntoChunks(addition, REASONING_CHUNK_SIZE) : [addition];
+    for (const segment of segments) {
+      events.push(
+        createTextDelta(
+          state.itemId,
+          segment,
+          state.arrayIndex,
+          state.contentIndex,
+          this.nextSequence(),
+        ),
+      );
+      state.contentIndex += segment.length;
+    }
+
+    state.text += addition;
+    state.item.content[0].text = state.text;
+
+    return events;
+  }
+
+  appendFinal(content: string): ResponseStreamEvent[] {
+    this.ensureStarted();
+    const normalized = normalizeOutputText(content);
+    if (!normalized) {
+      return [];
+    }
+
+    const events: ResponseStreamEvent[] = [];
+    const state = this.ensureFinalState(events);
+    const addition = state.text ? `\n\n${normalized}` : normalized;
+
+    const segments = this.options.stream ? splitIntoChunks(addition, TEXT_CHUNK_SIZE) : [addition];
+    for (const segment of segments) {
+      events.push(
+        createTextDelta(
+          state.itemId,
+          segment,
+          state.arrayIndex,
+          state.contentIndex,
+          this.nextSequence(),
+        ),
+      );
+      state.contentIndex += segment.length;
+    }
+
+    state.text += addition;
+    state.item.content[0].text = state.text;
+
+    return events;
+  }
+
+  appendToolCall(toolCall: HarmonyParsedToolCall): ResponseStreamEvent[] {
+    this.ensureStarted();
+
+    const itemId = `${this.responseId}_tool_${toolCall.id}`;
+    const item = createFunctionCallItem(itemId, toolCall);
+    this.outputs.push(item);
+    const arrayIndex = this.outputs.length - 1;
+    const outputIndexEvent = this.reserveOutputIndex();
+
+    const events: ResponseStreamEvent[] = [];
+    events.push(createOutputItemAdded(item, this.nextSequence(), outputIndexEvent));
+
+    if (this.options.stream) {
+      events.push(createFunctionCallArgumentsDelta(itemId, arrayIndex, this.nextSequence()));
+      const segments = splitIntoChunks(toolCall.arguments, ARGUMENT_CHUNK_SIZE);
+      for (const segment of segments) {
+        events.push(createFunctionCallArgumentsDelta(itemId, arrayIndex, this.nextSequence(), segment));
+      }
+    }
+
+    events.push(
+      createFunctionCallArgumentsDone(itemId, arrayIndex, toolCall.arguments, this.nextSequence()),
+    );
+    events.push(createOutputItemDone(item, this.nextSequence(), arrayIndex));
+
+    return events;
+  }
+
+  finish(): ResponseStreamEvent[] {
+    this.ensureStarted();
+    const events: ResponseStreamEvent[] = [];
+
+    if (this.reasoningState && this.reasoningState.open) {
+      events.push(
+        createTextDone(
+          this.reasoningState.itemId,
+          this.reasoningState.text,
+          this.reasoningState.arrayIndex,
+          this.reasoningState.contentIndex,
+          this.nextSequence(),
+        ),
+      );
+      events.push(
+        createOutputItemDone(
+          this.reasoningState.item,
+          this.nextSequence(),
+          this.reasoningState.arrayIndex,
+        ),
+      );
+      this.reasoningState.open = false;
+    }
+
+    if (this.finalState && this.finalState.open) {
+      events.push(
+        createTextDone(
+          this.finalState.itemId,
+          this.finalState.text,
+          this.finalState.arrayIndex,
+          this.finalState.contentIndex,
+          this.nextSequence(),
+        ),
+      );
+      events.push(
+        createOutputItemDone(
+          this.finalState.item,
+          this.nextSequence(),
+          this.finalState.arrayIndex,
+        ),
+      );
+      this.finalState.open = false;
+    }
+
+    events.push(
+      createResponseCompleted(
+        this.responseId,
+        this.createdAt,
+        this.model,
+        this.outputs,
+        this.nextSequence(),
+      ),
+    );
+
+    return events;
+  }
+
+  private ensureReasoningState(events: ResponseStreamEvent[]): TextItemState {
+    if (this.reasoningState) {
+      return this.reasoningState;
+    }
+
+    const itemId = `${this.responseId}_reasoning`;
+    const item = createReasoningItem(itemId, "");
+    this.outputs.push(item);
+    const arrayIndex = this.outputs.length - 1;
+    const outputIndexEvent = this.reserveOutputIndex();
+
+    events.push(createOutputItemAdded(item, this.nextSequence(), outputIndexEvent));
+
+    this.reasoningState = {
+      itemId,
+      item,
+      arrayIndex,
+      contentIndex: 0,
+      text: "",
+      open: true,
+    };
+
+    return this.reasoningState;
+  }
+
+  private ensureFinalState(events: ResponseStreamEvent[]): TextItemState {
+    if (this.finalState) {
+      return this.finalState;
+    }
+
+    const itemId = `${this.responseId}_text`;
+    const item = createMessageItem(itemId, "");
+    this.outputs.push(item);
+    const arrayIndex = this.outputs.length - 1;
+    const outputIndexEvent = this.reserveOutputIndex();
+
+    events.push(createOutputItemAdded(item, this.nextSequence(), outputIndexEvent));
+
+    this.finalState = {
+      itemId,
+      item,
+      arrayIndex,
+      contentIndex: 0,
+      text: "",
+      open: true,
+    };
+
+    return this.finalState;
+  }
+
+  private ensureStarted(): void {
+    if (!this.started) {
+      throw new Error("HarmonyResponsesEventBuilder.start must be called before appending output");
+    }
+  }
+
+  private nextSequence(): number {
+    this.sequenceNumber += 1;
+    return this.sequenceNumber;
+  }
+
+  private reserveOutputIndex(): number {
+    this.outputIndexCounter += 1;
+    return this.outputIndexCounter;
+  }
+}
+
 function resolveResponseId(options: HarmonyToResponsesOptions & { idPrefix: string }): string {
-  const reqId = (options as { requestId?: string }).requestId;
-  if (typeof reqId === "string") {
-    return reqId;
+  const { requestId } = options;
+  if (typeof requestId === "string") {
+    return requestId;
   }
   return `${options.idPrefix}_${Date.now()}`;
 }
 
 function resolveModel(options: HarmonyToResponsesOptions): string {
-  const m = (options as { model?: string }).model;
-  if (typeof m === "string") {
-    return m;
+  const { model } = options;
+  if (typeof model === "string") {
+    return model;
   }
   return "unknown";
 }
@@ -380,7 +511,6 @@ const createMessageItem = (itemId: string, text: string): ResponseOutputMessage 
 };
 
 const createReasoningItem = (itemId: string, reasoning: string): ResponseOutputMessage => {
-  // Note: Using message type for reasoning as there's no specific reasoning item type
   return {
     id: itemId,
     type: "message",
@@ -398,7 +528,7 @@ const createReasoningItem = (itemId: string, reasoning: string): ResponseOutputM
 
 const createFunctionCallItem = (
   itemId: string,
-  toolCall: { id: string; name: string; arguments: string },
+  toolCall: HarmonyParsedToolCall,
 ): ResponseFunctionToolCall => {
   return {
     id: itemId,
@@ -410,37 +540,6 @@ const createFunctionCallItem = (
   };
 };
 
-/**
- * Build the output array for the completed response
- */
-const buildOutputArray = (
-  parsed: ParsedHarmonyResponse,
-  responseId: string,
-): Array<ResponseOutputMessage | ResponseFunctionToolCall> => {
-  const output: Array<ResponseOutputMessage | ResponseFunctionToolCall> = [];
-
-  if (parsed.reasoning) {
-    output.push(createReasoningItem(`${responseId}_reasoning`, parsed.reasoning));
-  }
-
-  if (parsed.toolCalls) {
-    for (const toolCall of parsed.toolCalls) {
-      output.push(createFunctionCallItem(`${responseId}_tool_${toolCall.id}`, toolCall));
-    }
-  }
-
-  const finalMessages = parsed.messages.filter((m) => m.channel === "final");
-  if (finalMessages.length > 0) {
-    const fullText = finalMessages.map((m) => m.content).join("\n\n");
-    output.push(createMessageItem(`${responseId}_text`, fullText));
-  }
-
-  return output;
-};
-
-/**
- * Extract output text from output array
- */
 const extractOutputText = (output: Array<ResponseOutputMessage | ResponseFunctionToolCall>): string => {
   const textItems = output.filter((item): item is ResponseOutputMessage => item.type === "message");
   if (textItems.length === 0) {
@@ -452,24 +551,25 @@ const extractOutputText = (output: Array<ResponseOutputMessage | ResponseFunctio
   return textContent && "text" in textContent ? textContent.text : "";
 };
 
-/**
- * Split text into chunks for streaming
- */
 const splitIntoChunks = (text: string, chunkSize: number): string[] => {
-  const chunks: string[] = [];
-  const numChunks = Math.ceil(text.length / chunkSize);
-
-  for (const i of Array.from({ length: numChunks }, (_, idx) => idx)) {
-    const start = i * chunkSize;
-    chunks.push(text.substring(start, start + chunkSize));
+  if (!text) {
+    return [];
   }
 
+  if (text.length <= chunkSize) {
+    return [text];
+  }
+
+  const chunks: string[] = [];
+  for (let i = 0; i < text.length; i += chunkSize) {
+    chunks.push(text.slice(i, i + chunkSize));
+  }
   return chunks;
 };
 
-// For backward compatibility with tests
-export const createHarmonyToResponsesConverter = (options: HarmonyToResponsesOptions = {}) => {
-  return {
-    convert: (response: HarmonyMessage) => convertHarmonyToResponses(response, options),
-  };
+const normalizeOutputText = (text: string): string => {
+  if (!text) {
+    return "";
+  }
+  return text.replace(/\r/g, "").trim();
 };

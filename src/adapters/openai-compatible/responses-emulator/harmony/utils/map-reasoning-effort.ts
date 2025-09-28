@@ -2,7 +2,7 @@
  * @file Map OpenAI reasoning effort to Harmony format.
  */
 
-import type { Reasoning } from "../types";
+import { Reasoning } from "openai/resources";
 import { REASONING_LEVELS } from "../constants";
 import type { ReasoningLevel } from "../constants";
 

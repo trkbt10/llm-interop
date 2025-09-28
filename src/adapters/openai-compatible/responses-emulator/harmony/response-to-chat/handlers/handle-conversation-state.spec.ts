@@ -1,8 +1,8 @@
 /**
  * @file Tests for conversation state handling.
  */
+import { ResponseCreateParamsBase } from "openai/resources/responses/responses.mjs";
 import { handleConversationState, processAssistantMessage } from "./handle-conversation-state";
-import type { ResponseCreateParamsBase } from "../../types";
 
 describe("handleConversationState", () => {
   it("should return empty array when no input", () => {

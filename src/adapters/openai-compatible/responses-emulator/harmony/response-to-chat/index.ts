@@ -6,6 +6,3 @@
  */
 
 export { harmonizeResponseParams, type HarmonizerOptions } from "./harmonizer";
-
-// Re-export useful types
-export type { ResponseCreateParamsBase, ChatCompletionMessageParam } from "../types";

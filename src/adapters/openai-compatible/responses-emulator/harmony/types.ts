@@ -3,50 +3,15 @@
  */
 
 import type {
-  ResponseCreateParamsBase,
   Tool,
-  ResponseInput,
-  ResponseInputItem,
   ResponseTextConfig,
-  FunctionTool,
-  FileSearchTool,
-  WebSearchTool,
-  ComputerTool,
-  CustomTool,
   ToolChoiceOptions,
-  ToolChoiceAllowed as OpenAIToolChoiceAllowed,
-  ToolChoiceFunction as OpenAIToolChoiceFunction,
+  ToolChoiceAllowed,
+  ToolChoiceFunction,
   ToolChoiceTypes,
   ToolChoiceMcp,
-  ToolChoiceCustom as OpenAIToolChoiceCustom,
+  ToolChoiceCustom,
 } from "openai/resources/responses/responses";
-
-import type { Reasoning } from "openai/resources/shared";
-import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
-
-// Re-export for convenience
-export type {
-  ResponseCreateParamsBase,
-  Tool,
-  ResponseInput,
-  ResponseInputItem,
-  ResponseTextConfig,
-  FunctionTool,
-  FileSearchTool,
-  WebSearchTool,
-  ComputerTool,
-  CustomTool,
-  Reasoning,
-  ChatCompletionMessageParam,
-  ToolChoiceOptions,
-  ToolChoiceTypes,
-  ToolChoiceMcp,
-};
-
-// Tool choice types - extend OpenAI types
-export type ToolChoiceAllowed = OpenAIToolChoiceAllowed;
-export type ToolChoiceFunction = OpenAIToolChoiceFunction;
-export type ToolChoiceCustom = OpenAIToolChoiceCustom;
 
 export type ToolChoice =
   | ToolChoiceOptions
@@ -63,6 +28,15 @@ import type {
   ReasoningLevel,
   BuiltinTool,
 } from "./constants";
+
+export type HarmonyToolCall = {
+  id: string;
+  type: "function";
+  function: {
+    name: string;
+    arguments: string;
+  };
+};
 
 // Harmony-specific types
 export type HarmonySystemConfig = {
@@ -86,6 +60,8 @@ export type HarmonyMessage = {
   recipient?: string;
   content: string;
   constrainType?: string;
+  reasoning?: string;
+  tool_calls?: HarmonyToolCall[];
 };
 
 export type HarmonyToolMessage = {

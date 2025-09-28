@@ -16,9 +16,9 @@ import type {
   FunctionTool,
   ResponseInputItem,
   ResponseTextConfig,
-  ToolChoice,
   ResponseCreateParamsBase,
-} from "./types";
+} from "openai/resources/responses/responses";
+import { ToolChoice } from "./types";
 
 // Tool fixtures
 export const webSearchTool: Tool = {

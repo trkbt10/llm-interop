@@ -2,7 +2,7 @@
  * @file Generate Harmony developer message.
  */
 
-import type { ResponseCreateParamsBase } from "../../types";
+import { ResponseCreateParamsBase } from "openai/resources/responses/responses.js";
 import { HARMONY_ROLES } from "../../constants";
 import { formatHarmonyMessage } from "../../utils/format-harmony-message";
 import { convertToolsToHarmonyFormat } from "../converters/convert-tools";

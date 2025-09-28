@@ -2,8 +2,8 @@
  * @file Tests for response format handling.
  */
 import { handleResponseFormat } from "./handle-response-format";
-import type { ResponseTextConfig } from "../../types";
 import { createResponseTextConfig } from "../../fixtures.test.support";
+import { ResponseTextConfig } from "openai/resources/responses/responses.js";
 
 describe("handleResponseFormat", () => {
   it("should return null when no text config provided", () => {

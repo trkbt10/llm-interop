@@ -5,7 +5,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { ChatCompletion, ChatCompletionMessageToolCall } from "openai/resources/chat/completions";
 // Use global describe/it/expect from test runner; do not import vitest.
-import { createHarmonyToResponsesStream } from "./to-responses-response";
+import { createHarmonyToResponsesStream } from "./to-responses-response/stream";
 import type { ResponseStreamEvent } from "openai/resources/responses/responses";
 
 const RAW_FILE = join(process.cwd(), "__mocks__/raw/harmony/chat-sync.jsonl");

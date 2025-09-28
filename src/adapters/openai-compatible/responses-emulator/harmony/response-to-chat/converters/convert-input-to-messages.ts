@@ -2,9 +2,10 @@
  * @file Convert Response API input to ChatCompletion messages.
  */
 
-import type { ResponseInput, ChatCompletionMessageParam } from "../../types";
+import type { ResponseInput } from "openai/resources/responses/responses.js";
 import { formatHarmonyMessage } from "../../utils/format-harmony-message";
 import { isObject, isResponseInputToolCall, isMessageInput, isTextContentPart } from "../../utils/type-guards";
+import type { ChatCompletionMessageParam } from "openai/resources";
 
 /**
  * Transforms Response API input into Chat Completion message format for Harmony processing.

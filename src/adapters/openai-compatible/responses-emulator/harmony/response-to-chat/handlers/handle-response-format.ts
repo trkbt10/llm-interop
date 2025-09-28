@@ -2,7 +2,7 @@
  * @file Handle response format for structured outputs.
  */
 
-import type { ResponseTextConfig } from "../../types";
+import { ResponseTextConfig } from "openai/resources/responses/responses.js";
 import { hasResponseFormat } from "../../utils/type-guards";
 
 /**

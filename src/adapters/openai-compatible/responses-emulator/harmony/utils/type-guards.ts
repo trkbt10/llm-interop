@@ -15,7 +15,7 @@ import type {
   ToolChoiceFunction,
   ToolChoiceCustom,
   ResponseCreateParamsBase,
-} from "../types";
+} from "openai/resources/responses/responses";
 
 /**
  * Validates if a value is a non-null object suitable for property access.

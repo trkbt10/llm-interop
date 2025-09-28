@@ -2,7 +2,7 @@
  * @file Tests for Harmony to Responses converter.
  */
 import { createHarmonyToResponsesConverter } from "./converter";
-import type { HarmonyMessage } from "./types";
+import type { HarmonyMessage } from "../types";
 
 describe("HarmonyToResponsesConverter", () => {
   // eslint-disable-next-line no-restricted-syntax -- Test setup: converter needs mutable state for beforeEach initialization
@@ -110,32 +110,41 @@ describe("HarmonyToResponsesConverter", () => {
     it("should handle Harmony formatted content", async () => {
       const harmonyMessage: HarmonyMessage = {
         role: "assistant",
-        content: `<|start|>
-<|message|>role="assistant"
-<|channel|>analysis
-This is my analysis of the problem.
-<|message|>role="assistant"
-<|channel|>final
-The solution is simple.
-<|end|>`,
+        content: [
+          "<|start|>assistant",
+          "<|channel|>analysis",
+          "<|message|>This is my analysis of the problem.",
+          "<|end|>",
+          "<|start|>assistant",
+          "<|channel|>final",
+          "<|message|>The solution is simple.",
+          "<|return|>",
+        ].join(""),
       };
 
       const events = await converter.convert(harmonyMessage);
 
-      // Check that both analysis and final content are processed
-      const textDeltas = events.filter((e) => e.type === "response.output_text.delta");
-      expect(textDeltas.length).toBeGreaterThan(0);
-
-      const textDone = events.find((e) => {
-        if (e.type !== "response.output_text.done") {
+      const analysisDelta = events.find((event) => {
+        if (event.type !== "response.output_text.delta") {
           return false;
         }
-        if (!("text" in e)) {
+        if (!("delta" in event)) {
           return false;
         }
-        return e.text.includes("solution");
+        return event.delta.includes("analysis of the problem");
       });
-      expect(textDone).toBeDefined();
+      expect(analysisDelta).toBeDefined();
+
+      const finalDone = events.find((event) => {
+        if (event.type !== "response.output_text.done") {
+          return false;
+        }
+        if (!("text" in event)) {
+          return false;
+        }
+        return event.text.includes("The solution is simple");
+      });
+      expect(finalDone).toBeDefined();
     });
 
     it("should handle streaming mode", async () => {

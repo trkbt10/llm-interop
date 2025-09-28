@@ -2,7 +2,7 @@
  * @file Tests for tool choice handling.
  */
 import { handleToolChoice } from "./handle-tool-choice";
-import type { ToolChoice, ToolChoiceFunction } from "../../types";
+import type { ToolChoice } from "../../types";
 import {
   toolChoiceNone,
   toolChoiceAuto,
@@ -11,6 +11,7 @@ import {
   createToolChoiceCustom,
   createToolChoiceAllowed,
 } from "../../fixtures.test.support";
+import { ToolChoiceFunction } from "openai/resources/responses/responses.js";
 
 describe("handleToolChoice", () => {
   it("should return null when no tool choice provided", () => {

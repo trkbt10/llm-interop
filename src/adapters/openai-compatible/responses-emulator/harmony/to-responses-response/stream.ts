@@ -1,73 +1,63 @@
 /**
  * @file Streaming converter for Harmony to Responses API.
  *
- * Provides real-time streaming conversion of Harmony responses
+ * Provides real-time streaming conversion of Harmony responses.
  */
 
-import { convertHarmonyToResponses } from "./converter";
+import { HARMONY_CHANNELS } from "../constants";
+import { createHarmonyStreamParser } from "./stream-parser";
+import type { HarmonyStreamParser } from "./stream-parser";
+import { HarmonyResponsesEventBuilder } from "./converter";
 import type { HarmonyToResponsesOptions } from "./types";
 import type { ResponseStreamEvent } from "openai/resources/responses/responses";
 
-/**
- * Creates a streaming converter that transforms Harmony response chunks into Response API events.
- * Enables real-time processing of Harmony formatted responses, parsing channel-based content
- * and converting it into OpenAI Response API stream events. Essential for maintaining streaming
- * responsiveness while bridging Harmony and Response API formats.
- *
- * @param chunks - Async iterable of Harmony response string chunks
- * @param options - Conversion options for controlling output format and behavior
- * @yields Response API stream events representing parsed Harmony content
- */
 export async function* createHarmonyToResponsesStream(
   chunks: AsyncIterable<string>,
   options: HarmonyToResponsesOptions = {},
 ): AsyncGenerator<ResponseStreamEvent, void, unknown> {
-  // Stream mode is always enabled for streaming
+  const resolvedOptions = {
+    idPrefix: "harmony",
+    stream: true,
+    ...options,
+  } satisfies HarmonyToResponsesOptions & { idPrefix: string; stream: boolean };
 
-  // eslint-disable-next-line no-restricted-syntax -- Streaming buffer requires accumulation
-  let buffer = "";
-  // eslint-disable-next-line no-restricted-syntax -- State tracking for stream parsing
-  let harmonyStarted = false;
+  const parser = createHarmonyStreamParser();
+  const builder = new HarmonyResponsesEventBuilder(resolvedOptions);
+
+  yield builder.start();
 
   for await (const chunk of chunks) {
-    buffer += chunk;
-
-    // Wait for complete Harmony response
-    if (!harmonyStarted && buffer.includes("<|start|>")) {
-      harmonyStarted = true;
-    }
-
-    if (harmonyStarted && buffer.includes("<|end|>")) {
-      // Parse and convert the complete response
-      const harmonyMessage = {
-        role: "assistant",
-        content: buffer,
-      };
-
-      const events = await convertHarmonyToResponses(harmonyMessage, { ...options, stream: true });
-
-      // Yield all events
-      for (const event of events) {
-        yield event;
-      }
-
-      // Reset for potential next response
-      buffer = "";
-      harmonyStarted = false;
-    }
+    const frames = parser.push(chunk);
+    yield* emitFrames(builder, frames);
   }
 
-  // Handle any remaining content
-  if (buffer.trim()) {
-    const harmonyMessage = {
-      role: "assistant",
-      content: buffer,
-    };
+  const trailingFrames = parser.flush();
+  yield* emitFrames(builder, trailingFrames);
 
-    const events = await convertHarmonyToResponses(harmonyMessage, { ...options, stream: true });
+  for (const event of builder.finish()) {
+    yield event;
+  }
+}
 
-    for (const event of events) {
-      yield event;
+function* emitFrames(
+  builder: HarmonyResponsesEventBuilder,
+  frames: ReturnType<HarmonyStreamParser["push"]>,
+): Generator<ResponseStreamEvent, void, undefined> {
+  for (const frame of frames) {
+    const { message, toolCall } = frame;
+
+    if (message.channel === HARMONY_CHANNELS.ANALYSIS) {
+      yield* builder.appendReasoning(message.content);
+      continue;
+    }
+
+    if (message.isToolCall && toolCall) {
+      yield* builder.appendToolCall(toolCall);
+      continue;
+    }
+
+    if (message.channel === HARMONY_CHANNELS.FINAL) {
+      yield* builder.appendFinal(message.content);
     }
   }
 }

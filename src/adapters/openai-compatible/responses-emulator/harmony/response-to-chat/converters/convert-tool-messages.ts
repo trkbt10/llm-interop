@@ -2,7 +2,7 @@
  * @file Convert tool-related messages to Harmony format.
  */
 
-import type { ChatCompletionMessageParam } from "../../types";
+import { ChatCompletionMessageParam } from "openai/resources";
 import { HARMONY_ROLES } from "../../constants";
 import { formatHarmonyMessage } from "../../utils/format-harmony-message";
 import { formatToolResponse, parseToolRecipient } from "../../utils/tool-message-utils";

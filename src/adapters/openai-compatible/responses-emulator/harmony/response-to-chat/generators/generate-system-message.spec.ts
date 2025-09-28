@@ -1,8 +1,8 @@
 /**
  * @file Tests for system message generation.
  */
+import { ResponseCreateParamsBase } from "openai/resources/responses/responses.mjs";
 import { generateSystemMessage } from "./generate-system-message";
-import type { ResponseCreateParamsBase } from "../../types";
 
 describe("generateSystemMessage", () => {
   // Note: Date-dependent tests work with any current date

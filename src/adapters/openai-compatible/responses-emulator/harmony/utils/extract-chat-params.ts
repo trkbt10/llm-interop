@@ -2,7 +2,8 @@
  * @file Extract ChatCompletion-compatible parameters from Response API params
  */
 
-import type { ResponseCreateParamsBase, ExtractedChatParams } from "../types";
+import { ResponseCreateParamsBase } from "openai/resources/responses/responses.js";
+import type { ExtractedChatParams } from "../types";
 
 /**
  * Extracts Chat Completion compatible parameters from Response API request parameters.

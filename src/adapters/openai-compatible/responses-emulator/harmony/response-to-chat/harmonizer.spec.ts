@@ -3,7 +3,6 @@
  */
 import { harmonizeResponseParams } from "./harmonizer";
 import { extractChatCompletionParams } from "../utils/extract-chat-params";
-import type { ResponseCreateParamsBase } from "../types";
 import {
   createFunctionTool,
   webSearchTool,
@@ -13,6 +12,7 @@ import {
   createToolChoiceFunction,
   createInvalidParams,
 } from "../fixtures.test.support";
+import { ResponseCreateParamsBase } from "openai/resources/responses/responses.mjs";
 
 describe("harmonizeResponseParams", () => {
   // Note: Date-dependent tests would ideally be refactored to accept date as parameter

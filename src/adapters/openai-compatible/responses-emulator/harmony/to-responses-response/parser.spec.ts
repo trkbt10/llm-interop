@@ -1,204 +1,173 @@
 /**
  * @file Tests for Harmony response parser.
  */
-import { createHarmonyResponseParser } from "./parser";
-import type { HarmonyMessage } from "./types";
+import { parseHarmonyResponse } from "./parse-response";
+import { createHarmonyStreamParser } from "./stream-parser";
+import { HARMONY_CHANNELS } from "../constants";
+import type { HarmonyMessage } from "../types";
 
 describe("HarmonyResponseParser", () => {
-  // eslint-disable-next-line no-restricted-syntax -- Test setup requires mutable parser instance
-  let parser: ReturnType<typeof createHarmonyResponseParser>;
-
-  beforeEach(() => {
-    parser = createHarmonyResponseParser();
-  });
-
   describe("parseResponse", () => {
-    it("should parse simple content", async () => {
+    it("parses plain assistant content", async () => {
       const message: HarmonyMessage = {
         role: "assistant",
         content: "Hello, world!",
       };
 
-      const result = await parser.parseResponse(message);
+      const result = await parseHarmonyResponse(message);
 
       expect(result.messages).toHaveLength(1);
-      expect(result.messages[0]).toEqual({
-        channel: "final",
+      expect(result.messages[0]).toMatchObject({
+        channel: HARMONY_CHANNELS.FINAL,
         content: "Hello, world!",
+        isToolCall: false,
+        stopReason: "return",
       });
       expect(result.reasoning).toBeUndefined();
       expect(result.toolCalls).toBeUndefined();
     });
 
-    it("should parse reasoning from response", async () => {
+    it("parses analysis and final channels following the spec", async () => {
       const message: HarmonyMessage = {
         role: "assistant",
-        content: "The answer is 42.",
-        reasoning: "I calculated this by deep thought.",
+        content: [
+          "<|start|>assistant",
+          "<|channel|>analysis",
+          "<|message|>Working through the steps",
+          "<|end|>",
+          "<|start|>assistant",
+          "<|channel|>final",
+          "<|message|>All done!",
+          "<|return|>",
+        ].join(""),
       };
 
-      const result = await parser.parseResponse(message);
+      const result = await parseHarmonyResponse(message);
+      expect(result.messages).toHaveLength(2);
 
-      expect(result.reasoning).toBe("I calculated this by deep thought.");
-      expect(result.messages).toHaveLength(1);
+      expect(result.messages[0]).toMatchObject({
+        channel: HARMONY_CHANNELS.ANALYSIS,
+        content: "Working through the steps",
+        stopReason: "end",
+      });
+      expect(result.messages[1]).toMatchObject({
+        channel: HARMONY_CHANNELS.FINAL,
+        content: "All done!",
+        stopReason: "return",
+      });
+
+      expect(result.reasoning).toBe("Working through the steps");
     });
 
-    it("should parse tool calls in OpenAI format", async () => {
+    it("parses harmony tool calls and normalises metadata", async () => {
       const message: HarmonyMessage = {
         role: "assistant",
-        content: "Let me check the weather.",
+        content: [
+          "<|start|>assistant",
+          "<|channel|>commentary to=functions.get_weather",
+          "<|constrain|>json",
+          "<|message|>{\"location\":\"Tokyo\"}",
+          "<|call|>",
+        ].join(""),
+      };
+
+      const result = await parseHarmonyResponse(message);
+
+      expect(result.messages).toHaveLength(1);
+      expect(result.messages[0]).toMatchObject({
+        channel: HARMONY_CHANNELS.COMMENTARY,
+        constrainType: "json",
+        recipient: "functions.get_weather",
+        isToolCall: true,
+        stopReason: "call",
+      });
+
+      expect(result.toolCalls).toEqual([
+        {
+          id: "fc_0001",
+          name: "get_weather",
+          arguments: '{"location":"Tokyo"}',
+        },
+      ]);
+    });
+
+    it("prefers explicit reasoning field when provided", async () => {
+      const message: HarmonyMessage = {
+        role: "assistant",
+        content: [
+          "<|start|>assistant",
+          "<|channel|>analysis",
+          "<|message|>internal thoughts",
+          "<|end|>",
+        ].join(""),
+        reasoning: "external reasoning",
+      };
+
+      const result = await parseHarmonyResponse(message);
+      expect(result.reasoning).toBe("external reasoning");
+    });
+
+    it("normalises OpenAI tool_calls array when present", async () => {
+      const message: HarmonyMessage = {
+        role: "assistant",
+        content: "Let's call a tool.",
         tool_calls: [
           {
             id: "call_123",
             type: "function",
             function: {
               name: "get_weather",
-              arguments: '{"location": "NYC"}',
+              arguments: '{"location":"SF"}',
             },
           },
         ],
       };
 
-      const result = await parser.parseResponse(message);
+      const result = await parseHarmonyResponse(message);
+      expect(result.toolCalls).toEqual([
+        { id: "call_123", name: "get_weather", arguments: '{"location":"SF"}' },
+      ]);
+    });
+  });
 
-      expect(result.toolCalls).toHaveLength(1);
-      expect(result.toolCalls![0]).toEqual({
-        id: "call_123",
-        name: "get_weather",
-        arguments: '{"location": "NYC"}',
+  describe("HarmonyStreamParser", () => {
+    it("emits frames as soon as messages complete", () => {
+      const streamParser = createHarmonyStreamParser();
+
+      const frames = [
+        ...streamParser.push("<|start|>assistant<|channel|>analysis"),
+        ...streamParser.push("<|message|>Thinking"),
+        ...streamParser.push("<|end|>"),
+        ...streamParser.push("<|start|>assistant<|channel|>final"),
+        ...streamParser.push("<|message|>Done"),
+        ...streamParser.push("<|return|>"),
+        ...streamParser.flush(),
+      ];
+
+      const messages = frames.map((frame) => frame.message);
+      expect(messages).toHaveLength(2);
+      expect(messages[0]).toMatchObject({
+        channel: HARMONY_CHANNELS.ANALYSIS,
+        content: "Thinking",
+        stopReason: "end",
+      });
+      expect(messages[1]).toMatchObject({
+        channel: HARMONY_CHANNELS.FINAL,
+        content: "Done",
+        stopReason: "return",
       });
     });
 
-    it("should parse Harmony formatted content with channels", async () => {
-      const message: HarmonyMessage = {
-        role: "assistant",
-        content: `<|start|>
-<|message|>role="assistant"
-<|channel|>analysis
-Let me analyze this problem step by step.
-<|message|>role="assistant"
-<|channel|>commentary
-This is an interesting challenge.
-<|message|>role="assistant"
-<|channel|>final
-The solution is to use recursion.
-<|end|>`,
-      };
+    it("creates a fallback final message for plain text streams", () => {
+      const streamParser = createHarmonyStreamParser();
+      streamParser.push("Plain response");
+      const frames = streamParser.flush();
 
-      const result = await parser.parseResponse(message);
-
-      expect(result.messages).toHaveLength(3);
-
-      expect(result.messages[0]).toEqual({
-        channel: "analysis",
-        content: "Let me analyze this problem step by step.",
-      });
-
-      expect(result.messages[1]).toEqual({
-        channel: "commentary",
-        content: "This is an interesting challenge.",
-      });
-
-      expect(result.messages[2]).toEqual({
-        channel: "final",
-        content: "The solution is to use recursion.",
-      });
-
-      // Reasoning should be extracted from analysis channel
-      expect(result.reasoning).toBe("Let me analyze this problem step by step.");
-    });
-
-    it("should parse tool calls from Harmony format", async () => {
-      const message: HarmonyMessage = {
-        role: "assistant",
-        content: `<|start|>
-<|message|>role="assistant"
-<|channel|>final
-<|call|>functions.get_weather
-{"location": "San Francisco", "unit": "celsius"}
-<|message|>role="assistant"
-<|channel|>final
-I'll check the weather for you.
-<|end|>`,
-      };
-
-      const result = await parser.parseResponse(message);
-
-      expect(result.toolCalls).toHaveLength(1);
-      expect(result.toolCalls![0].name).toBe("get_weather");
-      expect(result.toolCalls![0].arguments).toBe('{"location": "San Francisco", "unit": "celsius"}');
-      expect(result.toolCalls![0].id).toMatch(/^fc_/);
-    });
-
-    it("should handle constrain types", async () => {
-      const message: HarmonyMessage = {
-        role: "assistant",
-        content: `<|start|>
-<|message|>role="assistant"
-<|channel|>final
-<|constrain|>json
-{"result": "success", "value": 42}
-<|end|>`,
-      };
-
-      const result = await parser.parseResponse(message);
-
-      expect(result.messages).toHaveLength(1);
-      expect(result.messages[0].constrainType).toBe("json");
-      expect(result.messages[0].content).toBe('{"result": "success", "value": 42}');
-    });
-
-    it("should handle return recipients", async () => {
-      const message: HarmonyMessage = {
-        role: "assistant",
-        content: `<|start|>
-<|message|>role="assistant"
-<|channel|>final
-<|return|>user
-Here is your answer.
-<|end|>`,
-      };
-
-      const result = await parser.parseResponse(message);
-
-      expect(result.messages).toHaveLength(1);
-      expect(result.messages[0].recipient).toBe("user");
-      expect(result.messages[0].isToolCall).toBe(false);
-    });
-
-    it("should handle empty Harmony content", async () => {
-      const message: HarmonyMessage = {
-        role: "assistant",
-        content: `<|start|>
-<|end|>`,
-      };
-
-      const result = await parser.parseResponse(message);
-
-      expect(result.messages).toHaveLength(0);
-      expect(result.reasoning).toBeUndefined();
-      expect(result.toolCalls).toBeUndefined();
-    });
-
-    it("should handle malformed tool calls gracefully", async () => {
-      const message: HarmonyMessage = {
-        role: "assistant",
-        content: "Checking...",
-        tool_calls: [
-          {
-            id: "call_456",
-            // Missing required fields - should handle gracefully
-          } as { id: string; type: "function"; function: { name: string; arguments: string } },
-        ],
-      };
-
-      const result = await parser.parseResponse(message);
-
-      expect(result.toolCalls).toHaveLength(1);
-      expect(result.toolCalls![0]).toEqual({
-        id: "call_456",
-        name: "unknown",
-        arguments: "{}",
+      expect(frames).toHaveLength(1);
+      expect(frames[0].message).toMatchObject({
+        channel: HARMONY_CHANNELS.FINAL,
+        content: "Plain response",
+        stopReason: "return",
       });
     });
   });

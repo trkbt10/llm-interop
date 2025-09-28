@@ -3,6 +3,7 @@
  */
 
 import type { ResponseStreamEvent } from "openai/resources/responses/responses";
+import type { HarmonyChannel as HarmonyChannelType } from "../constants";
 
 export type HarmonyToResponsesOptions = {
   /** Request ID for the response */
@@ -14,49 +15,34 @@ export type HarmonyToResponsesOptions = {
   /** Prefix for generated IDs */
   idPrefix?: string;
 };
-export type HarmonyToolCall = {
-  id: string;
-  type: "function";
-  function: {
-    name: string;
-    arguments: string;
-  };
-};
-export type HarmonyMessage = {
-  role: string;
-  content: string;
-  channel?: "analysis" | "commentary" | "final";
-  recipient?: string;
-  constrainType?: string;
-  reasoning?: string;
-  tool_calls?: HarmonyToolCall[];
-};
 export type HarmonyParsedToolCall = {
   id: string;
   name: string;
   arguments: string;
 };
+
+export type HarmonyStopReason = "end" | "call" | "return";
+
+export type ParsedHarmonyMessage = {
+  channel: HarmonyChannelType;
+  content: string;
+  recipient?: string;
+  constrainType?: string;
+  isToolCall: boolean;
+  stopReason: HarmonyStopReason;
+  role?: string;
+};
+
 export type ParsedHarmonyResponse = {
   messages: ParsedHarmonyMessage[];
   reasoning?: string;
   toolCalls?: HarmonyParsedToolCall[];
 };
 
-export type ParsedHarmonyMessage = {
-  channel: "analysis" | "commentary" | "final";
-  content: string;
-  recipient?: string;
-  constrainType?: string;
-  isToolCall?: boolean;
-};
-
-export type HarmonyParserState = {
-  currentMessage?: Partial<ParsedHarmonyMessage>;
-  messages: ParsedHarmonyMessage[];
-  inMessage: boolean;
-  currentRole?: string;
-  buffer: string;
-  expectingContent: boolean;
+export type HarmonyParserFrame = {
+  type: "message";
+  message: ParsedHarmonyMessage;
+  toolCall?: HarmonyParsedToolCall;
 };
 
 export type HarmonyResponseEvent = ResponseStreamEvent;

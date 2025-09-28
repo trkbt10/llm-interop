@@ -2,9 +2,9 @@
  * @file Convert OpenAI tools to Harmony TypeScript-like format.
  */
 
-import type { Tool } from "../../types";
 import { convertJsonSchemaToTypeScript } from "./convert-json-schema";
 import { isFunctionTool, isWebSearchTool, isCodeInterpreterTool } from "../../utils/type-guards";
+import { Tool } from "openai/resources/responses/responses.js";
 
 /**
  * Converts OpenAI tool definitions into Harmony TypeScript-style format strings.

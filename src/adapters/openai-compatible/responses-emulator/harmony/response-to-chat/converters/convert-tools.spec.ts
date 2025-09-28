@@ -1,9 +1,8 @@
 /**
  * @file Tests for tool conversion to Harmony format.
  */
+import { FunctionTool, Tool } from "openai/resources/responses/responses.js";
 import { convertToolsToHarmonyFormat, getBuiltinToolTypes } from "./convert-tools";
-import type { Tool, FunctionTool } from "../../types";
-
 describe("convertToolsToHarmonyFormat", () => {
   it("should return empty string for no tools", () => {
     expect(convertToolsToHarmonyFormat([])).toBe("");

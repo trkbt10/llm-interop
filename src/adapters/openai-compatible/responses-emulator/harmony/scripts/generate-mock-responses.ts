@@ -8,9 +8,9 @@ import { OpenAI } from "openai";
 import type { ChatCompletionCreateParams, ChatCompletion } from "openai/resources/chat/completions";
 import { writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import type { ResponseCreateParamsBase } from "../types";
 import { harmonizeResponseParams } from "../response-to-chat";
 import { extractChatCompletionParams } from "../utils/extract-chat-params";
+import { ResponseCreateParamsBase } from "openai/resources/responses/responses.mjs";
 
 // Configuration
 const GROQ_API_KEY = process.env.GROQ_API_KEY;

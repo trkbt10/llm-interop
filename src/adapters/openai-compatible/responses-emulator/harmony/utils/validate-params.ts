@@ -2,7 +2,7 @@
  * @file Validate Response API parameters.
  */
 
-import type { ResponseCreateParamsBase } from "../types";
+import { ResponseCreateParamsBase } from "openai/resources/responses/responses.js";
 
 /**
  * Domain-specific error for parameter validation failures

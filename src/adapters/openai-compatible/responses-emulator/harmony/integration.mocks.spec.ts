@@ -4,8 +4,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { ChatCompletion, ChatCompletionMessageToolCall } from "openai/resources/chat/completions";
-import type { HarmonyMessage } from "./to-responses-response";
-import { convertHarmonyToResponses } from "./to-responses-response";
+import type { HarmonyMessage } from "./types";
+import { convertHarmonyToResponses } from "./to-responses-response/converter";
 import { isFunctionToolCall } from "../../../../providers/openai/responses-guards";
 import type { ChatCompletionMessageToolCall as ToolCall } from "openai/resources/chat/completions";
 

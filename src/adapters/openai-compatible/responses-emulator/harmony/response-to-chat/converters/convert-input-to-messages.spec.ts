@@ -2,7 +2,6 @@
  * @file Tests for converting input to messages.
  */
 import { convertInputToMessages } from "./convert-input-to-messages";
-import type { ResponseInput } from "../../types";
 import {
   createMessageInput,
   createFunctionCallInput,
@@ -10,6 +9,7 @@ import {
   createTextContentPart,
   createImageContentPart,
 } from "../../fixtures.test.support";
+import { ResponseInput } from "openai/resources/responses/responses.js";
 
 describe("convertInputToMessages", () => {
   it("should return empty array for no input", () => {

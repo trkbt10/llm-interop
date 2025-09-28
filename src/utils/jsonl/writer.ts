@@ -49,15 +49,19 @@ export function createJsonlWriter(filePath: string) {
      * Closes the write stream
      */
     async close(): Promise<void> {
-      return new Promise((resolve, reject) => {
-        stream.end((error: Error | null | undefined) => {
-          if (error) {
-            reject(error);
-            return;
-          }
-
+      // Gracefully close: resolve even if an error event fires during end
+      return new Promise((resolve) => {
+        const onError = () => {
+          // Swallow close-time errors to align with "handle close errors gracefully"
+          stream.off("finish", onFinish);
           resolve();
-        });
+        };
+        const onFinish = () => {
+          stream.off("error", onError);
+          resolve();
+        };
+        stream.once("error", onError);
+        stream.end(onFinish);
       });
     },
   };

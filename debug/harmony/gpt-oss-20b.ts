@@ -136,29 +136,37 @@ async function runScenario(s: Scenario, logDir: string): Promise<ScenarioResult>
   return { completion: res, responseCompleted: completedEvent, responseEvents, harmonyContent };
 }
 
-function resolveChatContent(content: ChatCompletionMessage["content"]): string | undefined {
+type ChatMessageContentArray = Array<unknown>;
+
+function isChatMessageContentArray(content: unknown): content is ChatMessageContentArray {
+  return Array.isArray(content);
+}
+
+function resolveChatContent(content: unknown): string | undefined {
   if (!content) {
     return undefined;
   }
   if (typeof content === "string") {
     return content;
   }
-  if (Array.isArray(content)) {
-    return content
-      .map((part) => {
-        if (!part) {
-          return "";
-        }
-        if (typeof part === "string") {
-          return part;
-        }
-        if (typeof part === "object" && "text" in part && typeof part.text === "string") {
-          return part.text;
-        }
-        return JSON.stringify(part);
-      })
-      .filter((segment) => segment.length > 0)
-      .join("\n");
+  if (isChatMessageContentArray(content)) {
+    const segments: string[] = [];
+    for (const part of content) {
+      if (!part) {
+        continue;
+      }
+      if (typeof part === "string") {
+        segments.push(part);
+        continue;
+      }
+      if (typeof part === "object" && "text" in part && typeof part.text === "string") {
+        segments.push(part.text);
+        continue;
+      }
+      segments.push(JSON.stringify(part));
+    }
+    const nonEmpty = segments.filter((segment) => segment.length > 0);
+    return nonEmpty.length > 0 ? nonEmpty.join("\n") : undefined;
   }
   return String(content);
 }
@@ -171,7 +179,9 @@ function collectFinalText(event: ResponseCompletedEvent | undefined): string | u
   if (!event) {
     return undefined;
   }
-  const messageOutputs = event.response.output.filter(isResponseOutputMessage);
+  const messageOutputs = event.response.output
+    .filter(isResponseOutputMessage)
+    .filter((item) => !item.id.endsWith("_reasoning"));
   const textChunks = messageOutputs
     .flatMap((item) => item.content)
     .filter(isResponseOutputText)
@@ -262,15 +272,32 @@ async function main() {
   for (const s of scenarios) {
     try {
       const { completion, responseCompleted, harmonyContent } = await runScenario(s, logDir);
-      const finalText = collectFinalText(responseCompleted);
-      const fallbackText =
-        finalText ??
-        resolveChatContent(completion.choices?.[0]?.message?.content) ??
-        harmonyContent ??
-        "<no content>";
-      const origin = finalText ? "Responses" : harmonyContent ? "Harmony preview" : "ChatCompletion";
-      console.log(`📝 [${s.name}] (${origin}) ${fallbackText}`);
       const toolCalls = collectToolCalls(responseCompleted);
+      const finalText = collectFinalText(responseCompleted);
+      const chatContent = resolveChatContent(completion.choices?.[0]?.message?.content);
+      const fallbackText = (() => {
+        if (finalText) {
+          return finalText;
+        }
+        if (toolCalls.length > 0) {
+          return toolCalls.map((tc) => `${tc.name}(${tc.arguments})`).join("; ");
+        }
+        if (chatContent) {
+          return chatContent;
+        }
+        if (harmonyContent) {
+          return harmonyContent;
+        }
+        return "<no content>";
+      })();
+      const origin = finalText
+        ? "Responses"
+        : toolCalls.length > 0
+          ? "Responses tool_call"
+          : harmonyContent
+              ? "Harmony preview"
+              : "ChatCompletion";
+      console.log(`📝 [${s.name}] (${origin}) ${fallbackText}`);
       if (toolCalls.length > 0) {
         console.log(
           "🔧 Parsed tool calls:",

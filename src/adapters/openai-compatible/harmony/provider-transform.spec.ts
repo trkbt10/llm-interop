@@ -1,4 +1,11 @@
-import type { ChatCompletion } from "openai/resources/chat/completions";
+/**
+ * @file Integration test for the Harmony request/response adapter using lightweight Vitest doubles.
+ */
+/* eslint-disable no-restricted-imports -- The test harness relies on explicit Vitest helpers for type-safe mocks. */
+/* eslint-disable no-restricted-properties -- vi.* is used to observe adapter interactions without external side effects. */
+/* eslint-disable no-restricted-syntax -- Mocked constructs emulate the OpenAI SDK shape for deterministic testing. */
+import type { ChatCompletion, ChatCompletionCreateParams } from "openai/resources/chat/completions";
+import type { ResponseFunctionToolCall } from "openai/resources/responses/responses";
 import type { Provider } from "../../../config/types";
 import { buildOpenAIGenericAdapter } from "../factory";
 import { describe, expect, it, vi, beforeEach } from "vitest";
@@ -7,22 +14,20 @@ const chatCreateMock = vi.fn();
 const responsesCreateMock = vi.fn();
 const modelsListMock = vi.fn();
 
-class FakeOpenAI {
-  constructor(_opts: unknown) {}
-
-  chat = {
-    completions: {
-      create: chatCreateMock,
+function FakeOpenAI(this: Record<string, unknown>): void {
+  Object.assign(this, {
+    chat: {
+      completions: {
+        create: chatCreateMock,
+      },
     },
-  };
-
-  responses = {
-    create: responsesCreateMock,
-  };
-
-  models = {
-    list: modelsListMock,
-  };
+    responses: {
+      create: responsesCreateMock,
+    },
+    models: {
+      list: modelsListMock,
+    },
+  });
 }
 
 vi.mock("openai", () => ({
@@ -50,7 +55,12 @@ describe("OpenAI provider with Harmony transform", () => {
       },
     };
 
-    const capturedChatParams: unknown[] = [];
+    type CapturedChatParams = {
+      messages: ChatCompletionCreateParams["messages"];
+      tools: ChatCompletionCreateParams["tools"];
+    };
+
+    const capturedChatParams: CapturedChatParams[] = [];
 
     const chatCompletion: ChatCompletion = {
       id: "chatcmpl_test",
@@ -63,6 +73,7 @@ describe("OpenAI provider with Harmony transform", () => {
           message: {
             role: "assistant",
             content: "",
+            refusal: null,
             tool_calls: [
               {
                 id: "call_1",
@@ -85,8 +96,8 @@ describe("OpenAI provider with Harmony transform", () => {
       },
     };
 
-    chatCreateMock.mockImplementation(async (params) => {
-      capturedChatParams.push(params);
+    chatCreateMock.mockImplementation(async (params: ChatCompletionCreateParams) => {
+      capturedChatParams.push({ messages: params.messages, tools: params.tools });
       return chatCompletion;
     });
 
@@ -96,13 +107,14 @@ describe("OpenAI provider with Harmony transform", () => {
 
     const client = buildOpenAIGenericAdapter(provider);
 
-    const toolSchema = {
+    type FunctionTool = Extract<NonNullable<ChatCompletionCreateParams["tools"]>[number], { type: "function" }>;
+    const toolSchema: FunctionTool["function"]["parameters"] = {
       type: "object",
       properties: {
         location: { type: "string" },
       },
       required: ["location"],
-    } as const;
+    };
 
     const response = await client.responses.create({
       model: "gpt-oss-20b",
@@ -113,35 +125,69 @@ describe("OpenAI provider with Harmony transform", () => {
           name: "get_weather",
           description: "Get weather",
           parameters: toolSchema,
+          strict: true,
         },
       ],
       tool_choice: "auto",
     });
 
     expect(chatCreateMock).toHaveBeenCalledTimes(1);
-    const [chatParams] = capturedChatParams as Array<{
-      messages: Array<{ role: string; content: string }>;
-      tools: unknown;
-    }>;
+    const [chatParams] = capturedChatParams;
 
     const systemMessage = chatParams.messages[0];
     expect(systemMessage.role).toBe("system");
     expect(systemMessage.content).toContain("# Valid channels");
 
-    const developerMessage = chatParams.messages.find((m) => m.role === "system" && m.content.includes("# Tools"));
-    expect(developerMessage?.content).toContain("namespace functions");
+    const developerMessage = chatParams.messages.find((message) => {
+      if (message.role !== "system") {
+        return false;
+      }
+      if (typeof message.content !== "string") {
+        return false;
+      }
+      return message.content.includes("# Tools");
+    });
 
-    const firstTool = Array.isArray(chatParams.tools) ? chatParams.tools[0] : undefined;
+    if (!developerMessage || typeof developerMessage.content !== "string") {
+      throw new Error("Expected a developer system message describing tools");
+    }
+
+    expect(developerMessage.content).toContain("namespace functions");
+
+    if (!Array.isArray(chatParams.tools) || chatParams.tools.length === 0) {
+      throw new Error("Expected Harmony conversion to define at least one tool");
+    }
+    const [firstTool] = chatParams.tools;
     expect(firstTool).toBeDefined();
 
     expect(response.output).toHaveLength(1);
-    const [toolCall] = response.output as Array<{
-      type: string;
-      name: string;
-      arguments: string;
-    }>;
+    const toolCall = findFunctionToolCall(response.output);
+
+    if (!toolCall) {
+      throw new Error("Expected a function tool call in the response output");
+    }
+
     expect(toolCall.type).toBe("function_call");
     expect(toolCall.name).toBe("get_weather");
     expect(toolCall.arguments).toContain("Tokyo");
   });
 });
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isResponseFunctionToolCall(value: unknown): value is ResponseFunctionToolCall {
+  if (!isRecord(value)) {
+    return false;
+  }
+  const { type, name, arguments: args } = value;
+  return type === "function_call" && typeof name === "string" && typeof args === "string" && typeof value.call_id === "string";
+}
+
+function findFunctionToolCall(output: unknown): ResponseFunctionToolCall | undefined {
+  if (!Array.isArray(output)) {
+    return undefined;
+  }
+  return output.find(isResponseFunctionToolCall);
+}

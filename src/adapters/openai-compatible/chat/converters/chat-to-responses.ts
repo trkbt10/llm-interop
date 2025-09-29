@@ -99,16 +99,21 @@ export function buildResponseInputFromChatMessages(
     if (!isOpenAIChatBasicRole(message.role)) {
       continue;
     }
-    const content: ResponseInputMessageContentList = text
-      ? [
-          {
-            type: "input_text",
-            text,
-          },
-        ]
-      : [];
+    const content = buildMessageContent(text);
     items.push({ type: "message", role: message.role, content });
   }
 
   return items;
+}
+
+function buildMessageContent(text: string | undefined): ResponseInputMessageContentList {
+  if (!text) {
+    return [];
+  }
+  return [
+    {
+      type: "input_text",
+      text,
+    },
+  ];
 }

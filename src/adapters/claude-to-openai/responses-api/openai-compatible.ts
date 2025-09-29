@@ -147,6 +147,9 @@ function convertToolChoiceForChat(toolChoice: unknown): ChatCompletionToolChoice
 function buildChatParams(params: ResponseCreateParams): ChatCompletionCreateParams {
   const messages: ChatCompletionCreateParams["messages"] = [];
 
+  if (typeof params.model === "undefined") {
+    throw new Error("Model must be specified in parameters");
+  }
   if (params.instructions) {
     messages.push({ role: "system", content: params.instructions });
   }
@@ -154,13 +157,13 @@ function buildChatParams(params: ResponseCreateParams): ChatCompletionCreatePara
   addInputMessages(messages, params.input);
 
   const chatParams: ChatCompletionCreateParams = {
-    model: params.model ? params.model : process.env.ANTHROPIC_MODEL ? process.env.ANTHROPIC_MODEL : "",
+    model: params.model,
     messages,
     stream: !!params.stream,
   };
 
   if (params.max_output_tokens != null) {
-    chatParams.max_tokens = params.max_output_tokens;
+    chatParams.max_completion_tokens = params.max_output_tokens;
   }
   // Temperature and top_p disabled for all models
   // if (params.temperature != null) chatParams.temperature = params.temperature;
@@ -227,17 +230,11 @@ export function buildOpenAICompatibleClientForClaude(provider: Provider, modelHi
     const claudeReq = chatCompletionToClaudeLocal({ ...params, model: resolvedModel });
 
     if (params.stream) {
-      const streamAny = await anthropic.messages.create(
-        { ...claudeReq, stream: true },
-        { signal: options?.signal },
-      );
+      const streamAny = await anthropic.messages.create({ ...claudeReq, stream: true }, { signal: options?.signal });
       return claudeToChatCompletionStream(streamAny, resolvedModel);
     }
 
-    const claudeResp = await anthropic.messages.create(
-      { ...claudeReq, stream: false },
-      { signal: options?.signal },
-    );
+    const claudeResp = await anthropic.messages.create({ ...claudeReq, stream: false }, { signal: options?.signal });
     return claudeToChatCompletion(claudeResp, resolvedModel);
   }
 
@@ -268,20 +265,14 @@ export function buildOpenAICompatibleClientForClaude(provider: Provider, modelHi
     const claudeReq = chatCompletionToClaudeLocal(chatParams);
 
     if (chatParams.stream) {
-      const streamAny = await anthropic.messages.create(
-        { ...claudeReq, stream: true },
-        { signal: options?.signal },
-      );
+      const streamAny = await anthropic.messages.create({ ...claudeReq, stream: true }, { signal: options?.signal });
       const openaiTools = chatParams.tools
         ?.map(convertOpenAIChatToolToResponsesTool)
         .filter((t): t is Tool => t !== null);
       return claudeToOpenAIStream(streamAny, chatParams.model, openaiTools);
     }
 
-    const claudeResp = await anthropic.messages.create(
-      { ...claudeReq, stream: false },
-      { signal: options?.signal },
-    );
+    const claudeResp = await anthropic.messages.create({ ...claudeReq, stream: false }, { signal: options?.signal });
     const response = claudeToOpenAIResponse(claudeResp, chatParams.model);
     return response;
   }

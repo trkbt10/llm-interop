@@ -457,7 +457,9 @@ const shouldTreatAsImplicitToolCall = ({
   if (!body) {
     return false;
   }
-  if (!(body.startsWith("{") || body.startsWith("["))) {
+  const startsWithObject = body.startsWith("{");
+  const startsWithArray = body.startsWith("[");
+  if (!startsWithObject && !startsWithArray) {
     return false;
   }
   return true;

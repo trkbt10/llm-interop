@@ -1,8 +1,6 @@
 /**
  * @file Gateway surface exposing Gemini-compatible endpoints.
  */
-import { Hono } from "hono";
-
 import { emulateGeminiEndpoint } from "../../ports/fetch/gemini";
 import { createGatewayForwarder } from "../core/router-base";
 import type { GatewayConfig } from "../core/types";
@@ -22,16 +20,17 @@ async function resolveModelFromGeminiRequest(request: Request, pathname: string)
 }
 
 /**
- * Creates a Hono application that proxies Gemini-compatible requests across configured backends.
+ * Creates a fetch proxy that routes Gemini-compatible requests across configured backends.
  */
-export function createGeminiGateway(config: GatewayConfig): Hono {
-  const app = new Hono();
+export function createGeminiGateway(config: GatewayConfig) {
   const forward = createGatewayForwarder(config, {
     fetchFactory: (backend) => emulateGeminiEndpoint({ provider: backend.provider }),
     resolveModel: resolveModelFromGeminiRequest,
   });
 
-  app.all("*", (context) => forward(context.req.raw));
-
-  return app;
+  return {
+    fetch(request: Request) {
+      return forward(request);
+    },
+  };
 }

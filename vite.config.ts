@@ -5,18 +5,44 @@
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { builtinModules } from "node:module";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT_DIR = fileURLToPath(new URL("./", import.meta.url));
+const CLI_ENTRY = path.resolve(ROOT_DIR, "src/gateway/cli/server.ts");
 
 function noNodeBuiltins() {
   const builtins = new Set([...builtinModules, ...builtinModules.map((m) => `node:${m}`)]);
   return {
     name: "no-node-builtins",
     resolveId(id: string, importer?: string) {
+      if (importer && path.resolve(importer) === CLI_ENTRY) {
+        return null;
+      }
       const base = id.replace(/^node:/, "").split("/", 1)[0];
       if (builtins.has(id) || builtins.has(base)) {
         const from = importer ? ` imported from ${importer}` : "";
         throw new Error(`[no-node-builtins] Detected Node builtin import: '${id}'${from}`);
       }
       return null;
+    },
+  } as const;
+}
+
+function cliShebang() {
+  return {
+    name: "cli-shebang",
+    renderChunk(code: string, chunk: { facadeModuleId?: string | null }) {
+      if (!chunk.facadeModuleId) {
+        return null;
+      }
+      if (path.resolve(chunk.facadeModuleId) !== CLI_ENTRY) {
+        return null;
+      }
+      return {
+        code: `#!/usr/bin/env node\n${code}`,
+        map: null,
+      };
     },
   } as const;
 }
@@ -31,6 +57,7 @@ export default defineConfig({
       include: ["src/**/*.ts"],
     }),
     noNodeBuiltins(),
+    cliShebang(),
   ],
   build: {
     outDir: "dist",
@@ -55,8 +82,9 @@ export default defineConfig({
         "providers/openai": "src/providers/openai/index.ts",
         "providers/claude": "src/providers/claude/index.ts",
         "providers/gemini": "src/providers/gemini/index.ts",
+        "bin/gateway-server": "src/gateway/cli/server.ts",
       },
-      external: [/^node:.+/, /@anthropic-ai\//, /^openai(\/.*)?$/],
+      external: [/^node:.+/, /@anthropic-ai\//, /^openai(\/.*)?$/, "@hono/node-server"],
       output: [
         {
           dir: "dist",

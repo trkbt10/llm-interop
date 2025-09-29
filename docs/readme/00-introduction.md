@@ -31,3 +31,4 @@ const res = await client.responses.create({ model: "gpt-5-mini", input: "Hello" 
 Notes
 - Works in Node and any runtime with `fetch`.
 - Provide real API keys for the selected `provider.type` via your environment.
+- Need an HTTP server instead of an in-process adapter? See [Gateway Surfaces](15-gateway.md).

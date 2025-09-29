@@ -1,0 +1,44 @@
+{
+  "backends": [
+    {
+      "id": "openai-primary",
+      "provider": {
+        "type": "openai",
+        "apiKey": "${OPENAI_API_KEY}",
+        "model": "gpt-5"
+      },
+      "weight": 3,
+      "maxConcurrency": 8,
+      "models": {
+        "exact": ["gpt-5", "gpt-5-mini"],
+        "grades": ["high"]
+      }
+    },
+    {
+      "id": "openai-backup",
+      "provider": {
+        "type": "openai",
+        "baseURL": "https://api.openai.com/v1",
+        "apiKey": "${OPENAI_FALLBACK_KEY}",
+        "model": "gpt-5-mini"
+      },
+      "weight": 1,
+      "maxConcurrency": 4,
+      "models": {
+        "exact": ["gpt-5-mini"],
+        "grades": ["mid", "low"]
+      }
+    }
+  ],
+  "routing": {
+    "acquireTimeoutMs": 15000
+  },
+  "selection": {
+    "priority": ["exact", "grade", "provider"],
+    "allowFallbackToAny": true,
+    "providerHints": {
+      "openai": ["openai-primary"],
+      "anthropic": ["claude"]
+    }
+  }
+}

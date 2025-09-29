@@ -4,7 +4,51 @@
 
 import { convertJsonSchemaToTypeScript } from "./convert-json-schema";
 import { isFunctionTool, isWebSearchTool, isCodeInterpreterTool } from "../../utils/type-guards";
-import { Tool } from "openai/resources/responses/responses.js";
+import type { Tool, FunctionTool } from "openai/resources/responses/responses.js";
+
+const INDENT = "  ";
+
+type FunctionToolLike = FunctionTool & { name: string };
+
+const DEFAULT_DESCRIPTION = "No description provided";
+
+function sanitizeToolName(name: string): string {
+  const trimmed = name.trim();
+  if (!trimmed) {
+    return "unnamed_tool";
+  }
+  const normalized = trimmed.replace(/[^A-Za-z0-9_]/g, "_");
+  if (/^[A-Za-z_]/.test(normalized)) {
+    return normalized;
+  }
+  return `fn_${normalized}`;
+}
+
+function formatToolDescription(tool: FunctionToolLike): string {
+  const rawDescription = typeof tool.description === "string" ? tool.description.trim() : "";
+  const normalized = rawDescription.length > 0 ? rawDescription : DEFAULT_DESCRIPTION;
+  return normalized.replace(/\s+/g, " ");
+}
+
+function formatFunctionType(tool: FunctionToolLike): string {
+  if (!tool.parameters || Object.keys(tool.parameters).length === 0) {
+    return "() => any";
+  }
+  const paramsType = convertJsonSchemaToTypeScript(tool.parameters, `${INDENT}${INDENT}`);
+  return `(_: ${paramsType}) => any`;
+}
+
+function formatFunctionTool(tool: FunctionToolLike): string[] {
+  const lines: string[] = [];
+  lines.push(`// ${formatToolDescription(tool)}`);
+  if (tool.strict === true) {
+    lines.push("// Arguments must strictly follow the defined JSON schema.");
+  }
+  const signature = formatFunctionType(tool);
+  lines.push(`type ${sanitizeToolName(tool.name)} = ${signature};`);
+  lines.push("");
+  return lines;
+}
 
 /**
  * Converts OpenAI tool definitions into Harmony TypeScript-style format strings.
@@ -15,46 +59,38 @@ import { Tool } from "openai/resources/responses/responses.js";
  * @param tools - Array of OpenAI tool definitions requiring Harmony formatting
  * @returns TypeScript-style namespace string describing available functions
  */
-export function convertToolsToHarmonyFormat(tools: Tool[]): string {
-  if (!tools || tools.length === 0) {
+export function convertToolsToHarmonyFormat(tools: Tool[] | null | undefined): string {
+  if (!Array.isArray(tools) || tools.length === 0) {
     return "";
   }
 
-  // Extract function tools for namespace generation
-  const functionTools = tools.filter(isFunctionTool);
+  const functionTools = tools
+    .filter(isFunctionTool)
+    .filter((tool): tool is FunctionToolLike => typeof tool.name === "string" && tool.name.trim().length > 0);
 
-  // eslint-disable-next-line no-restricted-syntax -- Building formatted tool string requires accumulation
-  let result = "";
-
-  // Add function tools namespace
-  if (functionTools.length > 0) {
-    result += "## functions\n\nnamespace functions {\n\n";
-
-    for (const tool of functionTools) {
-      const description = tool.description ? tool.description : "No description provided";
-      const params = tool.parameters;
-
-      // Add description as comment
-      result += `// ${description}\n`;
-
-      // Format function type
-      if (!params || Object.keys(params).length === 0) {
-        result += `type ${tool.name} = () => any;\n\n`;
-        continue;
-      }
-
-      const paramsType = convertJsonSchemaToTypeScript(params, "");
-      result += `type ${tool.name} = (_: ${paramsType}) => any;\n\n`;
-    }
-
-    result += "} // namespace functions";
+  if (functionTools.length === 0) {
+    return "";
   }
 
-  // Note: Built-in tools like browser and python are handled separately in system message
-  // Built-in tool detection is handled by getBuiltinToolTypes function
+  const sorted = [...functionTools].sort((a, b) => a.name.localeCompare(b.name));
 
-  // Return the formatted tools
-  return result;
+  const lines: string[] = [];
+  lines.push("## functions");
+  lines.push("");
+  lines.push("namespace functions {");
+  lines.push("");
+
+  for (const tool of sorted) {
+    lines.push(...formatFunctionTool(tool));
+  }
+
+  // Remove trailing empty line for neatness
+  if (lines[lines.length - 1] === "") {
+    lines.pop();
+  }
+  lines.push("} // namespace functions");
+
+  return lines.join("\n");
 }
 
 /**

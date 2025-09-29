@@ -6,8 +6,6 @@ import { convertToolsToHarmonyFormat, getBuiltinToolTypes } from "./convert-tool
 describe("convertToolsToHarmonyFormat", () => {
   it("should return empty string for no tools", () => {
     expect(convertToolsToHarmonyFormat([])).toBe("");
-    // @ts-expect-error - Testing that function handles null input gracefully
-    // The converter should return empty string for null/undefined inputs
     expect(convertToolsToHarmonyFormat(null)).toBe("");
   });
 
@@ -26,7 +24,7 @@ describe("convertToolsToHarmonyFormat", () => {
     expect(result).toContain("namespace functions {");
     expect(result).toContain("// Gets the location of the user.");
     expect(result).toContain("type get_location = () => any;");
-    expect(result).toContain("} // namespace functions");
+    expect(result.trim().endsWith("} // namespace functions")).toBe(true);
   });
 
   it("should convert function tool with parameters", () => {
@@ -100,6 +98,21 @@ describe("convertToolsToHarmonyFormat", () => {
 
     const result = convertToolsToHarmonyFormat(tools);
     expect(result).toContain("// No description provided");
+  });
+
+  it("should annotate strict tools", () => {
+    const tools: Tool[] = [
+      {
+        type: "function",
+        name: "strict_tool",
+        parameters: null,
+        strict: true,
+        description: "Strict tool",
+      } as FunctionTool,
+    ];
+
+    const result = convertToolsToHarmonyFormat(tools);
+    expect(result).toContain("// Arguments must strictly follow the defined JSON schema.");
   });
 
   it("should ignore built-in tools in main output", () => {

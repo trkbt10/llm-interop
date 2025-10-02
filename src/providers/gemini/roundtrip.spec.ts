@@ -5,13 +5,13 @@
 import { mkdirSync, existsSync, copyFileSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { readJsonlToArray } from "../../utils/jsonl/reader";
-import { geminiToOpenAIStream } from "../gemini-to-openai";
+import { geminiToOpenAIStream } from "../../adapters/gemini-to-openai";
 import { ensureOpenAIResponseStream } from "../../providers/openai/responses-guards/stream-event";
-import { createInitialState, processOpenAIEventToGemini } from "../openai-to-gemini-v1beta/event-reducer";
+import { createInitialState, processOpenAIEventToGemini } from "../../adapters/openai-to-gemini-v1beta/event-reducer";
 import { parseNonSseLogFile, concatCandidateTexts } from "./non-sse-parser";
-import type { GenerateContentResponse } from "../../providers/gemini/client/fetch-client";
-import { isGeminiResponse, getCandidateParts, isGeminiFunctionCallPart } from "../../providers/gemini/guards";
-import type { GeminiStreamChunk } from "../openai-to-gemini-v1beta/core/gemini-types";
+import type { GenerateContentResponse } from "./client/fetch-client";
+import { isGeminiResponse, getCandidateParts, isGeminiFunctionCallPart } from "./guards";
+import type { GeminiStreamChunk } from "../../adapters/openai-to-gemini-v1beta/core/gemini-types";
 
 const RAW_DIR = "__mocks__/raw/gemini-direct";
 const FIXTURES_DIR = "__fixtures__/gemini-direct";

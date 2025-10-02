@@ -7,7 +7,7 @@ import { existsSync, mkdirSync, copyFileSync, readdirSync, readFileSync } from "
 import { join } from "node:path";
 import { handleGeminiRoute, type GeminiEndpointAdapter } from "./gemini";
 import { readJsonlToArray } from "../../utils/jsonl/reader";
-import { parseNonSseLogFile } from "../..//adapters/gemini/non-sse-parser";
+import { parseNonSseLogFile } from "../../providers/gemini/non-sse-parser";
 
 const RAW_DIR = "__mocks__/raw/gemini-direct";
 const FIXTURES_DIR = "__fixtures__/gemini-direct";

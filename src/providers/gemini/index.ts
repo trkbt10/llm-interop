@@ -35,3 +35,16 @@ export type {
   BatchEmbedContentsResponse,
 } from "./client/fetch-client";
 export { GeminiFetchClient } from "./client/fetch-client";
+
+// Parser and validators
+export { parseNonSseBody, parseNonSseLogFile, concatCandidateTexts } from "./non-sse-parser";
+export type { NonSseParseResult } from "./non-sse-parser";
+export {
+  validateGeminiContent,
+  validateGeminiResponseLike,
+  summarizeIssues,
+  isTextPart,
+  isFunctionCallPart,
+  isFunctionResponsePart,
+  isGeminiPart,
+} from "./validators";

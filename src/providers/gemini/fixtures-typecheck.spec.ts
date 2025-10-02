@@ -5,8 +5,8 @@
 import { mkdirSync, existsSync, copyFileSync, readdirSync, statSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { readJsonlToArray } from "../../utils/jsonl/reader";
-import { parseNonSseLogFile } from "./non-sse-parser";
-import { validateGeminiResponseLike, summarizeIssues } from "./validators";
+import { parseNonSseLogFile } from "../../providers/gemini/non-sse-parser";
+import { validateGeminiResponseLike, summarizeIssues } from "../../providers/gemini/validators";
 
 const RAW_DIR = "__mocks__/raw/gemini-direct";
 const FIXTURES_DIR = "__fixtures__/gemini-direct";

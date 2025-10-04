@@ -8,8 +8,10 @@ import { fileURLToPath } from "node:url";
 import {
   loadGatewayConfigFromFile,
   startGatewayServer,
+  summarizeGatewayConfig,
   type GatewaySurface,
   type GatewayServerRuntimeOptions,
+  type GatewayConfig,
 } from "..";
 
 const DEFAULT_CONFIG = "gateway-config.json";
@@ -230,6 +232,61 @@ function parseSurface(value: string): GatewaySurface {
 }
 
 /**
+ * Prints a formatted summary of the gateway configuration.
+ */
+function printConfigSummary(config: GatewayConfig, surface: GatewaySurface): void {
+  const summary = summarizeGatewayConfig(config);
+
+  console.log(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+  console.log(`🚪 Gateway Configuration Summary`);
+  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+  console.log(`Surface: ${surface}`);
+  console.log(`Backends: ${summary.totalBackends} configured\n`);
+
+  for (const backend of summary.backends) {
+    console.log(`  ├─ ${backend.id}`);
+    console.log(`  │  Provider: ${backend.provider}${backend.model ? ` (${backend.model})` : ""}`);
+    if (backend.weight !== undefined) {
+      console.log(`  │  Weight: ${backend.weight}`);
+    }
+    if (backend.maxConcurrency !== undefined) {
+      console.log(`  │  Max Concurrency: ${backend.maxConcurrency}`);
+    }
+    if (backend.supportedModels.exact.length > 0) {
+      console.log(`  │  Exact Models: ${backend.supportedModels.exact.join(", ")}`);
+    }
+    if (backend.supportedModels.grades.length > 0) {
+      console.log(`  │  Grades: ${backend.supportedModels.grades.join(", ")}`);
+    }
+    console.log("");
+  }
+
+  if (summary.routing?.acquireTimeoutMs) {
+    console.log(`Routing:`);
+    console.log(`  Acquire Timeout: ${summary.routing.acquireTimeoutMs}ms\n`);
+  }
+
+  if (summary.selection) {
+    console.log(`Selection:`);
+    if (summary.selection.priority) {
+      console.log(`  Priority: ${summary.selection.priority.join(" → ")}`);
+    }
+    if (summary.selection.allowFallbackToAny !== undefined) {
+      console.log(`  Allow Fallback: ${summary.selection.allowFallbackToAny}`);
+    }
+    if (summary.selection.providerHints && Object.keys(summary.selection.providerHints).length > 0) {
+      console.log(`  Provider Hints:`);
+      for (const [provider, backends] of Object.entries(summary.selection.providerHints)) {
+        console.log(`    ${provider}: ${backends.join(", ")}`);
+      }
+    }
+    console.log("");
+  }
+
+  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+}
+
+/**
  * CLI entry point.
  */
 export async function main() {
@@ -250,10 +307,18 @@ export async function main() {
   try {
     const config = await loadGatewayConfigFromFile(options.configPath);
 
+    printConfigSummary(config, options.surface);
+
+    // Merge server config from file and CLI args (CLI args take precedence)
+    const serverConfig: GatewayServerRuntimeOptions = {
+      ...config.server,
+      ...options.server,
+    };
+
     const instance = await startGatewayServer({
       config,
       surface: options.surface,
-      server: options.server,
+      server: serverConfig,
       onListening: ({ host, port }) => {
         console.log(`⚙️  Gateway listening on http://${host}:${port}`);
       },
@@ -262,7 +327,7 @@ export async function main() {
       },
     });
 
-    console.log(`Gateway (${options.surface}) ready at http://${instance.host}:${instance.port}`);
+    console.log(`✅ Gateway ready at http://${instance.host}:${instance.port}`);
 
     const shutdown = (signal: NodeJS.Signals) => {
       console.log(`\nReceived ${signal}. Shutting down gateway...`);

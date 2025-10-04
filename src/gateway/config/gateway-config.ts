@@ -37,5 +37,6 @@ export function createGatewayConfig(input: GatewayConfigInput): GatewayConfig {
     backends,
     routing: input.routing,
     selection: input.selection,
+    server: input.server,
   } satisfies GatewayConfig;
 }

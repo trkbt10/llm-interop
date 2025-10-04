@@ -8,9 +8,12 @@ import process from "node:process";
 import { serve, type ServerType } from "@hono/node-server";
 
 import { createGatewayConfig as createGatewayConfigInternal } from "./config/gateway-config";
+import { summarizeGatewayConfig as summarizeGatewayConfigInternal } from "./config/gateway-summary";
 import { createOpenAIGateway as createOpenAIGatewayInternal } from "./surfaces/openai";
 import { createAnthropicGateway as createAnthropicGatewayInternal } from "./surfaces/anthropic";
 import { createGeminiGateway as createGeminiGatewayInternal } from "./surfaces/gemini";
+
+export type { GatewayConfigSummary } from "./config/gateway-summary";
 
 const DEFAULT_PORT = 8787;
 const DEFAULT_HOST = "0.0.0.0";
@@ -83,12 +86,14 @@ export type GatewayConfig = {
   backends: Record<string, GatewayBackendConfig>;
   routing?: GatewayRoutingConfig;
   selection?: GatewaySelectionConfig;
+  server?: GatewayServerRuntimeOptions;
 };
 
 export type GatewayConfigInput = {
   backends: GatewayBackendConfig[];
   routing?: GatewayRoutingConfig;
   selection?: GatewaySelectionConfig;
+  server?: GatewayServerRuntimeOptions;
 };
 
 export type GatewaySurface = "openai" | "anthropic" | "gemini";
@@ -192,7 +197,8 @@ async function waitForListeningOrClose(server: ServerType): Promise<void> {
  * Loads a gateway configuration JSON file.
  */
 export async function loadGatewayConfigFromFile(configPath: string): Promise<GatewayConfig> {
-  const resolved = path.resolve(process.cwd(), configPath);
+  const cwd = process.cwd();
+  const resolved = path.resolve(cwd, configPath);
 
   try {
     const raw = await readFile(resolved, "utf8");
@@ -201,11 +207,41 @@ export async function loadGatewayConfigFromFile(configPath: string): Promise<Gat
   } catch (error) {
     const code = typeof error === "object" && error !== null ? (error as NodeJS.ErrnoException).code : undefined;
     if (code === "ENOENT") {
-      throw new Error(`Gateway config not found at ${resolved}`);
+      const exampleConfig: GatewayConfigInput = {
+        backends: [
+          {
+            id: "provider-1",
+            provider: {
+              type: "openai",
+              apiKey: "${YOUR_API_KEY}",
+              model: "llm-name"
+            },
+            weight: 1
+          }
+        ]
+      };
+
+      throw new Error(
+        `Gateway config not found.\n\n` +
+        `Search strategy:\n` +
+        `  1. Given path: ${configPath}\n` +
+        `  2. Resolved from working directory: ${cwd}\n` +
+        `  3. Final path checked: ${resolved}\n\n` +
+        `Create a gateway-config.json file with the following structure:\n` +
+        JSON.stringify(exampleConfig, null, 2) +
+        `\n\nSee gateway-config.example.json for a complete example.`
+      );
     }
     const reason = error instanceof Error ? error.message : String(error);
     throw new Error(`Failed to load config from ${resolved}: ${reason}`);
   }
+}
+
+/**
+ * Generates a human-readable summary of the gateway configuration.
+ */
+export function summarizeGatewayConfig(config: GatewayConfig | GatewayConfigInput) {
+  return summarizeGatewayConfigInternal(config);
 }
 
 /**

@@ -1,30 +1,29 @@
 /**
  * @file Gateway configuration summary utilities.
  */
-import type { GatewayConfig, GatewayConfigInput, GatewayModelGrade, GatewaySelectionRule } from "../core/types";
+import type {
+  GatewayConfig,
+  GatewayConfigInput,
+  GatewayBackendConfig,
+  GatewayRoutingConfig,
+  GatewaySelectionConfig,
+} from "../core/types";
 import { createGatewayConfig } from "./gateway-config";
+
+type BackendSummary = Pick<GatewayBackendConfig, "id" | "weight" | "maxConcurrency"> & {
+  provider: GatewayBackendConfig["provider"]["type"];
+  model?: GatewayBackendConfig["provider"]["model"];
+  supportedModels: {
+    exact: string[];
+    grades: NonNullable<GatewayBackendConfig["models"]>["grades"] extends (infer T)[] ? T[] : string[];
+  };
+};
 
 export type GatewayConfigSummary = {
   totalBackends: number;
-  backends: Array<{
-    id: string;
-    provider: string;
-    model?: string;
-    weight?: number;
-    maxConcurrency?: number;
-    supportedModels: {
-      exact: string[];
-      grades: GatewayModelGrade[];
-    };
-  }>;
-  routing?: {
-    acquireTimeoutMs?: number;
-  };
-  selection?: {
-    priority?: GatewaySelectionRule[];
-    allowFallbackToAny?: boolean;
-    providerHints?: Record<string, string[]>;
-  };
+  backends: BackendSummary[];
+  routing?: GatewayRoutingConfig;
+  selection?: GatewaySelectionConfig;
 };
 
 function isNormalizedGatewayConfig(
@@ -45,7 +44,7 @@ function normalizeGatewayConfig(config: GatewayConfig | GatewayConfigInput): Gat
  */
 export function summarizeGatewayConfig(config: GatewayConfig | GatewayConfigInput): GatewayConfigSummary {
   const normalized = normalizeGatewayConfig(config);
-  const backendEntries = Object.values(normalized.backends);
+  const backendEntries = Object.values(normalized.backendRecord);
 
   return {
     totalBackends: backendEntries.length,

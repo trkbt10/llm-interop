@@ -4,6 +4,8 @@
 import { emulateGeminiEndpoint } from "../../ports/fetch/gemini";
 import { createGatewayForwarder } from "../core/router-base";
 import type { GatewayConfig } from "../core/types";
+import { withCors } from "../middleware/cors";
+import { createRootHandler, GEMINI_ROUTES } from "../middleware/root-handler";
 
 const MODEL_PATH_REGEX =
   /^\/v1(?:beta)?\/models\/(.+?):(generateContent|streamGenerateContent|countTokens|embedContent|batchEmbedContents)$/;
@@ -28,9 +30,26 @@ export function createGeminiGateway(config: GatewayConfig) {
     resolveModel: resolveModelFromGeminiRequest,
   });
 
+  const handleRoot = createRootHandler(
+    "Gemini Gateway",
+    GEMINI_ROUTES,
+    "https://ai.google.dev/gemini-api/docs/api-overview",
+  );
+
+  const fetchHandler = withCors(async (request: Request) => {
+    // Handle root endpoint
+    const rootResponse = handleRoot(request);
+    if (rootResponse) {
+      return rootResponse;
+    }
+
+    // Forward to backend
+    return forward(request);
+  }, config.server?.cors);
+
   return {
     fetch(request: Request) {
-      return forward(request);
+      return fetchHandler(request);
     },
   };
 }

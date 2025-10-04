@@ -12,13 +12,33 @@ import { summarizeGatewayConfig as summarizeGatewayConfigInternal } from "./conf
 import { createOpenAIGateway as createOpenAIGatewayInternal } from "./surfaces/openai";
 import { createAnthropicGateway as createAnthropicGatewayInternal } from "./surfaces/anthropic";
 import { createGeminiGateway as createGeminiGatewayInternal } from "./surfaces/gemini";
+import type {
+  GatewayConfig,
+  GatewayConfigInput,
+  GatewayServerRuntimeOptions,
+  GatewayBackendConfig,
+  GatewayBackendModelsConfig,
+  GatewayRoutingConfig,
+  GatewaySelectionConfig,
+  GatewaySelectionRule,
+  GatewayModelGrade,
+} from "./core/types";
 
 export type { GatewayConfigSummary } from "./config/gateway-summary";
+export type {
+  GatewayConfig,
+  GatewayConfigInput,
+  GatewayServerRuntimeOptions,
+  GatewayBackendConfig,
+  GatewayBackendModelsConfig,
+  GatewayRoutingConfig,
+  GatewaySelectionConfig,
+  GatewaySelectionRule,
+  GatewayModelGrade,
+};
 
 const DEFAULT_PORT = 8787;
 const DEFAULT_HOST = "0.0.0.0";
-
-export type GatewayModelGrade = "high" | "mid" | "low";
 
 export type GatewayProviderModelMapping = {
   byGrade?: Partial<Record<GatewayModelGrade, string>>;
@@ -57,52 +77,7 @@ export type GatewayProviderConfig = {
   codingAgent?: GatewayProviderCodingAgent;
 };
 
-export type GatewayBackendModelsConfig = {
-  exact?: string[];
-  grades?: GatewayModelGrade[];
-};
-
-export type GatewayBackendConfig = {
-  id: string;
-  provider: GatewayProviderConfig;
-  weight?: number;
-  maxConcurrency?: number;
-  models?: GatewayBackendModelsConfig;
-};
-
-export type GatewayRoutingConfig = {
-  acquireTimeoutMs?: number;
-};
-
-export type GatewaySelectionRule = "exact" | "grade" | "provider";
-
-export type GatewaySelectionConfig = {
-  priority?: GatewaySelectionRule[];
-  allowFallbackToAny?: boolean;
-  providerHints?: Record<string, string[]>;
-};
-
-export type GatewayConfig = {
-  backends: Record<string, GatewayBackendConfig>;
-  routing?: GatewayRoutingConfig;
-  selection?: GatewaySelectionConfig;
-  server?: GatewayServerRuntimeOptions;
-};
-
-export type GatewayConfigInput = {
-  backends: GatewayBackendConfig[];
-  routing?: GatewayRoutingConfig;
-  selection?: GatewaySelectionConfig;
-  server?: GatewayServerRuntimeOptions;
-};
-
 export type GatewaySurface = "openai" | "anthropic" | "gemini";
-
-export type GatewayServerRuntimeOptions = {
-  port?: number;
-  host?: string;
-  strictPort?: boolean;
-};
 
 export type StartGatewayServerOptions = {
   config: GatewayConfig | GatewayConfigInput;
@@ -259,9 +234,12 @@ export function createGatewaySurface(
  */
 export async function startGatewayServer(options: StartGatewayServerOptions): Promise<GatewayServerInstance> {
   const app = resolveSurface(options.surface, options.config);
-  const host = options.server?.host ?? DEFAULT_HOST;
-  const strict = options.server?.strictPort ?? true;
-  const startingPort = options.server?.port ?? DEFAULT_PORT;
+
+  // Merge server options: options.server overrides config.server
+  const configServer = "server" in options.config ? options.config.server : undefined;
+  const host = options.server?.host ?? configServer?.host ?? DEFAULT_HOST;
+  const strict = options.server?.strictPort ?? configServer?.strictPort ?? true;
+  const startingPort = options.server?.port ?? configServer?.port ?? DEFAULT_PORT;
   const maxAttempts = strict ? 1 : 10;
 
   const attemptStart = async (

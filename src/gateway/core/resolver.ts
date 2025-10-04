@@ -124,7 +124,7 @@ function buildMetadata(config: GatewayConfig): BackendMetadataMap {
   const list: BackendMetadata[] = [];
   const byId: Record<string, BackendMetadata> = Object.create(null);
 
-  for (const backend of Object.values(config.backends)) {
+  for (const backend of Object.values(config.backendRecord)) {
     const exactModels = collectExactModels(backend);
     const grades = collectGrades(backend, exactModels);
     const providerType = backend.provider.type.toLowerCase();

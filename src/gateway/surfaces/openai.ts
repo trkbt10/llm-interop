@@ -4,6 +4,8 @@
 import { emulateOpenAIEndpoint } from "../../ports/fetch/openai";
 import { createGatewayForwarder } from "../core/router-base";
 import type { GatewayConfig } from "../core/types";
+import { withCors } from "../middleware/cors";
+import { createRootHandler, OPENAI_ROUTES } from "../middleware/root-handler";
 
 async function resolveModelFromOpenAIRequest(request: Request, pathname: string) {
   if (request.method.toUpperCase() !== "POST") {
@@ -38,9 +40,26 @@ export function createOpenAIGateway(config: GatewayConfig) {
     resolveModel: resolveModelFromOpenAIRequest,
   });
 
+  const handleRoot = createRootHandler(
+    "OpenAI Gateway",
+    OPENAI_ROUTES,
+    "https://platform.openai.com/docs/api-reference",
+  );
+
+  const fetchHandler = withCors(async (request: Request) => {
+    // Handle root endpoint
+    const rootResponse = handleRoot(request);
+    if (rootResponse) {
+      return rootResponse;
+    }
+
+    // Forward to backend
+    return forward(request);
+  }, config.server?.cors);
+
   return {
     fetch(request: Request) {
-      return forward(request);
+      return fetchHandler(request);
     },
   };
 }

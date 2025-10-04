@@ -84,7 +84,7 @@ function buildProviderStates(
 ): ProviderState[] {
   const states: ProviderState[] = [];
 
-  for (const backend of Object.values(config.backends)) {
+  for (const backend of Object.values(config.backendRecord)) {
     const weight = sanitizeWeight(backend.weight);
     const maxConcurrency = sanitizeMaxConcurrency(backend.maxConcurrency);
 

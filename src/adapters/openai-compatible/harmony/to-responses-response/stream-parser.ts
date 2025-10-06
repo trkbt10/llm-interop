@@ -353,8 +353,10 @@ export const createHarmonyStreamParser = (): HarmonyStreamParser => {
     }
 
     state.toolCallCounter += 1;
+    // Generate tool call ID in the format: call_{hash}
+    const toolCallId = `call_${Date.now().toString(36)}${state.toolCallCounter.toString(36)}${Math.random().toString(36).substring(2, 6)}`;
     return {
-      id: `fc_${state.toolCallCounter.toString().padStart(4, "0")}`,
+      id: toolCallId,
       name: functionName,
       arguments: message.content,
     };
@@ -519,8 +521,10 @@ export const normalizeToolCalls = (
     const name = typeof tc?.function?.name === "string" ? tc.function!.name : "unknown";
     const args = typeof tc?.function?.arguments === "string" ? tc.function!.arguments : "{}";
 
+    // Generate tool call ID in the format: call_{hash} if not provided
+    const toolCallId = tc?.id ?? `call_${Date.now().toString(36)}${Math.random().toString(36).substring(2, 10)}`;
     return {
-      id: tc?.id ?? `fc_${(index + 1).toString().padStart(4, "0")}`,
+      id: toolCallId,
       name,
       arguments: args,
     } satisfies HarmonyParsedToolCall;

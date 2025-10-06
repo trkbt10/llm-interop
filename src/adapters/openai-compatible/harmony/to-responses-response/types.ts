@@ -12,8 +12,6 @@ export type HarmonyToResponsesOptions = {
   model?: string;
   /** Whether to emit streaming events */
   stream?: boolean;
-  /** Prefix for generated IDs */
-  idPrefix?: string;
 };
 export type HarmonyParsedToolCall = {
   id: string;

@@ -82,13 +82,13 @@ describe("HarmonyResponseParser", () => {
         stopReason: "call",
       });
 
-      expect(result.toolCalls).toEqual([
-        {
-          id: "fc_0001",
-          name: "get_weather",
-          arguments: '{"location":"Tokyo"}',
-        },
-      ]);
+      expect(result.toolCalls).toHaveLength(1);
+      expect(result.toolCalls![0]).toMatchObject({
+        name: "get_weather",
+        arguments: '{"location":"Tokyo"}',
+      });
+      // ID should be in the format call_xxx
+      expect(result.toolCalls![0].id).toMatch(/^call_[a-z0-9]+$/);
     });
 
     it("prefers explicit reasoning field when provided", async () => {

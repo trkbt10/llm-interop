@@ -11,7 +11,6 @@ describe("HarmonyToResponsesConverter", () => {
   beforeEach(() => {
     converter = createHarmonyToResponsesConverter({
       model: "test-model",
-      idPrefix: "test",
     });
   });
 
@@ -61,7 +60,7 @@ describe("HarmonyToResponsesConverter", () => {
 
       // Should include reasoning events
       const reasoningDelta = events.find((e) => {
-        if (e.type !== "response.output_text.delta") {
+        if (e.type !== "response.reasoning_text.delta") {
           return false;
         }
         if (!("delta" in e)) {
@@ -125,7 +124,7 @@ describe("HarmonyToResponsesConverter", () => {
       const events = await converter.convert(harmonyMessage);
 
       const analysisDelta = events.find((event) => {
-        if (event.type !== "response.output_text.delta") {
+        if (event.type !== "response.reasoning_text.delta") {
           return false;
         }
         if (!("delta" in event)) {

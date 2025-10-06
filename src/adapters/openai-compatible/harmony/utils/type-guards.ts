@@ -553,17 +553,15 @@ export function hasResponseFormat(text: unknown): text is ResponseTextConfig & {
  * @returns True if item is a properly structured message input
  */
 export function isMessageInput(item: unknown): item is {
-  type: "message";
+  type?: "message";
   role: "user" | "system" | "developer" | "assistant";
   content: string | Array<{ type: string; text?: string }>;
 } {
   if (!isObject(item)) {
     return false;
   }
-  if (!("type" in item)) {
-    return false;
-  }
-  if (item.type !== "message") {
+  // Type field is optional for EasyInputMessage compatibility
+  if ("type" in item && item.type !== "message") {
     return false;
   }
   if (!("role" in item)) {

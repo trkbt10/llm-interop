@@ -19,25 +19,27 @@ export async function* createHarmonyToResponsesStream(
   options: HarmonyToResponsesOptions = {},
 ): AsyncGenerator<ResponseStreamEvent, void, unknown> {
   const resolvedOptions = {
-    idPrefix: "harmony",
     stream: true,
     ...options,
-  } satisfies HarmonyToResponsesOptions & { idPrefix: string; stream: boolean };
+  } satisfies HarmonyToResponsesOptions & { stream: boolean };
 
   const parser = createHarmonyStreamParser();
   const builder = createHarmonyResponsesEventBuilder(resolvedOptions);
 
   yield builder.start();
 
+  // eslint-disable-next-line no-restricted-syntax -- Need mutable state to track channel across async iterations
+  let lastChannel: string | null = null;
+
   for await (const chunk of chunks) {
     const frames = parser.push(chunk);
-    for (const event of emitFrames(builder, frames)) {
+    for (const event of emitFrames(builder, frames, { lastChannel }, (channel) => { lastChannel = channel; })) {
       yield event;
     }
   }
 
   const trailingFrames = parser.flush();
-  for (const event of emitFrames(builder, trailingFrames)) {
+  for (const event of emitFrames(builder, trailingFrames, { lastChannel }, (channel) => { lastChannel = channel; })) {
     yield event;
   }
 
@@ -49,12 +51,21 @@ export async function* createHarmonyToResponsesStream(
 function* emitFrames(
   builder: HarmonyResponsesEventBuilder,
   frames: ReturnType<HarmonyStreamParser["push"]>,
+  state: { lastChannel: string | null },
+  updateChannel: (channel: string) => void,
 ): Generator<ResponseStreamEvent, void, undefined> {
   for (const frame of frames) {
     const { message, toolCall } = frame;
 
+    // If we're transitioning from ANALYSIS to something else, finish reasoning
+    if (state.lastChannel === HARMONY_CHANNELS.ANALYSIS &&
+        message.channel !== HARMONY_CHANNELS.ANALYSIS) {
+      yield* builder.finishReasoning();
+    }
+
     if (message.channel === HARMONY_CHANNELS.ANALYSIS) {
       yield* builder.appendReasoning(message.content);
+      updateChannel(HARMONY_CHANNELS.ANALYSIS);
       continue;
     }
 
@@ -65,6 +76,7 @@ function* emitFrames(
 
     if (message.channel === HARMONY_CHANNELS.FINAL) {
       yield* builder.appendFinal(message.content);
+      updateChannel(HARMONY_CHANNELS.FINAL);
     }
   }
 }

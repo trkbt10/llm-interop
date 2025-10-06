@@ -194,6 +194,17 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
       if (key === "strictPort") {
         return updateServer({ strictPort: parseBoolean(value, true) }, nextSkip);
       }
+      if (key === "logging.enabled") {
+        const logging = state.options.server.logging ?? {};
+        return updateServer({ logging: { ...logging, enabled: parseBoolean(value, true) } }, nextSkip);
+      }
+      if (key === "logging.level") {
+        if (!value || !["debug", "info", "warn", "error"].includes(value)) {
+          return state;
+        }
+        const logging = state.options.server.logging ?? {};
+        return updateServer({ logging: { ...logging, level: value as "debug" | "info" | "warn" | "error" } }, nextSkip);
+      }
     }
 
     return state;
@@ -207,15 +218,17 @@ function printHelp(): void {
     "Usage: llm-interop-gateway [options]",
     "",
     "Options:",
-    "  -c, --config <path>            Path to gateway config JSON (default: gateway-config.json)",
-    "      --surface <kind>          Gateway surface to expose (openai | anthropic | gemini)",
-    "  -p, --port <number>            Port to listen on",
-    "      --host <host>              Hostname to bind (default: 0.0.0.0)",
-    "      --strictPort               Fail instead of trying the next port when busy (default: true)",
-    "      --server.port <number>     Same as --port",
-    "      --server.host <host>       Same as --host",
-    "      --server.strictPort        Same as --strictPort",
-    "  -h, --help                     Show this help message",
+    "  -c, --config <path>                Path to gateway config JSON (default: gateway-config.json)",
+    "      --surface <kind>               Gateway surface to expose (openai | anthropic | gemini)",
+    "  -p, --port <number>                Port to listen on",
+    "      --host <host>                  Hostname to bind (default: 0.0.0.0)",
+    "      --strictPort                   Fail instead of trying the next port when busy (default: true)",
+    "      --server.port <number>         Same as --port",
+    "      --server.host <host>           Same as --host",
+    "      --server.strictPort            Same as --strictPort",
+    "      --server.logging.enabled       Enable/disable request logging (default: true)",
+    "      --server.logging.level <level> Set log level (debug | info | warn | error, default: info)",
+    "  -h, --help                         Show this help message",
   ];
   console.log(lines.join("\n"));
 }

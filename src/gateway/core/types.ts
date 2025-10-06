@@ -74,6 +74,13 @@ export type GatewayServerRuntimeOptions = {
     /** Max age for preflight requests in seconds. */
     maxAge?: number;
   };
+  /** Logging configuration. */
+  logging?: {
+    /** Enable/disable logging. */
+    enabled?: boolean;
+    /** Log level. */
+    level?: "debug" | "info" | "warn" | "error";
+  };
 };
 
 /**

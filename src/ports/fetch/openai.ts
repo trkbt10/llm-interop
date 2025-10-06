@@ -44,7 +44,6 @@ export function emulateOpenAIEndpoint(options: { provider: Provider }) {
       try {
         const raw = await bodyToText(init.body);
         const responsesReq = JSON.parse(String(raw)) as ResponseCreateParams;
-
         const result = await client.responses.create(responsesReq);
 
         if (responsesReq.stream || isAsyncIterable(result)) {

@@ -5,6 +5,7 @@ import { createProviderBalancer, type ProviderFetch, type ProviderLease, type Ac
 import { createBackendResolver } from "./resolver";
 import type { GatewayConfig, GatewayBackendConfig } from "./types";
 import { errorResponse } from "../../ports/fetch/utils/http";
+import { createLogger, type Logger } from "./logger";
 
 function createRequestInitFromRequest(request: Request): RequestInit {
   return {
@@ -89,6 +90,7 @@ export function createGatewayForwarder(
 ) {
   const balancer = createProviderBalancer(config, options.fetchFactory);
   const resolver = createBackendResolver(config);
+  const logger: Logger = createLogger(config.server?.logging);
 
   type AcquireOutcome = { readonly kind: "ok"; readonly lease: ProviderLease } | { readonly kind: "error"; readonly response: Response };
 
@@ -116,7 +118,13 @@ export function createGatewayForwarder(
     const url = new URL(request.url);
     const pathname = url.pathname;
 
+    // Log incoming request
+    logger.info(`${request.method} ${pathname}`);
+
     const { attempted, model } = await options.resolveModel(request, pathname);
+    if (model) {
+      logger.debug(`Resolved model: ${model}`);
+    }
 
     const resolution = (() => {
       if (model !== undefined) {
@@ -138,16 +146,20 @@ export function createGatewayForwarder(
     const acquireOutcome = await acquireLease(buildAcquireOptions(resolution));
 
     if (acquireOutcome.kind === "error") {
+      logger.error(`Failed to acquire backend for ${pathname}`);
       return acquireOutcome.response;
     }
 
     const { lease } = acquireOutcome;
+    logger.info(`Routing to backend: ${lease.config.id} (active: ${lease.activeCount()}/${formatCapacityHeader(lease.maxConcurrency)})`);
 
     try {
       const response = await lease.handler(request.url, createRequestInitFromRequest(request));
+      logger.info(`Response from ${lease.config.id}: ${response.status} ${response.statusText}`);
       return wrapResponse(response, lease);
     } catch (error) {
       lease.release();
+      logger.error(`Error from backend ${lease.config.id}: ${error instanceof Error ? error.message : String(error)}`);
       return errorResponse(
         502,
         `Upstream ${lease.config.id} request failed: ${error instanceof Error ? error.message : String(error)}`,

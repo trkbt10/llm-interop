@@ -102,18 +102,21 @@ function addInputMessages(
       const contentStr = typeof item.content === "string" ? item.content : "";
 
       // For assistant messages with tool_calls, preserve them
-      if (item.role === "assistant" && "tool_calls" in item && item.tool_calls) {
-        messages.push({
-          role: "assistant",
-          content: contentStr,
-          tool_calls: item.tool_calls,
-        } as ChatCompletionCreateParams["messages"][0]);
-      } else {
-        messages.push({
-          role: item.role,
-          content: contentStr,
-        });
+      if (item.role === "assistant") {
+        if ("tool_calls" in item && item.tool_calls) {
+          messages.push({
+            role: "assistant",
+            content: contentStr,
+            tool_calls: item.tool_calls,
+          } as ChatCompletionCreateParams["messages"][0]);
+          continue;
+        }
       }
+
+      messages.push({
+        role: item.role,
+        content: contentStr,
+      });
     }
   }
 }

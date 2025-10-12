@@ -4,7 +4,8 @@
  *   CODING_AGENT_KIND=claude-code CODING_AGENT_BIN=/path/to/claude CODING_AGENT_PRODUCES=json \
  *   bun run debug/coding-agent/claudecode.ts
  */
-import { runCommonScenario } from "./common-scenario";
+import { runScenarios } from "./scenarios";
+import { buildCodingAgentClient } from "../../src/adapters/coding-agent-to-openai";
 import type { Provider } from "../../src/config/types";
 
 
@@ -31,7 +32,9 @@ async function main(): Promise<void> {
       })(),
     },
   };
-  await runCommonScenario(provider, "claude-code");
+
+  const client = buildCodingAgentClient(provider);
+  await runScenarios(client, "claude-code");
 }
 
 main().catch((err) => {

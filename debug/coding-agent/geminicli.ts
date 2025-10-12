@@ -3,7 +3,8 @@
  * Usage:
  *   bun run debug/coding-agent/geminicli.ts
  */
-import { runCommonScenario } from "./common-scenario";
+import { runScenarios } from "./scenarios";
+import { buildCodingAgentClient } from "../../src/adapters/coding-agent-to-openai";
 import type { Provider } from "../../src/config/types";
 
 
@@ -30,7 +31,9 @@ async function main(): Promise<void> {
       })(),
     },
   };
-  await runCommonScenario(provider, "gemini-cli");
+
+  const client = buildCodingAgentClient(provider);
+  await runScenarios(client, "gemini-cli");
 }
 
 main().catch((err) => {

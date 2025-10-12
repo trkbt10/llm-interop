@@ -4,7 +4,8 @@
  *   CODING_AGENT_KIND=codex-cli CODING_AGENT_BIN=/path/to/codex CODING_AGENT_PRODUCES=text \
  *   bun run debug/coding-agent/codex.ts
  */
-import { runCommonScenario } from "./common-scenario";
+import { runScenarios } from "./scenarios";
+import { buildCodingAgentClient } from "../../src/adapters/coding-agent-to-openai";
 import type { Provider } from "../../src/config/types";
 
 
@@ -31,7 +32,9 @@ async function main(): Promise<void> {
       })(),
     },
   };
-  await runCommonScenario(provider, "codex-cli");
+
+  const client = buildCodingAgentClient(provider);
+  await runScenarios(client, "codex-cli");
 }
 
 main().catch((err) => {

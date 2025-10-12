@@ -16,8 +16,7 @@ import type { Provider } from "../../../config/types";
 import Anthropic from "@anthropic-ai/sdk";
 import type { OpenAICompatibleClient } from "../../openai-client-types";
 import { selectApiKey } from "../../../config/select-api-key";
-import type { ResponseFunctionToolCallOutputItem } from "openai/resources/responses/responses";
-import { isOpenAIResponsesFunctionTool } from "../../../providers/openai/responses-guards";
+import { isFunctionToolCallOutput, isOpenAIResponsesFunctionTool } from "../../../providers/openai/responses-guards";
 import type {
   ChatCompletionCreateParams,
   ChatCompletionCreateParamsNonStreaming,
@@ -39,6 +38,33 @@ import { chatCompletionToClaudeLocal } from "../chat-completion/request-converte
 import { resolveModelForProvider } from "../../../model/mapper";
 import { convertOpenAIChatToolToResponsesTool } from "../../shared/openai-tool-converters";
 
+/**
+ * Converts function_call_output item.output to a string for tool message content
+ */
+function convertFunctionCallOutputToString(
+  output: string | Array<{ type: string; text?: string }>,
+): string {
+  if (typeof output === "string") {
+    return output;
+  }
+
+  if (Array.isArray(output)) {
+    return output
+      .map((o) => {
+        if (o.type === "input_text" && o.text) {
+          return o.text;
+        }
+        throw new Error(`Unsupported output type in function_call_output: ${o.type}`);
+      })
+      .join("\n");
+  }
+
+  throw new Error("Invalid output format in function_call_output");
+}
+
+/**
+ * Adds ResponseInput items to chat completion messages array
+ */
 function addInputMessages(
   messages: ChatCompletionCreateParams["messages"],
   input: ResponseCreateParams["input"],
@@ -52,51 +78,41 @@ function addInputMessages(
     return;
   }
 
-  // Convert ResponseInput array to ChatCompletionMessageParam[]
-  if (Array.isArray(input)) {
-    for (const item of input) {
-      if (!item || typeof item !== "object") {
-        continue;
-      }
+  if (!Array.isArray(input)) {
+    return;
+  }
 
-      // Convert function_call_output to tool message
-      if (item.type === "function_call_output") {
-        const toolOutput = item as ResponseFunctionToolCallOutputItem;
+  for (const item of input) {
+    if (!item || typeof item !== "object") {
+      continue;
+    }
+
+    // Convert function_call_output to tool message
+    if (isFunctionToolCallOutput(item)) {
+      messages.push({
+        role: "tool",
+        tool_call_id: item.call_id,
+        content: convertFunctionCallOutputToString(item.output),
+      });
+      continue;
+    }
+
+    // Convert message-like objects with role and content
+    if ("role" in item && "content" in item) {
+      const contentStr = typeof item.content === "string" ? item.content : "";
+
+      // For assistant messages with tool_calls, preserve them
+      if (item.role === "assistant" && "tool_calls" in item && item.tool_calls) {
         messages.push({
-          role: "tool",
-          tool_call_id: toolOutput.call_id,
-          content: toolOutput.output,
+          role: "assistant",
+          content: contentStr,
+          tool_calls: item.tool_calls,
+        } as ChatCompletionCreateParams["messages"][0]);
+      } else {
+        messages.push({
+          role: item.role,
+          content: contentStr,
         });
-        continue;
-      }
-
-      // Convert message-like objects with role and content
-      if ("role" in item && "content" in item) {
-        const role = item.role as "user" | "assistant" | "system";
-        const content = item.content;
-
-        // For assistant messages with tool_calls, preserve them
-        if (role === "assistant" && "tool_calls" in item) {
-          if (item.tool_calls) {
-            messages.push({
-              role: "assistant",
-              content: typeof content === "string" ? content : "",
-              tool_calls: item.tool_calls,
-            } as ChatCompletionCreateParams["messages"][0]);
-          } else {
-            messages.push({
-              role,
-              content: typeof content === "string" ? content : "",
-            });
-          }
-        } else {
-          // Regular message without tool calls
-          messages.push({
-            role,
-            content: typeof content === "string" ? content : "",
-          });
-        }
-        continue;
       }
     }
   }

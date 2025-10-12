@@ -5,8 +5,7 @@ import type {
   ResponseInput,
   ResponseInputItem,
   ResponseInputImage,
-  ResponseOutputMessage,
-  ResponseFunctionToolCall,
+  ResponseInputMessageContentList,
 } from "openai/resources/responses/responses";
 import type { ChatCompletionMessageParam, ChatCompletionContentPart } from "openai/resources/chat/completions";
 import {
@@ -14,6 +13,8 @@ import {
   isFunctionToolCallOutput,
   isInputText,
   isInputImage,
+  isResponseInputOutputMessage,
+  isResponseInputFunctionToolCall,
 } from "../../../../providers/openai/responses-guards";
 
 /**
@@ -35,7 +36,7 @@ export const convertResponseInputToMessages = (input: ResponseInput): ChatComple
 
   if (input && typeof input === "object") {
     // Handle single ResponseInputItem or structured input
-    const converted = convertInputItem(input as ResponseInputItem);
+    const converted = convertInputItem(input);
     if (converted) {
       messages.push(...converted);
     }
@@ -52,12 +53,10 @@ const convertInputItem = (item: ResponseInputItem): ChatCompletionMessageParam[]
 
   // Handle EasyInputMessage
   if (isEasyInputMessage(item)) {
-    const convertedContent =
-      typeof item.content === "string" ? item.content : convertContentList(item.content as unknown[]);
-
     // Handle each role type separately for proper typing
     const role = item.role;
     if (role === "system") {
+      const convertedContent = typeof item.content === "string" ? item.content : convertContentList(item.content);
       messages.push({
         role: "system",
         content: collapseToText(convertedContent),
@@ -66,6 +65,7 @@ const convertInputItem = (item: ResponseInputItem): ChatCompletionMessageParam[]
     }
 
     if (role === "user") {
+      const convertedContent = typeof item.content === "string" ? item.content : convertContentList(item.content);
       messages.push({
         role: "user",
         content: convertedContent,
@@ -74,6 +74,7 @@ const convertInputItem = (item: ResponseInputItem): ChatCompletionMessageParam[]
     }
 
     if (role === "assistant") {
+      const convertedContent = typeof item.content === "string" ? item.content : convertContentList(item.content);
       messages.push({
         role: "assistant",
         content: collapseToText(convertedContent),
@@ -83,7 +84,7 @@ const convertInputItem = (item: ResponseInputItem): ChatCompletionMessageParam[]
   }
 
   // Handle ResponseOutputMessage (assistant messages from previous turns)
-  if (isResponseOutputMessage(item)) {
+  if (isResponseInputOutputMessage(item)) {
     const content = item.content
       .map((c) => {
         if ("text" in c) {
@@ -101,7 +102,7 @@ const convertInputItem = (item: ResponseInputItem): ChatCompletionMessageParam[]
   }
 
   // Handle function tool calls
-  if (isFunctionToolCall(item)) {
+  if (isResponseInputFunctionToolCall(item)) {
     // Function calls are typically part of assistant messages
     // We need to handle this specially
     messages.push({
@@ -123,9 +124,10 @@ const convertInputItem = (item: ResponseInputItem): ChatCompletionMessageParam[]
 
   // Handle function tool call outputs
   if (isFunctionToolCallOutput(item)) {
+    const convertedOutput = typeof item.output === "string" ? item.output : convertContentList(item.output);
     messages.push({
       role: "tool",
-      content: item.output,
+      content: typeof convertedOutput === "string" ? convertedOutput : collapseToText(convertedOutput),
       tool_call_id: item.call_id,
     });
     return messages;
@@ -141,8 +143,10 @@ const convertInputItem = (item: ResponseInputItem): ChatCompletionMessageParam[]
 /**
  * Converts ResponseInputMessageContentList to chat content
  */
-const convertContentList = (content: unknown[]): string | ChatCompletionContentPart[] => {
-  const parts: ChatCompletionContentPart[] = [];
+const convertContentList = (content: ResponseInputMessageContentList): string | ChatCompletionContentPart[] => {
+  const parts: Array<
+    { type: "text"; text: string } | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } }
+  > = [];
 
   for (const item of content) {
     if (isInputText(item)) {
@@ -175,71 +179,14 @@ const convertContentList = (content: unknown[]): string | ChatCompletionContentP
 
 // Helper functions for type safety
 const getImageUrl = (item: ResponseInputImage): string => {
-  const iu = (item as { image_url?: unknown }).image_url;
-  if (typeof iu === "string") {
-    return iu;
-  }
-  if (iu) {
-    if (typeof iu === "object") {
-      if ("url" in (iu as Record<string, unknown>)) {
-        const url = (iu as { url?: unknown }).url;
-        if (typeof url === "string") {
-          return url;
-        }
-        return "";
-      }
-    }
+  if (item.image_url && typeof item.image_url === "string") {
+    return item.image_url;
   }
   return "";
 };
 
 const getImageDetail = (item: ResponseInputImage): "auto" | "low" | "high" => {
-  const iu = (item as { image_url?: unknown }).image_url;
-  if (iu) {
-    if (typeof iu === "object") {
-      if ("detail" in (iu as Record<string, unknown>)) {
-        const d = (iu as { detail?: unknown }).detail;
-        if (d === "auto" || d === "low" || d === "high") {
-          return d;
-        }
-      }
-    }
-  }
-  return "auto";
-};
-
-// Local type guards (different from centralized ones)
-
-const isResponseOutputMessage = (item: unknown): item is ResponseOutputMessage => {
-  if (!item) {
-    return false;
-  }
-  if (typeof item !== "object") {
-    return false;
-  }
-  if ((item as unknown as { type: string }).type !== "message") {
-    return false;
-  }
-  if (!("content" in item)) {
-    return false;
-  }
-  return Array.isArray((item as unknown as { content: unknown }).content);
-};
-
-const isFunctionToolCall = (item: unknown): item is ResponseFunctionToolCall => {
-  if (!item) {
-    return false;
-  }
-  if (typeof item !== "object") {
-    return false;
-  }
-  if ((item as unknown as { type: string }).type !== "function_call") {
-    return false;
-  }
-  if (!("name" in item)) {
-    return false;
-  }
-  return "arguments" in item;
+  return item.detail ?? "auto";
 };
 
 // Collapse content parts or string to a single string

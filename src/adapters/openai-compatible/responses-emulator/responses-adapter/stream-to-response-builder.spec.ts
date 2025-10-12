@@ -216,6 +216,7 @@ describe("buildResponseItemsFromStream", () => {
 
       {
         type: "response.function_call_arguments.done",
+        name: "get_weather",
         arguments: '{"location": "San Francisco"}',
         item_id: "fc_789",
         output_index: 0,
@@ -366,6 +367,7 @@ describe("buildResponseItemsFromStream", () => {
 
       {
         type: "response.function_call_arguments.done",
+        name: "get_weather",
         arguments: '{"location": "Tokyo"}',
         item_id: "fc_weather",
         output_index: 1,

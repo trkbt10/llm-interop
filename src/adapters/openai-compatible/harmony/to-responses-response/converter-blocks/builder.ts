@@ -143,7 +143,9 @@ export const createHarmonyResponsesEventBuilder = (
 
     const segments = options.stream ? splitIntoChunks(addition, REASONING_CHUNK_SIZE) : [addition];
     for (const segment of segments) {
-      events.push(createReasoningTextDelta(state.itemId, segment, state.outputIndex, state.contentIndex, nextSequence()));
+      events.push(
+        createReasoningTextDelta(state.itemId, segment, state.outputIndex, state.contentIndex, nextSequence()),
+      );
       state.contentIndex += segment.length;
     }
 
@@ -202,7 +204,9 @@ export const createHarmonyResponsesEventBuilder = (
       }
     }
 
-    events.push(createFunctionCallArgumentsDone(itemId, outputIndex, toolCall.arguments, nextSequence()));
+    events.push(
+      createFunctionCallArgumentsDone(itemId, outputIndex, toolCall.name, toolCall.arguments, nextSequence()),
+    );
     events.push(createOutputItemDone(item, nextSequence(), outputIndex));
 
     return events;

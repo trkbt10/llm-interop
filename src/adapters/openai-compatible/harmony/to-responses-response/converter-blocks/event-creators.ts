@@ -194,6 +194,7 @@ export const createFunctionCallArgumentsDelta = (
 export const createFunctionCallArgumentsDone = (
   itemId: string,
   outputIndex: number,
+  name: string,
   args: string,
   sequenceNumber: number,
 ): ResponseFunctionCallArgumentsDoneEvent => {
@@ -201,6 +202,7 @@ export const createFunctionCallArgumentsDone = (
     type: "response.function_call_arguments.done",
     item_id: itemId,
     output_index: outputIndex,
+    name,
     arguments: args,
     sequence_number: sequenceNumber,
   };
@@ -248,7 +250,9 @@ export const createFunctionCallItem = (itemId: string, toolCall: HarmonyParsedTo
   };
 };
 
-const extractOutputText = (output: Array<ResponseOutputMessage | ResponseFunctionToolCall | ResponseReasoningItem>): string => {
+const extractOutputText = (
+  output: Array<ResponseOutputMessage | ResponseFunctionToolCall | ResponseReasoningItem>,
+): string => {
   const textItems = output.filter((item): item is ResponseOutputMessage => item.type === "message");
   if (textItems.length === 0) {
     return "";
